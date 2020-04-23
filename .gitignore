@@ -274,4 +274,11 @@ __pycache__/
 ############################################################
 
 vcpgk/
-
+CMakeCache.txt
+cmake_install.cmake
+CMakeFiles/
+*.vcxproj
+*.filters
+*.sln
+*.dir/
+*_autogen/

@@ -5,6 +5,8 @@
 #include "styleTab.h"
 #include "outputTab.h"
 
+#include "project.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -13,6 +15,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tabWidget->addTab(new DataTab(this), tr("Data"));
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
+
+
+	project *p = new project();
 }
 
 MainWindow::~MainWindow()
