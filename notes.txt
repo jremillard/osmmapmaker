@@ -1,0 +1,30 @@
+CMake projects should use: "-DCMAKE_TOOLCHAIN_FILE=C:/Remillard/Documents//osmmapmaker/vcpkg/scripts/buildsystems/vcpkg.cmake"
+
+
+  * bzip2[core]:x64-windows
+  * cairo[core]:x64-windows
+    cairomm[core]:x64-windows
+  * dirent[core]:x64-windows
+  * expat[core]:x64-windows
+  * fontconfig[core]:x64-windows
+  * freetype[bzip2,core,png]:x64-windows
+  * gettext[core]:x64-windows
+  * glib[core]:x64-windows
+  * libffi[core]:x64-windows
+  * libiconv[core]:x64-windows
+  * libpng[core]:x64-windows
+  * libsigcpp[core]:x64-windows
+  * pcre[core]:x64-windows
+  * pixman[core]:x64-windows
+  * zlib[core]:x64-windows
+  * icu[core]:x64-windows
+  * ragel[core]:x64-windows
+  * liblzma[core]:x64-windows
+
+    find_package(proj4 CONFIG REQUIRED)
+    target_link_libraries(main PRIVATE proj)
+
+
+    find_package(LibXml2 REQUIRED)
+    target_include_directories(main PRIVATE ${LIBXML2_INCLUDE_DIR})
+    target_link_libraries(main PRIVATE ${LIBXML2_LIBRARIES})
