@@ -16,13 +16,13 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
 
-
-	project *p = new project();
+	project_ = new project("c:\\remillard\\documents\\osmmapmaker\\project.xml");
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+	delete project_;
 }
 
 void MainWindow::on_actionExit_triggered()
