@@ -21,9 +21,11 @@ public:
 	}
 
 
+private:
 	path renderDatabasePath();
 
-private:
+	void createRenderDatabaseIfNotExist();
+	void upgradeRenderDatabase();
 
 	std::vector< DataSource*> dataSources_;
 	path projectPath_;

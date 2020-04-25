@@ -6,6 +6,8 @@ find_package(Qt5 REQUIRED COMPONENTS Widgets Core Xml)
 find_package(BZip2)
 find_package(ZLib)
 find_package(EXPAT)
+find_package(SQLiteCpp)
+find_package(sqlite3)
 
 add_definitions(-DNOMINMAX)
 

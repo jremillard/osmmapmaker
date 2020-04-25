@@ -8,10 +8,10 @@
 #include "project.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+	QMainWindow(parent),
+	ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 	ui->tabWidget->addTab(new DataTab(this), tr("Data"));
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));

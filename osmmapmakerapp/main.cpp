@@ -1,11 +1,25 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <QMessageBox>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+	QApplication a(argc, argv);
 
-    return a.exec();
+	try
+	{
+		MainWindow w;
+		w.show();
+
+		return a.exec();
+	}
+	catch (std::exception &e)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(QString("Internal Error.\n\n%1").arg(e.what()));
+		msgBox.exec();
+		return EXIT_FAILURE;
+	}
+
+	return EXIT_SUCCESS;
 }

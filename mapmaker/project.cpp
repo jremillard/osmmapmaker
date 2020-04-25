@@ -34,7 +34,7 @@ project::project(path fileName)
 	}
 
 	createRenderDatabaseIfNotExist();
-
+	upgradeRenderDatabase();
 }
 
 void project::createRenderDatabaseIfNotExist()
@@ -42,17 +42,56 @@ void project::createRenderDatabaseIfNotExist()
 	path renderDbPath = renderDatabasePath();
 	if (exists(renderDbPath) == false)
 	{
-		SQLite::Database db(renderDbPath.generic_u8string().c_str(), SQLite::OPEN_CREATE);
+		QString nativePath = QString::fromStdWString(renderDbPath.native());
 
+		SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
+		SQLite::Transaction transaction(db);
+
+		QFile file(":/resources/render-0.sql");
+		file.open(QIODevice::ReadOnly | QIODevice::Text);
+		QByteArray sql = file.readAll();
+	
+		db.exec(sql.begin());
+
+		transaction.commit();
 	}
 }
+
+void project::upgradeRenderDatabase()
+{
+	path renderDbPath = renderDatabasePath();
+	QString nativePath = QString::fromStdWString(renderDbPath.native());
+
+	SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
+
+	SQLite::Transaction transaction(db);
+
+	const std::string currentSchemaNumber = db.execAndGet("SELECT version FROM version");
+
+	for (int rev = stoi(currentSchemaNumber)+1; true; ++rev)
+	{
+		QString sqlFileNAme = QString(":/resources/render-%1.sql").arg(rev);
+
+		QFile file(sqlFileNAme);
+		if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false)
+			break;
+		QByteArray sql = file.readAll();
+
+		db.exec(sql.begin());
+	}
+
+	transaction.commit();
+
+}
+
 
 path project::renderDatabasePath()
 {
 	path dbPath = projectPath_;
 	dbPath.replace_extension(".sqlite");
 	
+	return dbPath;
 }
 
 
