@@ -2,17 +2,21 @@
 #include "datasource.h"
 
 
-dataSource::dataSource()
+DataSource::DataSource()
 {
 }
 
-dataSource::~dataSource()
+DataSource::~DataSource()
 {
 }
 
-QString dataSource::name()
+QString DataSource::userName()
 {
-	return name_;
+	return userName_;
 }
 
+QString DataSource::dataName()
+{
+	return userName_;
+}
 

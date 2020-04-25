@@ -1,14 +1,17 @@
 #pragma once
 
-#include "datasource.h"
+#include "osmdata.h"
 
 #include <QDomNode>
 
-class OsmDataDownload : public dataSource
+class OsmDataDownload : public OsmData
 {
 public:
 	OsmDataDownload(QDomNode projectNode);
 	~OsmDataDownload();
+
+	virtual void import();
+
 };
 
 

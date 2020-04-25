@@ -18,6 +18,6 @@ set(UI_FILES mainwindow.ui dataTab.ui outputTab.ui styleTab.ui)
 
 add_executable(osmmapmakerapp ${SRC_FILES} ${UI_FILES} resources.qrc)
 
-target_link_libraries(osmmapmakerapp mapmaker Qt5::Widgets Qt5::WinMain )
+target_link_libraries(osmmapmakerapp mapmaker Qt5::Widgets Qt5::WinMain BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT)
 
 

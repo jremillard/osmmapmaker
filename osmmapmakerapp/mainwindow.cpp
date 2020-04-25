@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
 
-	project_ = new project("c:\\remillard\\documents\\osmmapmaker\\project.xml");
+	project_ = new project("C:\\Users\\Jason\\Documents\\Map Maker\\project.xml");
 }
 
 MainWindow::~MainWindow()

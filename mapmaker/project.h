@@ -4,20 +4,28 @@
 #include <vector>
 #include "datasource.h"
 
+#include <filesystem>
+
+using namespace std::filesystem;
+
+
 class project
 {
 public:
-	project(QString filename);
+	project(path filename);
 	~project();
 
-	std::vector< dataSource*> dataSources()
+	std::vector< DataSource*> dataSources()
 	{
 		return dataSources_;
 	}
 
 
+	path renderDatabasePath();
+
 private:
 
-	std::vector< dataSource*> dataSources_;
+	std::vector< DataSource*> dataSources_;
+	path projectPath_;
 
 };

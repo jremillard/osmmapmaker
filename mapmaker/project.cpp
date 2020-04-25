@@ -4,16 +4,21 @@
 
 #include "osmdatadownload.h"
 
-project::project(QString fileName)
+#include <SQLiteCpp/SQLiteCpp.h>
+
+project::project(path fileName)
 {
+	projectPath_ = fileName;
 	QDomDocument xmlBOM;
 
 	// Load xml file as raw data
-	QFile f(fileName);
+	QString pathStrQ(fileName.string().c_str());
+
+	QFile f(pathStrQ);
 
 	if (!f.open(QIODevice::ReadOnly))
 	{
-		auto s = QString("Can't open file %1.").arg(fileName);
+		auto s = QString("Can't open file %1.").arg(pathStrQ);
 		throw std::exception(s.toUtf8());
 	}
 
@@ -25,12 +30,31 @@ project::project(QString fileName)
 	QDomNodeList directDownloads = xmlBOM.elementsByTagName("openStreetMapDirectDownload");
 	for (int i = 0; i < directDownloads.length(); ++i)
 	{
-		dataSources_.push_back( new OsmDataDownload(directDownloads.at(i)));
+		dataSources_.push_back(new OsmDataDownload(directDownloads.at(i)));
 	}
 
-
+	createRenderDatabaseIfNotExist();
 
 }
+
+void project::createRenderDatabaseIfNotExist()
+{
+	path renderDbPath = renderDatabasePath();
+	if (exists(renderDbPath) == false)
+	{
+		SQLite::Database db(renderDbPath.generic_u8string().c_str(), SQLite::OPEN_CREATE);
+
+
+	}
+}
+
+path project::renderDatabasePath()
+{
+	path dbPath = projectPath_;
+	dbPath.replace_extension(".sqlite");
+	
+}
+
 
 project::~project()
 {

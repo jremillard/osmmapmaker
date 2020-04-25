@@ -2,16 +2,20 @@
 
 #include <QString>
 
-class dataSource
+class DataSource
 {
 public:
-	dataSource();
-	virtual ~dataSource();
+	DataSource();
+	virtual ~DataSource();
 
-	virtual QString name();
+	virtual QString userName();
+	virtual QString dataName();
+
+	virtual void import() = 0;
 
 protected:
-	QString name_;
+	QString userName_;
+	QString dataName_;
 
 };
 
