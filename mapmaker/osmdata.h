@@ -11,6 +11,13 @@
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/geom/wkb.hpp>
 
+enum OsmEntityType
+{
+	OET_POINT = 0,
+	OET_LINE = 1,
+	OET_AREA = 2,
+};
+
 class OsmData : public DataSource
 {
 public:
@@ -33,11 +40,14 @@ public:
 	void area(const osmium::Area& area);
 
 private:
+	void addTagsToDb(long long id, const osmium::TagList &);
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
 
+	std::vector<std::string> discardedKeys_;
+
 	QString dataSource_;
-	SQLite::Statement *queryAddPoint_;
-	SQLite::Statement *queryAddPointKV_;
+	SQLite::Statement *queryAdd_;
+	SQLite::Statement *queryAddKV_;
 
 	SQLite::Database &db_;
 };

@@ -43,7 +43,7 @@ QString DataSource::userName()
 
 QString DataSource::dataName()
 {
-	return userName_;
+	return dataName_;
 }
 
 QDateTime DataSource::importTime()

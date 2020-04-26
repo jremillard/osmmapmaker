@@ -92,7 +92,13 @@ void DataTab::on_add_clicked()
 		for (DataSource *output : project_->dataSources())
 		{
 			importName = output->userName();
+
 			SQLite::Transaction transaction(db);
+
+			SQLite::Statement removeDataStatement(db, "DELETE FROM entity WHERE source = ?");
+			removeDataStatement.bind(1, output->dataName().toStdString());
+			removeDataStatement.exec();
+
 			output->importData(db);
 			transaction.commit();
 		}
