@@ -7,10 +7,14 @@
 class OsmDataFile : public OsmData
 {
 public:
-	OsmDataFile(QDomNode projectNode);
+	OsmDataFile(QDomElement projectNode);
 	~OsmDataFile();
 
-	virtual void Import();
+	void importData(SQLite::Database &db);
+
+private:
+	QString fileName_;
+
 };
 
 

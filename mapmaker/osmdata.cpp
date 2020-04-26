@@ -1,51 +1,22 @@
 #include "osmdata.h"
 
 #include <osmium/io/any_input.hpp>
-#include <osmium/handler.hpp>
-#include <osmium/osm/node.hpp>
-#include <osmium/osm/way.hpp>
-#include <osmium/io/any_input.hpp>
-#include <osmium/visitor.hpp>
-#include <osmium/index/map/sparse_mem_array.hpp>
-#include <osmium/handler/node_locations_for_ways.hpp>
 
 OsmData::OsmData()
 {
+}
+
+OsmData::OsmData(QDomElement projectNode) : DataSource( projectNode)
+{
+
 }
 
 OsmData::~OsmData()
 {
 }
 
-class MyHandler : public osmium::handler::Handler 
-{
-public:
-	int count = 0;
 
-	void node(const osmium::Node& node)
-	{
-		++count;
-	}
-
-	void way(const osmium::Way& way) 
-	{
-		++count;
-
-	}
-
-	void relation(const osmium::Relation& relation) 
-	{
-		++count;
-	}
-
-	void area(const osmium::Area& area) 
-	{
-		++count;
-	}
-
-};
-
-void OsmData::importFile( QString fileName)
+void OsmData::importFile(SQLite::Database &db, QString fileName)
 {
 	// The Reader is initialized here with an osmium::io::File, but could
 
@@ -56,11 +27,53 @@ void OsmData::importFile( QString fileName)
 
 	osmium::io::Reader reader(input_file);
 
-
-	MyHandler handler;
+	OsmDataImportHandler handler(db, dataName());
 	osmium::apply(reader, handler);
+
+	//osmium::geom::WKTFactory<> factory;
+	//osmium::geom::WKTFactory<> factory{ 3 }; // three digits after decimal point
+
+	//osmium::geom::detail::WKTFactoryImpl t;
+
+	//osmium::geom::GeometryFactory<, IdentityProjection> f;
 
 	reader.close();
 }
 
 
+OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSource) : db_(db) , dataSource_(dataSource)
+{
+	queryAddPoint_ = new SQLite::Statement(db_, "INSERT INTO point(source, geom) VALUES (?,?)");
+	queryAddPointKV_ = new SQLite::Statement(db_, "INSERT INTO pointKV(id, key, value) VALUES (?,?,?)");
+
+}
+
+OsmDataImportHandler::~OsmDataImportHandler()
+{
+	delete queryAddPoint_;
+	delete queryAddPointKV_;
+}
+
+
+void OsmDataImportHandler::node(const osmium::Node& node)
+{
+	queryAddPoint_->bind(1, dataSource_.toStdString());
+	std::string pt = factory_.create_point(node);
+		
+	queryAddPoint_->bind(2, pt.c_str(), pt.size());
+
+	queryAddPoint_->exec();
+	queryAddPoint_->reset();
+}
+
+void OsmDataImportHandler::way(const osmium::Way& way)
+{
+}
+
+void OsmDataImportHandler::relation(const osmium::Relation& relation)
+{
+}
+
+void OsmDataImportHandler::area(const osmium::Area& area)
+{
+}

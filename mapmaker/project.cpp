@@ -2,11 +2,15 @@
 #include <QtXml>
 #include <exception>
 
-#include "osmdatadownload.h"
+#include "osmdataextractdownload.h"
+#include "osmdatadirectdownload.h"
+#include "osmdatafile.h"
 
 #include <SQLiteCpp/SQLiteCpp.h>
+#include <SQLiteCpp/VariadicBind.h>
 
-project::project(path fileName)
+
+Project::Project(path fileName)
 {
 	projectPath_ = fileName;
 	QDomDocument xmlBOM;
@@ -26,18 +30,29 @@ project::project(path fileName)
 	xmlBOM.setContent(&f);
 	f.close();
 
-	//openStreetMapDirectDownload nodes
-	QDomNodeList directDownloads = xmlBOM.elementsByTagName("openStreetMapDirectDownload");
-	for (int i = 0; i < directDownloads.length(); ++i)
+	QDomNodeList dataSources = xmlBOM.elementsByTagName("openStreetMapExtractDownload");
+	for (int i = 0; i < dataSources.length(); ++i)
 	{
-		dataSources_.push_back(new OsmDataDownload(directDownloads.at(i)));
+		dataSources_.push_back(new OsmDataExtractDownload(dataSources.at(i)));
+	}
+
+	dataSources = xmlBOM.elementsByTagName("openStreetMapDirectDownload");
+	for (int i = 0; i < dataSources.length(); ++i)
+	{
+		dataSources_.push_back(new OsmDataExtractDownload(dataSources.at(i)));
+	}
+
+	dataSources = xmlBOM.elementsByTagName("openStreetMapFileSource");
+	for (int i = 0; i < dataSources.length(); ++i)
+	{
+		dataSources_.push_back(new OsmDataFile(dataSources.at(i).toElement()));
 	}
 
 	createRenderDatabaseIfNotExist();
 	upgradeRenderDatabase();
 }
 
-void project::createRenderDatabaseIfNotExist()
+void Project::createRenderDatabaseIfNotExist()
 {
 	path renderDbPath = renderDatabasePath();
 	if (exists(renderDbPath) == false)
@@ -58,7 +73,7 @@ void project::createRenderDatabaseIfNotExist()
 	}
 }
 
-void project::upgradeRenderDatabase()
+void Project::upgradeRenderDatabase()
 {
 	path renderDbPath = renderDatabasePath();
 	QString nativePath = QString::fromStdWString(renderDbPath.native());
@@ -79,14 +94,17 @@ void project::upgradeRenderDatabase()
 		QByteArray sql = file.readAll();
 
 		db.exec(sql.begin());
+
+		SQLite::Statement query(db, "UPDATE version SET version = ?");
+		SQLite::bind(query, rev);
+		query.exec();
 	}
 
 	transaction.commit();
-
 }
 
 
-path project::renderDatabasePath()
+path Project::renderDatabasePath()
 {
 	path dbPath = projectPath_;
 	dbPath.replace_extension(".sqlite");
@@ -95,7 +113,7 @@ path project::renderDatabasePath()
 }
 
 
-project::~project()
+Project::~Project()
 {
 	for (auto i : dataSources_)
 		delete i;

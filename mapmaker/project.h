@@ -8,21 +8,20 @@
 
 using namespace std::filesystem;
 
-
-class project
+class Project
 {
 public:
-	project(path filename);
-	~project();
+	Project(path filename);
+	~Project();
 
 	std::vector< DataSource*> dataSources()
 	{
 		return dataSources_;
 	}
 
+	path renderDatabasePath();
 
 private:
-	path renderDatabasePath();
 
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();

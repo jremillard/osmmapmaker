@@ -18,10 +18,11 @@ public:
 
 private slots:
     void on_actionExit_triggered();
+	void openProject(path projectPath);
 
 private:
     Ui::MainWindow *ui;
-	project *project_ = NULL;
+	Project *project_ = NULL;
 
 };
 

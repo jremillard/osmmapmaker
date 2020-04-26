@@ -16,7 +16,21 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
 
-	project_ = new project("C:\\Users\\Jason\\Documents\\Map Maker\\project.xml");
+	project_ = NULL;
+
+	openProject("C:\\Users\\Jason\\Documents\\Map Maker\\project.xml");
+}
+
+
+void MainWindow::openProject(path projectPath)
+{
+	delete project_;
+	project_ = NULL;
+	project_ = new Project(projectPath);
+	setWindowTitle(QString("OSM Map Maker - %1").arg(projectPath.filename().wstring()));
+
+	DataTab *dataTab = dynamic_cast<DataTab*>(ui->tabWidget->widget(0));
+	dataTab->setProject(project_);
 }
 
 MainWindow::~MainWindow()
