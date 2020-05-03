@@ -21,7 +21,11 @@ public:
 
 	path renderDatabasePath();
 
+	void createViews();
+	void render();
+
 private:
+	void createView(SQLite::Database &db, const QString &viewName, const QString &primaryKey, std::vector<QString> &attributes);
 
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();

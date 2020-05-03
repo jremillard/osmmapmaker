@@ -17,7 +17,7 @@ create table entityKV (
 		ON DELETE CASCADE
 	);
 
-CREATE INDEX entityKV_Index ON entityKV ( key, value ); 
+CREATE INDEX entityKV_Index ON entityKV ( id, key, value); 
 CREATE INDEX entity_Index ON entity (source, type); 
 
 

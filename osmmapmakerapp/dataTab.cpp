@@ -102,6 +102,9 @@ void DataTab::on_add_clicked()
 			output->importData(db);
 			transaction.commit();
 		}
+
+		project_->createViews();
+		project_->render();
 	}
 	catch (std::exception &e)
 	{
