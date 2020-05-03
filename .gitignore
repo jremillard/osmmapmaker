@@ -10,5 +10,8 @@ CMakeFiles/
 *.dir/
 *_autogen/
 .vs/
+*.sqlite
+*.sqlite.index
+*.osm
 */x64/
 */Debug/

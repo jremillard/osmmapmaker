@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<map>
+  <renderdb filename="$file$.sqlite"></renderdb>
+
+  <!--
+  <openStreetMapExtractDownload name="Groton">    
+    <provider>Geofabrick</provider>
+    <extractName></extractName>
+    <extractUrl></extractUrl>
+    <lastUpdateDate></lastUpdateDate>
+    <lastImportTimeS></lastImportTimeS>
+  </openStreetMapExtractDownload>  
+  
+  -->
+
+  <openStreetMapFileSource name="Groton">
+    <dataSource>Primary</dataSource>
+    <lastUpdateDate></lastUpdateDate>
+    <lastImportTimeS>0</lastImportTimeS>
+    <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
+  </openStreetMapFileSource>
+
+  <style>
+    <layer>
+      
+      <dataSelect>
+        <and k="highway" v="track"/>
+      </dataSelect>
+
+      <line>
+        <stroke>#FFFFFF</stroke>
+        <stroke_width>3</stroke_width>
+        <stroke_opacity>1</stroke_opacity>
+        <smooth>0</smooth>        
+      </line>
+
+      <line>
+        <stroke>#FFFF00</stroke>
+        <stroke_width>1</stroke_width>
+        <stroke_opacity>1</stroke_opacity>
+        <smooth>0</smooth>
+      </line>
+
+    </layer>
+  
+</style>
+
+</map>

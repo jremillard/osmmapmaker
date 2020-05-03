@@ -104,7 +104,6 @@ void DataTab::on_add_clicked()
 		}
 
 		project_->createViews();
-		project_->render();
 	}
 	catch (std::exception &e)
 	{
