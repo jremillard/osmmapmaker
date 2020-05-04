@@ -4,5 +4,7 @@
       <file>resources/render-1.sql</file>
       <file>resources/discarded.txt</file>
       <file>resources/downloadicon.svg</file>
+      <file>resources/addicon.svg</file>
+      <file>resources/trashicon.svg</file>
     </qresource>
 </RCC>

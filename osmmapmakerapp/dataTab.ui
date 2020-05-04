@@ -66,6 +66,10 @@
        <property name="text">
         <string>Add New Map Data Source ...</string>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/addicon.svg</normaloff>:/resources/addicon.svg</iconset>
+       </property>
       </widget>
      </item>
      <item>
@@ -142,12 +146,12 @@
                <string>Import Data To Project</string>
               </property>
               <property name="icon">
-               <iconset>
-                <normaloff>resources/downloadicon.svg</normaloff>resources/downloadicon.svg</iconset>
+               <iconset resource="resources.qrc">
+                <normaloff>:/resources/downloadicon.svg</normaloff>:/resources/downloadicon.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
-                <width>32</width>
+                <width>16</width>
                 <height>16</height>
                </size>
               </property>
@@ -190,7 +194,11 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Delete</string>
+             <string>Delete Data Source</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/resources/trashicon.svg</normaloff>:/resources/trashicon.svg</iconset>
             </property>
            </widget>
           </item>
@@ -309,6 +317,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
