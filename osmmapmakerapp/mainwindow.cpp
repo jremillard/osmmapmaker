@@ -37,6 +37,10 @@ void MainWindow::openProject(path projectPath)
 
 	DataTab *dataTab = dynamic_cast<DataTab*>(ui->tabWidget->widget(0));
 	dataTab->setProject(project_);
+
+	StyleTab *styleTab = dynamic_cast<StyleTab*>(ui->tabWidget->widget(1));
+	styleTab->setProject(project_);
+
 }
 
 MainWindow::~MainWindow()
