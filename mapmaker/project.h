@@ -14,12 +14,19 @@ public:
 	Project(path filename);
 	~Project();
 
+	void save();
+	void save(path filename);
+
 	std::vector< DataSource*> dataSources()
 	{
 		return dataSources_;
 	}
 
+	void removeDataSource(DataSource* src);
+	void addDataSource(DataSource* src);
+
 	path renderDatabasePath();
+	path projectPath();
 
 	void createViews();
 

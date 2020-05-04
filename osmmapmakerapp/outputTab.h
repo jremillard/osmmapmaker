@@ -16,6 +16,7 @@ public:
 
 private slots:
 
+
 private:
 	Ui::OutputTab *ui;
 };

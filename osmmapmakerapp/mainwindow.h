@@ -18,6 +18,11 @@ public:
 
 private slots:
     void on_actionExit_triggered();
+	void on_action_Project_New_triggered();
+	void on_action_Project_Open_triggered();
+	void on_action_Project_Copy_triggered();
+	void on_action_Project_Save_triggered();
+
 	void openProject(path projectPath);
 
 private:

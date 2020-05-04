@@ -9,7 +9,6 @@ DataSource::DataSource()
 
 DataSource::DataSource(QDomElement projectNode)
 {
-
 	userName_ = projectNode.attributeNode("name").value();
 
 	QDomElement el;
@@ -31,14 +30,24 @@ DataSource::DataSource(QDomElement projectNode)
 	}
 }
 
-
 DataSource::~DataSource()
 {
 }
 
+QString DataSource::primarySourceName()
+{
+	return QString("Primary");
+}
+
+
 QString DataSource::userName()
 {
 	return userName_;
+}
+
+void DataSource::setUserName(QString name)
+{
+	userName_ = name;
 }
 
 QString DataSource::dataName()
@@ -46,7 +55,18 @@ QString DataSource::dataName()
 	return dataName_;
 }
 
+void DataSource::setDataName(QString name)
+{
+	dataName_ = name;
+}
+
+
 QDateTime DataSource::importTime()
 {
 	return lastImport_;
+}
+
+void DataSource::setImportTime(QDateTime time)
+{
+	lastImport_ = time;
 }

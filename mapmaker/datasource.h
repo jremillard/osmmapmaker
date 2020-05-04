@@ -16,10 +16,17 @@ public:
 	virtual ~DataSource();
 
 	virtual QString userName();
+	virtual void setUserName(QString name);
+
 	virtual QString dataName();
+	virtual void setDataName(QString name);
+
 	virtual QDateTime importTime();
+	virtual void setImportTime(QDateTime time);
 
 	virtual void importData(SQLite::Database &db) = 0;
+
+	static QString primarySourceName();
 
 protected:
 	QString userName_;

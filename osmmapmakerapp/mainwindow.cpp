@@ -7,6 +7,10 @@
 
 #include "project.h"
 
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QStandardPaths>
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -18,7 +22,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	project_ = NULL;
 
-	openProject("C:\\Users\\Jason\\Documents\\Map Maker\\project.xml");
+	openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton\\project.xml");
+
+	setCursor(Qt::ArrowCursor);
 }
 
 
@@ -39,7 +45,64 @@ MainWindow::~MainWindow()
 	delete project_;
 }
 
+void MainWindow::on_action_Project_New_triggered()
+{
+	QMessageBox msgBox(this);
+	msgBox.setText(QString("New"));
+	msgBox.exec();
+}
+
+void MainWindow::on_action_Project_Open_triggered()
+{
+	auto locs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+	QString loc;
+	if (locs.size() > 0)
+		loc = locs[0];
+
+	QString file = QFileDialog::getOpenFileName(this, tr("Open Project"), loc, tr("Map Project Files (*.xml)"));
+
+	if (file.isEmpty() == false)
+	{
+		QMessageBox msgBox(this);
+
+		msgBox.setText(QString("Open %1").arg(file));
+		msgBox.exec();
+	}
+
+}
+
+void MainWindow::on_action_Project_Copy_triggered()
+{
+	QMessageBox msgBox(this);
+
+	msgBox.setText(QString("Copy"));
+	msgBox.exec();
+
+}
+
+void MainWindow::on_action_Project_Save_triggered()
+{
+	try
+	{
+		setCursor(Qt::WaitCursor);
+
+		if (project_ != NULL)
+			project_->save();
+
+		setCursor(Qt::ArrowCursor);
+	}
+	catch (std::exception &e)
+	{
+		setCursor(Qt::ArrowCursor);
+
+		QMessageBox msgBox;
+		msgBox.setText(QString("Failure saving %1 project.\n%2").arg(QString::fromStdString(project_->projectPath().string()), e.what()));
+		msgBox.exec();
+	}
+
+}
+
 void MainWindow::on_actionExit_triggered()
 {
-    this->close();
+	this->close();
 }

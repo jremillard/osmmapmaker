@@ -51,6 +51,14 @@ Project::Project(path fileName)
 	upgradeRenderDatabase();
 }
 
+Project::~Project()
+{
+	for (auto i : dataSources_)
+		delete i;
+	dataSources_.clear();
+}
+
+
 void Project::createRenderDatabaseIfNotExist()
 {
 	path renderDbPath = renderDatabasePath();
@@ -103,6 +111,7 @@ void Project::upgradeRenderDatabase()
 }
 
 
+
 path Project::renderDatabasePath()
 {
 	path dbPath = projectPath_;
@@ -112,12 +121,21 @@ path Project::renderDatabasePath()
 }
 
 
-Project::~Project()
+path Project::projectPath()
 {
-	for (auto i : dataSources_)
-		delete i;
-	dataSources_.clear();
+	return projectPath_;
 }
+
+
+void Project::save()
+{
+	save(projectPath_);
+}
+
+void Project::save(path filename)
+{
+}
+
 
 
 void Project::createViews()
@@ -185,4 +203,13 @@ void Project::createView(SQLite::Database &db, const QString &viewName, const QS
 	db.exec(createViewSql.toStdString());
 }
 
+void Project::removeDataSource(DataSource* src)
+{
+	dataSources_.erase(find(dataSources_.begin(), dataSources_.end(),src));
+	delete src;
+}
 
+void Project::addDataSource(DataSource* src)
+{
+	dataSources_.push_back(src);
+}

@@ -20,6 +20,13 @@
     <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
   </openStreetMapFileSource>
 
+  <openStreetMapFileSource name="Groton 2">
+    <dataSource>Secondary</dataSource>
+    <lastUpdateDate></lastUpdateDate>
+    <lastImportTimeS>0</lastImportTimeS>
+    <fileName>C:\Users\Jason\Documents\Map Maker\groton2.osm</fileName>
+  </openStreetMapFileSource>
+
   <style>
     <layer>
       

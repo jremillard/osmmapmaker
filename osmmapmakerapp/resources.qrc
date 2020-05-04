@@ -3,5 +3,6 @@
       <file>resources/render-0.sql</file>
       <file>resources/render-1.sql</file>
       <file>resources/discarded.txt</file>
+      <file>resources/downloadicon.svg</file>
     </qresource>
 </RCC>
