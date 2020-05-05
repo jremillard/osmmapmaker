@@ -3,8 +3,13 @@
       <file>resources/render-0.sql</file>
       <file>resources/render-1.sql</file>
       <file>resources/discarded.txt</file>
-      <file>resources/downloadicon.svg</file>
-      <file>resources/addicon.svg</file>
+      <file>resources/download.svg</file>
+      <file>resources/plus.svg</file>
+      <file>resources/minus.svg</file>
       <file>resources/trashicon.svg</file>
+      <file>resources/uparrow.svg</file>
+      <file>resources/downarrow.svg</file>
+      <file>resources/leftarrow.svg</file>
+      <file>resources/rightarrow.svg</file>
     </qresource>
 </RCC>

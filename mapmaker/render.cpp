@@ -21,7 +21,7 @@ using namespace mapnik;
 
 static bool mapnikInit = false;
 
-Render::Render(Project *project, double leftLinear, double bottomLinear, double pixelResolution, int imageWithPixels, int imageHeightPixels)
+Render::Render(Project *project)
 {
 	using namespace mapnik;
 
@@ -36,9 +36,9 @@ Render::Render(Project *project, double leftLinear, double bottomLinear, double 
 
 	const std::string srs_merc = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over";
 
-	map_ = Map(imageWithPixels, imageHeightPixels);
+	map_ = Map(100, 100);
 
-	map_.set_background(parse_color("blue"));
+	map_.set_background(parse_color("white"));
 	map_.set_srs(srs_merc);
 
 	path renderDbPath = project->renderDatabasePath();
@@ -52,8 +52,8 @@ Render::Render(Project *project, double leftLinear, double bottomLinear, double 
 
 		{
 			line_symbolizer line_sym;
-			put(line_sym, keys::stroke, color(0xFF, 0xFF, 0xFF));
-			put(line_sym, keys::stroke_width, 5.0);
+			put(line_sym, keys::stroke, color(0x00, 0x00, 0x00));
+			put(line_sym, keys::stroke_width, 3.0);
 			put(line_sym, keys::stroke_linecap, ROUND_CAP);
 			put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
 			r.append(std::move(line_sym));
@@ -86,12 +86,37 @@ Render::Render(Project *project, double leftLinear, double bottomLinear, double 
 
 		map_.add_layer(lyr);
 	}
+
 }
 
-QImage Render::RenderImage()
+void Render::GetBoundingBox(double *centerX, double *centerY, double *pixelResolution)
 {
-	//m.zoom_to_box(box2d<double>(-8024477.28459, 5445190.38849, -7381388.20071, 5662941.44855));
-	map_.zoom_all();
+
+	*pixelResolution = map_.scale();
+
+	box2d<double> box = map_.get_current_extent();
+
+	*centerX = box.center().x;
+	*centerY = box.center().y;
+}
+
+
+QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
+{
+	map_.resize(imageWithPixels, imageHeightPixels);
+
+	if (pixelResolution <= 0)
+	{
+		map_.zoom_all();
+	}
+	else
+	{
+		double widthLin = (double)imageWithPixels * pixelResolution;
+		double heightLin = (double)imageHeightPixels * pixelResolution;
+
+		box2d<double> box(centerX-widthLin/2.0, centerY - heightLin / 2.0, centerX + widthLin / 2.0, centerY + heightLin / 2.0);
+		map_.zoom_to_box(box);
+	}
 
 	box2d<double> bb = map_.get_current_extent();
 
@@ -101,20 +126,29 @@ QImage Render::RenderImage()
 
 	ren.apply();
 
-	save_to_file(buf, "c:\\remillard\\documents\\demo.png", "png");
+	//save_to_file(buf, "c:\\remillard\\documents\\demo.png", "png");
 
-	save_map(map_, "c:\\remillard\\documents\\map.xml");
+	//save_map(map_, "c:\\remillard\\documents\\map.xml");
 
 	QImage img = QImage(map_.width(), map_.height(), QImage::Format_ARGB32);
 
-	for (std::size_t row = 0; row < map_.height(); ++row)
+	for (std::size_t row = 0; row < buf.height(); ++row)
 	{
-		image_rgba8::pixel_type const* rowPtr = buf.get_row(row);
+		image_rgba8::pixel_type * rowPtr = buf.get_row(row);
+
+		// probably not needed on OS-X... mapnik didn't use the native byte ordering, the used disk format of 
+		// libpng, need to sort that out here.
+		for (std::size_t col = 0; col < buf.width(); ++col)
+		{
+			image_rgba8::pixel_type pixel = rowPtr[col] & 0x00FFFFFF;
+			pixel = _byteswap_ulong(pixel);
+			rowPtr[col] = (rowPtr[col] & 0xFF000000) | (pixel >> 8);
+		}
 
 		memcpy(img.scanLine(row), rowPtr, map_.width()*sizeof(image_rgba8::pixel_type));
 	}
 
-	img.save("c:\\remillard\\documents\\demo2.png");
+	//img.save("c:\\remillard\\documents\\demo2.png");
 
 	return img;
 }

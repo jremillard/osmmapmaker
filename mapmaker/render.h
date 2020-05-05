@@ -9,9 +9,11 @@
 class Render
 {
 public:
-	Render(Project *project, double leftLinear, double bottomLinear, double pixelResolution, int imageWithPixels, int imageHeightPixels);
+	Render(Project *project);
 
-	QImage RenderImage();
+	QImage RenderImage(int imageWithPixels, int imageHeightPixels, double leftLinear, double bottomLinear, double pixelResolution);
+
+	void GetBoundingBox(double *leftLinear, double *bottomLinear, double *pixelResolution);
 
 private:
 	mapnik::Map map_;

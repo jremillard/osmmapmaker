@@ -68,7 +68,7 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/resources/addicon.svg</normaloff>:/resources/addicon.svg</iconset>
+         <normaloff>:/resources/plus.svg</normaloff>:/resources/plus.svg</iconset>
        </property>
       </widget>
      </item>
@@ -147,7 +147,7 @@
               </property>
               <property name="icon">
                <iconset resource="resources.qrc">
-                <normaloff>:/resources/downloadicon.svg</normaloff>:/resources/downloadicon.svg</iconset>
+                <normaloff>:/resources/download.svg</normaloff>:/resources/download.svg</iconset>
               </property>
               <property name="iconSize">
                <size>
