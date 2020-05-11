@@ -23,6 +23,9 @@ public:
 private slots:
 	void on_zoomIn_clicked();
 	void on_zoomOut_clicked();
+	void on_styleNew_clicked();
+	void on_styleTree_itemSelectionChanged();
+	void on_lineUpdate_clicked();
 
 private:
 	void paintEvent(QPaintEvent *event);
@@ -30,6 +33,10 @@ private:
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
 	void resizeEvent(QResizeEvent *event);
+	void updateTree();
+	void freshRender();
+
+	int renderImageLeft();
 
 	bool mouseTracking_;
 	QPoint mouseTrackingStart_;

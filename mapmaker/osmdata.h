@@ -44,6 +44,7 @@ private:
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
 
 	std::vector<std::string> discardedKeys_;
+	std::vector<std::string> areaKeys_;
 
 	QString dataSource_;
 	SQLite::Statement *queryAdd_;

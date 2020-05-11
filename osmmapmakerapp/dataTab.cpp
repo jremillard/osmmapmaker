@@ -155,20 +155,17 @@ void DataTab::on_OSMFileImport_clicked()
 		{
 			if (name == output->userName())
 			{
-				path renderDbPath = project_->renderDatabasePath();
-				QString nativePath = QString::fromStdWString(renderDbPath.native());
-
-				SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
+				SQLite::Database *db = project_->renderDatabase();
 
 				importName = output->userName();
 
-				SQLite::Transaction transaction(db);
+				SQLite::Transaction transaction(*db);
 
-				SQLite::Statement removeDataStatement(db, "DELETE FROM entity WHERE source = ?");
+				SQLite::Statement removeDataStatement(*db, "DELETE FROM entity WHERE source = ?");
 				removeDataStatement.bind(1, output->dataName().toStdString());
 				removeDataStatement.exec();
 
-				output->importData(db);
+				output->importData(*db);
 				transaction.commit();
 
 				project_->createViews();

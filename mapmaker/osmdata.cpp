@@ -100,21 +100,37 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
 
-
-	QFile file(":/resources/discarded.txt");
-	bool open = file.open(QIODevice::ReadOnly | QIODevice::Text);
-	assert(open);
-
-	QTextStream in(&file);
-	while (!in.atEnd())
 	{
-		QString line = in.readLine().trimmed();
-		if (line.isEmpty() == false)
+		QFile file(":/resources/discarded.txt");
+		bool open = file.open(QIODevice::ReadOnly | QIODevice::Text);
+		assert(open);
+
+		QTextStream in(&file);
+		while (!in.atEnd())
 		{
-			discardedKeys_.push_back(line.toStdString());
+			QString line = in.readLine().trimmed();
+			if (line.isEmpty() == false)
+			{
+				discardedKeys_.push_back(line.toStdString());
+			}
 		}
 	}
 
+	{
+		QFile file(":/resources/areas.txt");
+		bool open = file.open(QIODevice::ReadOnly | QIODevice::Text);
+		assert(open);
+
+		QTextStream in(&file);
+		while (!in.atEnd())
+		{
+			QString line = in.readLine().trimmed();
+			if (line.isEmpty() == false)
+			{
+				areaKeys_.push_back(line.toStdString());
+			}
+		}
+	}
 }
 
 OsmDataImportHandler::~OsmDataImportHandler()
@@ -173,6 +189,18 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 
 	try
 	{
+		for (const osmium::Tag &tag : way.tags())
+		{
+			for (const std::string &discardKey : areaKeys_)
+			{
+				if (std::strcmp(tag.key(), discardKey.c_str()) == 0)
+				{
+					line = false;
+					break;
+				}
+			}
+		}
+
 		if (line)
 		{
 			queryAdd_->bind(1, OET_LINE);
@@ -182,12 +210,10 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 		}
 		else
 		{
-			/*
 			queryAdd_->bind(1, OET_AREA);
 			queryAdd_->bind(2, dataSource_.toStdString());
-			std::string pt = factory_.create_polygon(way);
+			std::string pt = factory_.create_linestring(way);
 			queryAdd_->bind(3, pt.c_str(), pt.size());
-			*/
 		}
 
 		queryAdd_->exec();

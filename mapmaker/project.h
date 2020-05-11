@@ -3,6 +3,7 @@
 #include <QString>
 #include <vector>
 #include "datasource.h"
+#include "stylelayer.h"
 
 #include <filesystem>
 
@@ -25,7 +26,17 @@ public:
 	void removeDataSource(DataSource* src);
 	void addDataSource(DataSource* src);
 
+	std::vector< StyleLayer*> styleLayers()
+	{
+		return styleLayers_;
+	}
+
+	void removeStyleLayer(StyleLayer* l);
+	void addStyleLayer(StyleLayer *l);
+
 	path renderDatabasePath();
+	SQLite::Database* renderDatabase();
+
 	path projectPath();
 
 	void createViews();
@@ -36,7 +47,9 @@ private:
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();
 
+	SQLite::Database *db_;
 	std::vector< DataSource*> dataSources_;
+	std::vector< StyleLayer *> styleLayers_;
 	path projectPath_;
 
 };

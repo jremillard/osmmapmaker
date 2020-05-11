@@ -27,12 +27,13 @@
     <fileName>C:\Users\Jason\Documents\Map Maker\groton2.osm</fileName>
   </openStreetMapFileSource>
 
-  <style>
-    <layer>
-      
-      <dataSelect>
+  <layer k="highway" type="line">
+    
+    <subLayer name="" visible="true">
+  
+      <selector>
         <and k="highway" v="track"/>
-      </dataSelect>
+      </selector>
 
       <line>
         <stroke>#FFFFFF</stroke>
@@ -48,8 +49,8 @@
         <smooth>0</smooth>
       </line>
 
-    </layer>
+    </subLayer>
   
-</style>
+</layer>
 
 </map>

@@ -38,55 +38,118 @@ Render::Render(Project *project)
 
 	map_ = Map(100, 100);
 
-	map_.set_background(parse_color("white"));
+	map_.set_background(parse_color("green"));
 	map_.set_srs(srs_merc);
 
 	path renderDbPath = project->renderDatabasePath();
 	QString nativePath = QString::fromStdWString(renderDbPath.native());
 
-	feature_type_style roads34_style;
-
-	{
-		rule r;
-		r.set_filter(parse_expression("[highway]='track'"));
-
-		{
-			line_symbolizer line_sym;
-			put(line_sym, keys::stroke, color(0x00, 0x00, 0x00));
-			put(line_sym, keys::stroke_width, 3.0);
-			put(line_sym, keys::stroke_linecap, ROUND_CAP);
-			put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
-			r.append(std::move(line_sym));
-
-		}
-
-		roads34_style.add_rule(std::move(r));
-	}
-
-	map_.insert_style("smallroads", std::move(roads34_style));
-
-	{
+	size_t styleIndex = 0;
+	for (auto projectLayer : project->styleLayers())
+	{	
 		parameters p;
 		p["type"] = "sqlite";
 		p["file"] = nativePath.toUtf8().constBegin();
-		p["table"] = "highway_v";
+		p["table"] = projectLayer->key().toStdString() + "_v";
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
 		p["auto_index"] = "true";
 		p["use_spatial_index"] = "true";
 
-		layer lyr("smallroads");
+		QString layerName = QString("%1-%2").arg(projectLayer->key()).arg(styleIndex);
+
+		layer lyr(layerName.toStdString());
 
 		lyr.set_datasource(datasource_cache::instance().create(p));
 
 		lyr.set_srs("+proj=longlat +datum=WGS84 +no_defs");
 
-		lyr.add_style("smallroads");
+		switch (projectLayer->layerType())
+		{
+			case ST_LABEL:
+			{
+				break;
+			}
+
+			case ST_POINT:
+			{
+				break;
+			}
+
+			case ST_LINE:
+			{
+				std::vector<QString> names = projectLayer->subLayerNames();
+
+				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				{
+					Line line = projectLayer->subLayerLine(subLayerIndex);
+
+					if (line.casingWidth_ > 0)
+					{
+						feature_type_style style;
+
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
+
+						line_symbolizer line_sym;
+						put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
+						put(line_sym, keys::stroke_width, line.width_ + line.casingWidth_*2.0);
+						//put(line_sym, keys::stroke_linecap, ROUND_CAP);
+						//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
+						put(line_sym, keys::stroke_opacity, line.opacity_);
+						put(line_sym, keys::smooth, line.smooth_);
+
+						r.append(std::move(line_sym));
+
+						style.add_rule(std::move(r));
+
+						QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+						lyr.add_style(styleLayer.toStdString());
+
+					}
+
+					feature_type_style style;
+
+					rule r;
+					//r.set_filter(parse_expression("[highway]='track'"));
+
+					line_symbolizer line_sym;
+					put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
+					put(line_sym, keys::stroke_width, line.width_);
+					//put(line_sym, keys::stroke_linecap, ROUND_CAP);
+					//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
+					put(line_sym, keys::stroke_opacity, line.opacity_);
+					put(line_sym, keys::smooth, line.smooth_);
+
+					r.append(std::move(line_sym));
+
+					style.add_rule(std::move(r));
+
+					QString styleLayer = QString("%1-%2-%3").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+					lyr.add_style(styleLayer.toStdString());
+
+					++subLayerIndex;
+				}
+
+				break;
+			}
+
+			case ST_AREA:
+			{
+				break;
+			}
+		}
 
 		map_.add_layer(lyr);
+		++styleIndex;
 	}
-
 }
 
 void Render::GetBoundingBox(double *centerX, double *centerY, double *pixelResolution)

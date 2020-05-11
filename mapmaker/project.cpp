@@ -19,6 +19,8 @@ Project::Project(path fileName)
 
 	QFile f(pathStrQ);
 
+	db_ = NULL;
+
 	if (!f.open(QIODevice::ReadOnly))
 	{
 		auto s = QString("Can't open file %1.").arg(pathStrQ);
@@ -48,6 +50,12 @@ Project::Project(path fileName)
 	}
 
 	createRenderDatabaseIfNotExist();
+
+	path renderDbPath = renderDatabasePath();
+	QString nativePath = QString::fromStdWString(renderDbPath.native());
+	db_ = new SQLite::Database(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
+	db_->exec("PRAGMA cache_size = -256000");
+
 	upgradeRenderDatabase();
 }
 
@@ -56,6 +64,12 @@ Project::~Project()
 	for (auto i : dataSources_)
 		delete i;
 	dataSources_.clear();
+
+	for (auto i : styleLayers_)
+		delete i;
+	styleLayers_.clear();
+
+	delete db_;
 }
 
 
@@ -82,14 +96,9 @@ void Project::createRenderDatabaseIfNotExist()
 
 void Project::upgradeRenderDatabase()
 {
-	path renderDbPath = renderDatabasePath();
-	QString nativePath = QString::fromStdWString(renderDbPath.native());
+	SQLite::Transaction transaction(*db_);
 
-	SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
-
-	SQLite::Transaction transaction(db);
-
-	const std::string currentSchemaNumber = db.execAndGet("SELECT version FROM version");
+	const std::string currentSchemaNumber = db_->execAndGet("SELECT version FROM version");
 
 	for (int rev = stoi(currentSchemaNumber)+1; true; ++rev)
 	{
@@ -100,9 +109,9 @@ void Project::upgradeRenderDatabase()
 			break;
 		QByteArray sql = file.readAll();
 
-		db.exec(sql.begin());
+		db_->exec(sql.begin());
 
-		SQLite::Statement query(db, "UPDATE version SET version = ?");
+		SQLite::Statement query(*db_, "UPDATE version SET version = ?");
 		SQLite::bind(query, rev);
 		query.exec();
 	}
@@ -110,6 +119,10 @@ void Project::upgradeRenderDatabase()
 	transaction.commit();
 }
 
+SQLite::Database* Project::renderDatabase()
+{
+	return db_;
+}
 
 
 path Project::renderDatabasePath()
@@ -136,16 +149,11 @@ void Project::save(path filename)
 {
 }
 
-
-
 void Project::createViews()
 {
-	path renderDbPath = renderDatabasePath();
-	QString nativePath = QString::fromStdWString(renderDbPath.native());
+	SQLite::Database *db = renderDatabase();
 
-	SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
-
-	SQLite::Transaction transaction(db);
+	SQLite::Transaction transaction(*db);
 
 	std::vector<QString> attributes{ 
 		"name", "surface", "oneway",
@@ -154,7 +162,7 @@ void Project::createViews()
 		"layer","lit","bridge","footway","width","sidewalk",
 		"bus","horse","direction","cycleway","operator"};
 
-	createView(db, "highway_v", "highway",attributes);
+	createView(*db, "highway_v", "highway",attributes);
 
 	transaction.commit();
 }
@@ -212,4 +220,15 @@ void Project::removeDataSource(DataSource* src)
 void Project::addDataSource(DataSource* src)
 {
 	dataSources_.push_back(src);
+}
+
+void Project::removeStyleLayer(StyleLayer* l)
+{
+	styleLayers_.erase(find(styleLayers_.begin(), styleLayers_.end(), l));
+	delete l;
+}
+
+void Project::addStyleLayer(StyleLayer *l)
+{
+	styleLayers_.insert(styleLayers_.begin(), l);
 }
