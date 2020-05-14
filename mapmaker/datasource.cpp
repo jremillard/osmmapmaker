@@ -34,6 +34,26 @@ DataSource::~DataSource()
 {
 }
 
+void DataSource::saveXML(QDomDocument &doc, QDomElement &parentElement)
+{
+	QDomElement nameElement = doc.createElement("name");
+	nameElement.appendChild(doc.createTextNode(userName_));
+	parentElement.appendChild(nameElement);
+
+	QDomElement dataSourceElement = doc.createElement("dataSource");
+	dataSourceElement.appendChild(doc.createTextNode(dataName_));
+	parentElement.appendChild(dataSourceElement);
+
+	QDomElement lastUpdateDateElement = doc.createElement("lastUpdateDate");
+	lastUpdateDateElement.appendChild(doc.createTextNode(lastImport_.toString(Qt::ISODate)));
+	parentElement.appendChild(lastUpdateDateElement);
+
+	QDomElement lastImportTimeSElement = doc.createElement("lastImportTimeS");
+	lastImportTimeSElement.appendChild(doc.createTextNode(QString::number(lastImportTimeS_)));
+	parentElement.appendChild(lastImportTimeSElement);
+}
+
+
 QString DataSource::primarySourceName()
 {
 	return QString("Primary");

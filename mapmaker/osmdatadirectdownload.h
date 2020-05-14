@@ -11,6 +11,9 @@ public:
 	~OsmDataDirectDownload();
 
 	void importData(SQLite::Database &db);
+
+	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
+
 };
 
 

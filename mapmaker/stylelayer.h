@@ -33,6 +33,8 @@ class Line
 public:
 	Line();
 
+	QString name_;
+	bool visible_;
 	QColor color_;
 	QColor casingColor_;
 	double width_;
@@ -51,7 +53,7 @@ public:
 
 	QString key();
 
-	void save(QDomElement layerNode);
+	void saveXML(QDomDocument &doc, QDomElement &layerElement);
 
 	StyleLayerType layerType();
 

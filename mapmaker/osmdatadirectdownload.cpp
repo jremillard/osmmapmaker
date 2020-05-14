@@ -18,4 +18,10 @@ void OsmDataDirectDownload::importData(SQLite::Database &db)
 {
 }
 
+void OsmDataDirectDownload::saveXML(QDomDocument &doc, QDomElement &toElement)
+{
+	toElement = doc.createElement("openStreetMapDirectDownload");
+
+	DataSource::saveXML(doc, toElement);
+}
 

@@ -30,4 +30,16 @@ void OsmDataFile::importData(SQLite::Database &db)
 	importFile(db, fileName_);
 }
 
+void OsmDataFile::saveXML(QDomDocument &doc, QDomElement &toElement)
+{
+	toElement = doc.createElement("openStreetMapFileSource");
+
+	DataSource::saveXML(doc, toElement);
+
+	QDomElement fileNameElement = doc.createElement("fileName");
+	fileNameElement.appendChild(doc.createTextNode(fileName_)); 
+
+	toElement.appendChild(fileNameElement);
+}
+
 

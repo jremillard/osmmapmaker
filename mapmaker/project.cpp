@@ -27,26 +27,49 @@ Project::Project(path fileName)
 		throw std::exception(s.toUtf8());
 	}
 
+	backgroundColor_ = QColor(0xE0,0xE0,0xE0);
+
 	// Set data into the QDomDocument before processing
 	xmlBOM.setContent(&f);
 	f.close();
 
-	QDomNodeList dataSources = xmlBOM.elementsByTagName("openStreetMapExtractDownload");
-	for (int i = 0; i < dataSources.length(); ++i)
-	{
-		dataSources_.push_back(new OsmDataExtractDownload(dataSources.at(i)));
-	}
+	QDomElement projectNode = xmlBOM.firstChildElement("osmmapmakerproject");
 
-	dataSources = xmlBOM.elementsByTagName("openStreetMapDirectDownload");
-	for (int i = 0; i < dataSources.length(); ++i)
-	{
-		dataSources_.push_back(new OsmDataExtractDownload(dataSources.at(i)));
-	}
+	QDomNodeList toplevelNodes = projectNode.childNodes();
 
-	dataSources = xmlBOM.elementsByTagName("openStreetMapFileSource");
-	for (int i = 0; i < dataSources.length(); ++i)
+	for (int i = 0; i < toplevelNodes.size(); ++i)
 	{
-		dataSources_.push_back(new OsmDataFile(dataSources.at(i).toElement()));
+		QDomElement topNode = toplevelNodes.at(i).toElement();
+		QString name = topNode.tagName();
+
+		if (name == "openStreetMapExtractDownload")
+		{
+			dataSources_.push_back(new OsmDataExtractDownload(topNode));
+		}
+		else if (name == "openStreetMapDirectDownload")
+		{
+			dataSources_.push_back(new OsmDataExtractDownload(topNode));
+		}
+		else if (name == "openStreetMapFileSource")
+		{
+			dataSources_.push_back(new OsmDataFile(topNode));
+		}
+		else if (name == "map")
+		{
+			backgroundColor_ = topNode.attributes().namedItem("backgroundColor").nodeValue();
+
+			QDomNodeList layers = topNode.childNodes();
+
+			for (int layerI = 0; layerI < layers.length(); ++layerI)
+			{
+				QDomElement layerNode = layers.at(layerI).toElement();
+
+				if (layerNode.tagName() == "layer")
+				{
+					styleLayers_.push_back(new StyleLayer(layerNode));
+				}
+			}
+		}
 	}
 
 	createRenderDatabaseIfNotExist();
@@ -139,14 +162,63 @@ path Project::projectPath()
 	return projectPath_;
 }
 
+QColor Project::backgroundColor()
+{
+	return backgroundColor_;
+}
+
+void Project::setBackgroundColor(QColor c)
+{
+	backgroundColor_ = c;
+}
 
 void Project::save()
 {
 	save(projectPath_);
 }
 
-void Project::save(path filename)
+void Project::save(path fileName)
 {
+	QDomDocument doc;
+
+	QDomProcessingInstruction xmlProcessingInstruction = doc.createProcessingInstruction("xml", "version=\"1.0\" encoding=\"UTF-8\"");
+	doc.appendChild(xmlProcessingInstruction);
+
+	QDomElement root = doc.createElement("osmmapmakerproject");
+	doc.appendChild(root);
+
+	for (auto dataSrc : dataSources_)
+	{
+		QDomElement dataNode;
+		dataSrc->saveXML(doc, dataNode);
+		root.appendChild(dataNode);
+	}
+
+	QDomElement mapElement = doc.createElement("map");
+	mapElement.setAttribute("backgroundColor", backgroundColor_.name());
+	root.appendChild(mapElement);
+
+	for (StyleLayer * layer : styleLayers_)
+	{
+		QDomElement layerElement = doc.createElement("layer");
+		layer->saveXML(doc, layerElement);
+		mapElement.appendChild(layerElement);
+	}
+
+	QString pathStrQ(fileName.string().c_str());
+
+	QFile file(pathStrQ);
+	if (file.open(QIODevice::WriteOnly))
+	{
+		QTextStream stream(&file);
+		stream << doc.toString();
+		file.close();
+	}
+	else
+	{
+		auto s = QString("Can't open file %1.").arg(pathStrQ);
+		throw std::exception(s.toUtf8());
+	}
 }
 
 void Project::createViews()
@@ -155,14 +227,24 @@ void Project::createViews()
 
 	SQLite::Transaction transaction(*db);
 
-	std::vector<QString> attributes{ 
-		"name", "surface", "oneway",
-		"service","maxspeed","lanes","access",
-		"ref","tracktype","bicycle","foot",
-		"layer","lit","bridge","footway","width","sidewalk",
-		"bus","horse","direction","cycleway","operator"};
+	for (auto projectLayer : styleLayers())
+	{
+		std::vector<QString> attributes;
 
-	createView(*db, "highway_v", "highway",attributes);
+		/*
+		std::vector<QString> attributes{
+			"name", "surface", "oneway",
+			"service","maxspeed","lanes","access",
+			"ref","tracktype","bicycle","foot",
+			"layer","lit","bridge","footway","width","sidewalk",
+			"bus","horse","direction","cycleway","operator" };
+		*/
+
+		QString key = projectLayer->key();
+		createView(*db, key + "_v", key, attributes);
+	}
+
+
 
 	transaction.commit();
 }

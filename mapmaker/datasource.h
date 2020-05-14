@@ -28,6 +28,8 @@ public:
 
 	static QString primarySourceName();
 
+	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
+
 protected:
 	QString userName_;
 	QString dataName_;

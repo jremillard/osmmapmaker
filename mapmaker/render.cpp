@@ -23,6 +23,8 @@ static bool mapnikInit = false;
 
 Render::Render(Project *project)
 {
+	project->createViews();
+
 	using namespace mapnik;
 
 	if (mapnikInit == false)
@@ -38,7 +40,7 @@ Render::Render(Project *project)
 
 	map_ = Map(100, 100);
 
-	map_.set_background(parse_color("green"));
+	map_.set_background(color( project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue()));
 	map_.set_srs(srs_merc);
 
 	path renderDbPath = project->renderDatabasePath();
@@ -84,6 +86,8 @@ Render::Render(Project *project)
 				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 				{
 					Line line = projectLayer->subLayerLine(subLayerIndex);
+					if (line.visible_ == false)
+						continue;
 
 					if (line.casingWidth_ > 0)
 					{

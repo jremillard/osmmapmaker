@@ -34,6 +34,9 @@ public:
 	void removeStyleLayer(StyleLayer* l);
 	void addStyleLayer(StyleLayer *l);
 
+	QColor backgroundColor();
+	void setBackgroundColor(QColor c);
+
 	path renderDatabasePath();
 	SQLite::Database* renderDatabase();
 
@@ -47,6 +50,7 @@ private:
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();
 
+	QColor backgroundColor_;
 	SQLite::Database *db_;
 	std::vector< DataSource*> dataSources_;
 	std::vector< StyleLayer *> styleLayers_;

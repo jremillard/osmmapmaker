@@ -17,6 +17,8 @@ public:
 	QString localFile();
 	void    SetLocalFile(QString file);
 
+	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
+
 private:
 	QString fileName_;
 

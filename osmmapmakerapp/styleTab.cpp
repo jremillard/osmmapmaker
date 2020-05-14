@@ -33,11 +33,17 @@ StyleTab::~StyleTab()
 
 void StyleTab::setProject(Project *project)
 {
+	project_ = NULL;
 	project_ = project;
 
+	delete render_;
+	render_ = NULL;
+	render_ = new Render(project_);
+}
+
+void StyleTab::showEvent(QShowEvent *event)
+{
 	updateTree();
-	
-	freshRender();
 }
 
 void StyleTab::paintEvent(QPaintEvent *event)
@@ -78,6 +84,7 @@ void StyleTab::on_styleNew_clicked()
 			case ST_LINE:
 			{
 				Line line;
+				line.visible_ = true;
 				line.casingWidth_ = 0;
 				line.casingColor_ = QColor(Qt::white);
 				line.color_ = QColor(Qt::black);
@@ -180,9 +187,14 @@ int StyleTab::renderImageLeft()
 
 void StyleTab::updateTree()
 {
-	ui->styleTree->reset();
 	ui->styleTree->clear();
 
+	QStringList names;
+	names.push_back(tr("Map"));
+	QTreeWidgetItem *map = new QTreeWidgetItem(names);
+	map->setData(0, Qt::UserRole, -1);
+
+	ui->styleTree->addTopLevelItem(map);
 
 	size_t layerIndex = 0;
 	for (auto s : project_->styleLayers())
@@ -205,6 +217,8 @@ void StyleTab::updateTree()
 			case ST_AREA:
 				names.push_back(tr("Area"));
 				break;
+			default:
+				assert(false);
 		}
 
 		QTreeWidgetItem *w = new QTreeWidgetItem(names);
@@ -230,15 +244,18 @@ void StyleTab::updateTree()
 	int typeWidth = 20;
 	ui->styleTree->setColumnWidth(0, ui->styleTree->width() - iconWidth - typeWidth);
 	ui->styleTree->setColumnWidth(1, typeWidth);
+
+	on_styleTree_itemSelectionChanged();
 }
 
 void StyleTab::on_styleTree_itemSelectionChanged()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
 
-	if (currentItem == NULL)
+	if (currentItem == NULL || (currentItem->parent() == NULL && currentItem->data(0, Qt::UserRole).toInt() < 0))
 	{
-		ui->styleDetail->setCurrentWidget(ui->emptyStylePage);
+		ui->styleDetail->setCurrentWidget(ui->pageMap);
+		ui->mapBackgroundColor->setText(project_->backgroundColor().name());
 	}
 	else if (currentItem->parent() == NULL)
 	{
@@ -257,7 +274,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 
 			case ST_LABEL:
 			{
-				ui->styleDetail->setCurrentWidget(ui->emptyStylePage);
+				ui->styleDetail->setCurrentWidget(ui->pageLabel);
 				break;
 			}
 
@@ -273,6 +290,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 
 				Line line = layer->subLayerLine(subLayerIndex);
 
+				ui->lineVisible->setChecked(line.visible_);
 				ui->lineColor->setText(line.color_.name());
 				ui->lineWidth->setValue(line.width_);
 				ui->lineCasingWidth->setValue(line.casingWidth_);
@@ -288,11 +306,78 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				ui->styleDetail->setCurrentWidget(ui->pageArea);
 				break;
 			}
+
+			default:
+				assert(false);
 		}
 	}
 }
 
-void StyleTab::on_lineUpdate_clicked()
+////////// map tab
+void StyleTab::on_mapUpdateMap_clicked()
+{
+	freshRender();
+}
+
+void StyleTab::on_mapBackgroundColor_editingFinished()
+{
+	project_->setBackgroundColor(QColor(ui->mapBackgroundColor->text()));
+}
+
+////////// area tab
+void StyleTab::on_areaUpdateMap_clicked()
+{
+	freshRender();
+}
+
+///////// point tab
+void StyleTab::on_pointUpdateMap_clicked()
+{
+	freshRender();
+}
+
+//////// line tab
+void StyleTab::on_lineVisible_clicked()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineColor_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineWidth_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineDashArray_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineCasingWidth_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineCasingColor_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineSmooth_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::on_lineOpacity_editingFinished()
+{
+	lineSave();
+}
+
+void StyleTab::lineSave()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
 
@@ -306,15 +391,19 @@ void StyleTab::on_lineUpdate_clicked()
 
 	Line line = layer->subLayerLine(subLayerIndex);
 
+	line.visible_ = ui->lineVisible->isChecked();
 	line.color_ = ui->lineColor->text();
 	line.width_ = ui->lineWidth->value();
 	line.casingWidth_ = ui->lineCasingWidth->value();
 	line.casingColor_ = ui->lineCasingColor->text();
-	line.smooth_= ui->lineSmooth->value();
+	line.smooth_ = ui->lineSmooth->value();
 	line.opacity_ = ui->lineOpacity->value();
 
 	layer->setSubLayerLine(subLayerIndex, line);
+}
 
+void StyleTab::on_lineUpdateMap_clicked()
+{
 	freshRender();
 }
 
