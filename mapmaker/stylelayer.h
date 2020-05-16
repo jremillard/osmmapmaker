@@ -5,6 +5,8 @@
 #include <QColor>
 #include <QtXml>
 
+#include "datasource.h"
+
 enum StyleLayerType
 {
 	ST_LABEL,
@@ -43,19 +45,34 @@ public:
 	double smooth_;
 };
 
+class Area
+{
+public:
+	Area();
+
+	QString name_;
+	bool visible_;
+	QColor color_;
+	double opacity_;
+
+	double casingWidth_;
+	QColor casingColor_;
+};
 
 class StyleLayer
 {
 public:
-	StyleLayer(QString key, StyleLayerType type);
+	StyleLayer(QString dataSource, QString key, StyleLayerType type);
 	StyleLayer(QDomElement layerNode);
 	virtual ~StyleLayer();
 
 	QString key();
+	QString dataSource();
 
 	void saveXML(QDomDocument &doc, QDomElement &layerElement);
 
 	StyleLayerType layerType();
+	OsmEntityType dataType();
 
 	std::vector<QString> subLayerNames();
 
@@ -65,10 +82,18 @@ public:
 	Line subLayerLine(size_t i);
 	void setSubLayerLine(size_t i, const Line &lines);
 
+	Area subLayerArea(size_t i);
+	void setSubLayerArea(size_t i, const Area &area);
+
+	void showAll();
+	void hideAll();
+
 private:
 	StyleLayerType type_;
 	QString key_;
+	QString dataSource_;
 
 	std::vector<Line > lines_;
+	std::vector<Area> areas_;
 	std::vector<std::vector<StyleSelector>  > selectors_;
 };

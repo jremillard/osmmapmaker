@@ -19,6 +19,7 @@ public:
 	NewStopLeveStyle(Project *project, QWidget *parent);
 	~NewStopLeveStyle();
 
+	QString dataSource();
 	QString styleKey();
 	StyleLayerType styleType();
 

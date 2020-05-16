@@ -11,6 +11,14 @@ NewStopLeveStyle::NewStopLeveStyle(Project *project, QWidget *parent):
 
 	SQLite::Database* db = project->renderDatabase();
 
+	for (auto data : project->dataSources())
+	{
+		QString name = data->dataName();
+		if (name == data->primarySourceName())
+			ui->dataSource->setCurrentIndex(ui->dataSource->count());
+		ui->dataSource->addItem(name);
+	}
+
 	SQLite::Statement query(*db, "select key, count(key) as freq from entityKV group by key order by freq desc");
 
 	while (query.executeStep())
@@ -42,6 +50,11 @@ QString NewStopLeveStyle::styleKey()
 StyleLayerType NewStopLeveStyle::styleType()
 {
 	return (StyleLayerType )ui->styleType->currentData().toInt();
+}
+
+QString NewStopLeveStyle::dataSource()
+{
+	return ui->dataSource->currentText();
 }
 
 void NewStopLeveStyle::on_key_textEdited(const QString &text)

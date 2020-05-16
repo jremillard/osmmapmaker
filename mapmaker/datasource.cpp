@@ -36,9 +36,7 @@ DataSource::~DataSource()
 
 void DataSource::saveXML(QDomDocument &doc, QDomElement &parentElement)
 {
-	QDomElement nameElement = doc.createElement("name");
-	nameElement.appendChild(doc.createTextNode(userName_));
-	parentElement.appendChild(nameElement);
+	parentElement.setAttribute("name", userName_);
 
 	QDomElement dataSourceElement = doc.createElement("dataSource");
 	dataSourceElement.appendChild(doc.createTextNode(dataName_));

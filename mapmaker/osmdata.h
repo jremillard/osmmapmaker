@@ -11,13 +11,6 @@
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/geom/wkb.hpp>
 
-enum OsmEntityType
-{
-	OET_POINT = 0,
-	OET_LINE = 1,
-	OET_AREA = 2,
-};
-
 class OsmData : public DataSource
 {
 public:

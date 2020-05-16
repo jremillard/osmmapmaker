@@ -25,6 +25,7 @@ void StyleSelector::SetAnds(const std::vector<QString> &keys, const std::vector<
 
 Line::Line()
 {
+	visible_ = true;
 	color_ = QColor(Qt::black);
 	casingColor_ = QColor(Qt::white);
 	casingWidth_ = 0.0;
@@ -33,18 +34,32 @@ Line::Line()
 	smooth_ = 0;
 }
 
+Area::Area()
+{
+	visible_ = true;
+	color_ = QColor(Qt::blue);
+
+	opacity_ = 1.0;
+
+	casingWidth_ = 0;
+	casingColor_ = QColor(Qt::black);
+}
+
 //////////////////////////////////////////
 
 
-StyleLayer::StyleLayer(QString key, StyleLayerType type)
+StyleLayer::StyleLayer(QString dataSource, QString key, StyleLayerType type)
 {
 	type_ = type;
 	key_ = key;
+	dataSource_ = dataSource;
 }
 
 StyleLayer::StyleLayer(QDomElement layerNode)
 {
 	key_ = layerNode.attributes().namedItem("k").nodeValue();
+	dataSource_ = layerNode.attributes().namedItem("dataSource").nodeValue();
+
 	QString typeStr = layerNode.attributes().namedItem("type").nodeValue();
 
 	QDomNodeList subLayers = layerNode.elementsByTagName("subLayer");
@@ -92,6 +107,27 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 	else if (typeStr == "area")
 	{
 		type_ = ST_AREA;
+
+		for (int i = 0; i < subLayers.length(); ++i)
+		{
+			Area area;
+
+			QDomElement lineNode = subLayers.at(i).firstChildElement("area");
+
+			if (lineNode.isNull() == false)
+			{
+				area.name_ = subLayers.at(i).attributes().namedItem("name").nodeValue();
+				area.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
+
+				area.color_ = lineNode.firstChildElement("color").text();
+				area.casingColor_ = lineNode.firstChildElement("casingColor").text();
+				area.casingWidth_ = lineNode.firstChildElement("casingWidth").text().toDouble();
+				area.opacity_ = lineNode.firstChildElement("opacity").text().toDouble();
+			}
+
+			areas_.push_back(area);
+		}
+
 	}
 	else
 	{
@@ -113,9 +149,15 @@ QString StyleLayer::key()
 	return key_;
 }
 
+QString StyleLayer::dataSource()
+{
+	return dataSource_;
+}
+
 void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 {
 	layerElement.setAttribute("k", key());
+	layerElement.setAttribute("dataSource", dataSource());
 
 	std::vector<QString> subLayerNamesV = subLayerNames();
 
@@ -179,6 +221,33 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 		case ST_AREA:
 		{
 			layerElement.setAttribute("type", "area");
+
+			QDomElement lineNode = doc.createElement("area");
+
+			Area area = subLayerArea(i);
+
+			subLayerNode.setAttribute("name", area.name_);
+			subLayerNode.setAttribute("visible", area.visible_ ? "true" : "false");
+
+			QDomElement colorNode = doc.createElement("color");
+			colorNode.appendChild(doc.createTextNode(area.color_.name()));
+			lineNode.appendChild(colorNode);
+
+			QDomElement opacityNode = doc.createElement("opacity");
+			opacityNode.appendChild(doc.createTextNode(QString::number(area.opacity_)));
+			lineNode.appendChild(opacityNode);
+
+			QDomElement casingWidthNode = doc.createElement("casingWidth");
+			casingWidthNode.appendChild(doc.createTextNode(QString::number(area.casingWidth_)));
+			lineNode.appendChild(casingWidthNode);
+
+			QDomElement casingColorNode = doc.createElement("casingColor");
+			casingColorNode.appendChild(doc.createTextNode(area.casingColor_.name()));
+			lineNode.appendChild(casingColorNode);
+
+			subLayerNode.appendChild(lineNode);
+			break;
+
 			break;
 		}
 
@@ -194,6 +263,39 @@ StyleLayerType StyleLayer::layerType()
 {
 	return type_;
 }
+
+OsmEntityType StyleLayer::dataType()
+{
+	switch (type_)
+	{
+	case ST_LABEL: return OET_POINT;
+	case ST_POINT: return OET_POINT;
+	case ST_LINE: return OET_LINE;
+	case ST_AREA: return OET_AREA;
+	default:
+		assert(false);
+	}
+
+	return OET_POINT;
+}
+
+void StyleLayer::showAll()
+{
+	for (auto &line : lines_)
+	{
+		line.visible_ = true;
+	}
+
+}
+
+void StyleLayer::hideAll()
+{
+	for (auto &line : lines_)
+	{
+		line.visible_ = false;
+	}
+}
+
 
 std::vector<QString> StyleLayer::subLayerNames()
 {
@@ -232,6 +334,25 @@ void StyleLayer::setSubLayerSelectors(size_t i, const std::vector<StyleSelector>
 {
 	selectors_[i] = selections;
 }
+
+Area StyleLayer::subLayerArea(size_t i)
+{
+	return areas_[i];
+}
+
+void StyleLayer::setSubLayerArea(size_t i, const Area &area)
+{
+	if (i < areas_.size())
+	{
+		areas_[i] = area;
+	}
+	else if (i == areas_.size())
+	{
+		areas_.push_back(area);
+		selectors_.push_back(std::vector<StyleSelector>());
+	}
+}
+
 
 Line StyleLayer::subLayerLine(size_t i)
 {

@@ -7,6 +7,13 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
 
+enum OsmEntityType
+{
+	OET_POINT = 0,
+	OET_LINE = 1,
+	OET_AREA = 2,
+};
+
 class DataSource
 {
 public:

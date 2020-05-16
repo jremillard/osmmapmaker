@@ -25,12 +25,27 @@ private slots:
 	void on_zoomOut_clicked();
 	void on_styleNew_clicked();
 	void on_styleTree_itemSelectionChanged();
-	void on_areaUpdateMap_clicked();
 	void on_pointUpdateMap_clicked();
 
 	// map
 	void on_mapBackgroundColor_editingFinished();
 	void on_mapUpdateMap_clicked();
+
+	// layer
+	void on_layerShowAll_clicked();
+	void on_layerHideAll_clicked();
+	void on_layerMoveUp_clicked();
+	void on_layerMoveDown_clicked();
+	void on_layerDelete_clicked();
+	void on_layerUpdateMap_clicked();
+
+	// area
+	void on_areaShowAll_clicked();
+	void on_areaColor_editingFinished();
+	void on_areaOpacity_editingFinished();
+	void on_areaBorderThickness_editingFinished();
+	void on_areaBorderColor_editingFinished();
+	void on_areaUpdateMap_clicked();
 
 	// line
 	void on_lineVisible_clicked();
@@ -53,6 +68,7 @@ private:
 	void updateTree();
 	void freshRender();
 	void lineSave();
+	void saveArea();
 
 	int renderImageLeft();
 

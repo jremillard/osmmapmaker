@@ -241,7 +241,7 @@ void Project::createViews()
 		*/
 
 		QString key = projectLayer->key();
-		createView(*db, key + "_v", key, attributes);
+		createView(*db, key + "_v", projectLayer->dataSource(), projectLayer->dataType(), key, attributes);
 	}
 
 
@@ -249,7 +249,7 @@ void Project::createViews()
 	transaction.commit();
 }
 
-void Project::createView(SQLite::Database &db, const QString &viewName, const QString &primaryKey, std::vector<QString> &attributes)
+void Project::createView(SQLite::Database &db, const QString &viewName, const QString &dataSource, OsmEntityType type, const QString &primaryKey, std::vector<QString> &attributes)
 {	
 	db.exec(QString("DROP VIEW IF EXISTS %1").arg(viewName).toStdString());
 
@@ -283,7 +283,10 @@ void Project::createView(SQLite::Database &db, const QString &viewName, const QS
 
 	createViewSql += QString("\nfrom entity\n");
 
-	createViewSql += QString("JOIN entityKV as %1 on entity.id == %1.id and %1.key == '%1'").arg(primaryKey);
+	if (type == OET_LINE)
+		createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and (entity.type == %3 or entity.type == %4) and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg(type).arg(OET_AREA);
+	else
+		createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and entity.type == %3 and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg( type);
 
 	for (QString a : attributes)
 	{
@@ -307,10 +310,9 @@ void Project::addDataSource(DataSource* src)
 void Project::removeStyleLayer(StyleLayer* l)
 {
 	styleLayers_.erase(find(styleLayers_.begin(), styleLayers_.end(), l));
-	delete l;
 }
 
-void Project::addStyleLayer(StyleLayer *l)
+void Project::addStyleLayer(size_t addAt, StyleLayer *l)
 {
-	styleLayers_.insert(styleLayers_.begin(), l);
+	styleLayers_.insert(styleLayers_.begin()+addAt, l);
 }

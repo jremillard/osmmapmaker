@@ -32,7 +32,7 @@ public:
 	}
 
 	void removeStyleLayer(StyleLayer* l);
-	void addStyleLayer(StyleLayer *l);
+	void addStyleLayer(size_t atIndex, StyleLayer *l);
 
 	QColor backgroundColor();
 	void setBackgroundColor(QColor c);
@@ -45,7 +45,7 @@ public:
 	void createViews();
 
 private:
-	void createView(SQLite::Database &db, const QString &viewName, const QString &primaryKey, std::vector<QString> &attributes);
+	void createView(SQLite::Database &db, const QString &viewName, const QString &dataSource, OsmEntityType type, const QString &primaryKey, std::vector<QString> &attributes);
 
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();

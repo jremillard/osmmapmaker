@@ -47,8 +47,13 @@ Render::Render(Project *project)
 	QString nativePath = QString::fromStdWString(renderDbPath.native());
 
 	size_t styleIndex = 0;
-	for (auto projectLayer : project->styleLayers())
+
+	std::vector< StyleLayer*> layers = project->styleLayers();
+
+	for (auto projectLayerI = layers.rbegin(); projectLayerI != layers.rend(); ++projectLayerI)
 	{	
+		StyleLayer *projectLayer = *projectLayerI;;
+
 		parameters p;
 		p["type"] = "sqlite";
 		p["file"] = nativePath.toUtf8().constBegin();
@@ -147,6 +152,69 @@ Render::Render(Project *project)
 
 			case ST_AREA:
 			{
+				std::vector<QString> names = projectLayer->subLayerNames();
+
+				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				{
+					Area area = projectLayer->subLayerArea(subLayerIndex);
+					if (area.visible_ == false)
+						continue;
+
+					if (area.casingWidth_ > 0)
+					{
+						feature_type_style style;
+
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
+
+						line_symbolizer line_sym;
+						put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
+						put(line_sym, keys::stroke_width, area.casingWidth_);
+						put(line_sym, keys::stroke_opacity, area.opacity_);
+						put(line_sym, keys::smooth, 0.0);
+
+						r.append(std::move(line_sym));
+
+						style.add_rule(std::move(r));
+
+						QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+						lyr.add_style(styleLayer.toStdString());
+
+					}
+
+					feature_type_style style;
+
+					rule r;
+					//r.set_filter(parse_expression("[highway]='track'"));
+
+					polygon_symbolizer area_sym;
+
+					put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
+					put(area_sym, keys::fill_opacity, area.opacity_);
+
+					if (area.casingWidth_ > 0)
+						put(area_sym, keys::gamma, 0);
+					else
+						put(area_sym, keys::gamma, 1);
+
+					r.append(std::move(area_sym));
+
+					style.add_rule(std::move(r));
+
+					QString styleLayer = QString("%1-%2-%3").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+					lyr.add_style(styleLayer.toStdString());
+
+					++subLayerIndex;
+				}
+
+				break;
+
 				break;
 			}
 		}

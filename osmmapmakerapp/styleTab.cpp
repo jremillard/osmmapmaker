@@ -3,6 +3,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <QMessageBox>
 
 #include <render.h>
 
@@ -61,13 +62,22 @@ void StyleTab::paintEvent(QPaintEvent *event)
 
 void StyleTab::on_styleNew_clicked()
 {
+	if (project_->dataSources().size() == 0)
+	{
+		QMessageBox msgBox(this);
+		msgBox.setText(tr("Please add a data source first."));
+		msgBox.exec();
+		return;
+	}
+
 	NewStopLeveStyle dlg(project_, this);
 	if (dlg.exec() == QDialog::Accepted)
 	{
 		QString key = dlg.styleKey();
+		QString dataSource = dlg.dataSource();
 		StyleLayerType type = dlg.styleType();
 
-		StyleLayer *l = new StyleLayer(key, type);
+		StyleLayer *l = new StyleLayer(dataSource,key, type);
 
 		switch (type)
 		{
@@ -84,29 +94,20 @@ void StyleTab::on_styleNew_clicked()
 			case ST_LINE:
 			{
 				Line line;
-				line.visible_ = true;
-				line.casingWidth_ = 0;
-				line.casingColor_ = QColor(Qt::white);
-				line.color_ = QColor(Qt::black);
-				line.width_ = 1.5;
-
 				l->setSubLayerLine(0, line);
-				std::vector<StyleSelector> selectors;
-				StyleSelector sel;
-				sel.SetAnds(std::vector<QString>() = { "track","access" }, std::vector<QString>() = { "yes","no" });
-				
-				selectors.push_back(sel);
-				l->setSubLayerSelectors(0, selectors);
 			}
 			break;
 
 			case ST_AREA:
 			{
+				Area area;
+				l->setSubLayerArea(0, area);
 			}
 			break;
 		}
 
-		project_->addStyleLayer(l);
+		
+		project_->addStyleLayer(project_->styleLayers().size(), l);
 		updateTree();
 	}
 
@@ -271,7 +272,6 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 
 		switch (layer->layerType())
 		{
-
 			case ST_LABEL:
 			{
 				ui->styleDetail->setCurrentWidget(ui->pageLabel);
@@ -304,6 +304,16 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 			case ST_AREA:
 			{
 				ui->styleDetail->setCurrentWidget(ui->pageArea);
+
+				Area area = layer->subLayerArea(subLayerIndex);
+
+				ui->areaVisible->setChecked(area.visible_);
+				ui->areaColor->setText(area.color_.name());
+				ui->areaOpacity->setValue(area.opacity_);
+
+				ui->areaBorderThickness->setValue(area.casingWidth_);
+				ui->areaBorderColor->setText(area.casingColor_.name());
+
 				break;
 			}
 
@@ -324,11 +334,155 @@ void StyleTab::on_mapBackgroundColor_editingFinished()
 	project_->setBackgroundColor(QColor(ui->mapBackgroundColor->text()));
 }
 
+////////// layer
+
+void StyleTab::on_layerShowAll_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+	StyleLayer* layer = layers[index];
+	layer->showAll();
+
+	freshRender();
+
+}
+
+void StyleTab::on_layerHideAll_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+	StyleLayer* layer = layers[index];
+	layer->hideAll();
+
+	freshRender();
+
+}
+
+void StyleTab::on_layerMoveUp_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+	if (index > 0)
+	{
+		StyleLayer* layer = layers[index];
+
+		project_->removeStyleLayer(layer);;
+
+		--index;
+		project_->addStyleLayer(index, layer);
+
+		updateTree();
+		freshRender();
+	}
+}
+
+void StyleTab::on_layerMoveDown_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+	if (index + 1 < layers.size())
+	{
+		StyleLayer* layer = layers[index];
+
+		project_->removeStyleLayer(layer);;
+
+		++index;
+		project_->addStyleLayer(index, layer);
+
+		updateTree();
+		freshRender();
+	}
+}
+
+void StyleTab::on_layerUpdateMap_clicked()
+{
+	freshRender();
+}
+
+void StyleTab::on_layerDelete_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+	StyleLayer* layer = layers[index];
+	project_->removeStyleLayer(layer);;
+	delete layer;
+
+	updateTree();
+	freshRender();
+	if ( layers.size() == 1)
+		ui->styleDetail->setCurrentIndex(0);
+}
+
 ////////// area tab
 void StyleTab::on_areaUpdateMap_clicked()
 {
 	freshRender();
 }
+
+void StyleTab::on_areaShowAll_clicked()
+{
+	saveArea();
+}
+
+void StyleTab::on_areaColor_editingFinished()
+{
+	saveArea();
+}
+
+void StyleTab::on_areaOpacity_editingFinished()
+{
+	saveArea();
+}
+
+void StyleTab::on_areaBorderThickness_editingFinished()
+{
+	saveArea();
+}
+
+void StyleTab::on_areaBorderColor_editingFinished()
+{
+	saveArea();
+}
+
+void StyleTab::saveArea()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->parent()->data(0, Qt::UserRole).toUInt();
+	size_t subLayerIndex = currentItem->data(0, Qt::UserRole).toUInt();
+
+	StyleLayer* layer = layers[index];
+
+	//ui->styleDetail->setCurrentWidget(ui->pageLine);
+
+	Area area = layer->subLayerArea(subLayerIndex);
+
+	area.visible_ = ui->areaVisible->isChecked();
+	area.color_ = ui->areaColor->text();
+	area.opacity_ = ui->areaOpacity->value();
+
+	area.casingWidth_ = ui->areaBorderThickness->value();
+	area.casingColor_ = ui->areaBorderColor->text();
+
+	layer->setSubLayerArea(subLayerIndex, area);
+}
+
 
 ///////// point tab
 void StyleTab::on_pointUpdateMap_clicked()
@@ -387,7 +541,7 @@ void StyleTab::lineSave()
 
 	StyleLayer* layer = layers[index];
 
-	ui->styleDetail->setCurrentWidget(ui->pageLine);
+	//ui->styleDetail->setCurrentWidget(ui->pageLine);
 
 	Line line = layer->subLayerLine(subLayerIndex);
 
