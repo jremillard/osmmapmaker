@@ -20,6 +20,6 @@ find_library(mapnik NAMES mapnik)
 
 add_executable(osmmapmakerapp ${SRC_FILES} ${UI_FILES} resources.qrc)
 
-target_link_libraries(osmmapmakerapp mapmaker Qt5::Widgets Qt5::WinMain BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT SQLiteCpp sqlite3 ${mapnik} )
+target_link_libraries(osmmapmakerapp mapmaker Qt5::Widgets Qt5::WinMain BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 ${mapnik} )
 
 #install(DIRECTORY "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/bin/plugins" DESTINATION  "${CMAKE_BINARY_DIR}/Debug")

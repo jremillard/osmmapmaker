@@ -5,12 +5,19 @@
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
+#include <proj.h>
 
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
 
+static PJ_CONTEXT *proj_context = NULL;
+
+
 Project::Project(path fileName)
 {
+	if (proj_context == NULL)
+		proj_context = proj_context_create();
+
 	projectPath_ = fileName;
 	QDomDocument xmlBOM;
 
@@ -244,8 +251,6 @@ void Project::createViews()
 		createView(*db, key + "_v", projectLayer->dataSource(), projectLayer->dataType(), key, attributes);
 	}
 
-
-
 	transaction.commit();
 }
 
@@ -315,4 +320,53 @@ void Project::removeStyleLayer(StyleLayer* l)
 void Project::addStyleLayer(size_t addAt, StyleLayer *l)
 {
 	styleLayers_.insert(styleLayers_.begin()+addAt, l);
+}
+
+std::string Project::mapSRS()
+{
+	// EPSG:3857 
+	const std::string srs_merc = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over";
+
+	return srs_merc;
+}
+
+std::string Project::dataSRS()
+{
+	const std::string dataSRS = "+proj=longlat +datum=WGS84 +no_defs";
+
+	return dataSRS;
+}
+
+void Project::convertMapToData(double x, double y, double *lon, double *lat)
+{
+	PJ *mapToData = proj_create_crs_to_crs(proj_context, mapSRS().c_str(), dataSRS().c_str(),NULL);
+
+	PJ_COORD in;
+	memset(&in, 0, sizeof(in));
+	in.xyzt.x = x;
+	in.xyzt.y = y;
+
+	PJ_COORD out = proj_trans(mapToData, PJ_FWD, in);
+
+	proj_destroy(mapToData);
+
+	*lon = out.lp.lam;
+	*lat = out.lp.phi;
+}
+
+void Project::convertDataToMap(double lon, double lat, double *x, double *y)
+{
+	PJ *mapToData = proj_create_crs_to_crs(proj_context, dataSRS().c_str(), mapSRS().c_str(), NULL);
+
+	PJ_COORD in;
+	memset(&in, 0, sizeof(in));
+	in.lp.lam = lon;
+	in.lp.phi = lat;
+
+	PJ_COORD out = proj_trans(mapToData, PJ_FWD, in);
+
+	proj_destroy(mapToData);
+
+	*x = out.xyzt.x;
+	*y = out.xyzt.y;
 }

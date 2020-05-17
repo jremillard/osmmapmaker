@@ -2,6 +2,9 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include <osmium/io/any_input.hpp>
 
@@ -30,6 +33,8 @@ using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, 
 
 // The location handler always depends on the index type
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
+
+
 
 
 OsmData::OsmData()
@@ -97,6 +102,47 @@ void OsmData::importFile(SQLite::Database &db, QString fileName)
 
 OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSource) : db_(db) , dataSource_(dataSource)
 {
+	QFile jsonFile(":/resources/presets.json");
+	jsonFile.open(QFile::ReadOnly);
+	QJsonDocument presetDoc = QJsonDocument::fromJson(jsonFile.readAll());
+
+	QJsonObject presets = presetDoc.object();
+
+	for (auto presetIter = presets.begin(); presetIter != presets.end(); ++presetIter)
+	{
+		QJsonObject preset = presetIter.value().toObject();
+
+		QJsonArray geoTypes = preset.value("geometry").toArray();
+
+		bool isArea = false;
+		bool isLine = false;
+
+		for (auto geo : geoTypes)
+		{
+			if (geo.toString() == "area")
+				isArea = true;
+			if (geo.toString() == "line")
+				isLine = true;
+		}
+
+		if (isArea && isLine == false) // exclusive area's
+		{
+			QJsonObject tags = preset.value("tags").toObject();
+			for (auto tagsIter = tags.begin(); tagsIter != tags.end(); ++tagsIter)
+			{
+				QString val = tagsIter.value().toString();
+				QString key = tagsIter.key();
+				if (key != "brand:wikidata") // wikidata isn't going to be a primary key.
+				{
+					if (val == "*")
+						areas_.insert(key + QString(":::"), 0);
+					else
+						areas_.insert(key + QString(":::") + val, 0);
+				}
+			}
+		}
+	}
+
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
 
@@ -112,22 +158,6 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 			if (line.isEmpty() == false)
 			{
 				discardedKeys_.push_back(line.toStdString());
-			}
-		}
-	}
-
-	{
-		QFile file(":/resources/areas.txt");
-		bool open = file.open(QIODevice::ReadOnly | QIODevice::Text);
-		assert(open);
-
-		QTextStream in(&file);
-		while (!in.atEnd())
-		{
-			QString line = in.readLine().trimmed();
-			if (line.isEmpty() == false)
-			{
-				areaKeys_.push_back(line.toStdString());
 			}
 		}
 	}
@@ -191,14 +221,15 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 	{
 		for (const osmium::Tag &tag : way.tags())
 		{
-			for (const std::string &discardKey : areaKeys_)
-			{
-				if (std::strcmp(tag.key(), discardKey.c_str()) == 0)
-				{
-					line = false;
-					break;
-				}
-			}
+			QString tagName = QString(tag.key()) + ":::";
+
+			if (areas_.find(tagName) != areas_.end())
+				line = false;
+
+			tagName += tag.value();
+
+			if (areas_.find(tagName) != areas_.end())
+				line = false;
 		}
 
 		if (line)

@@ -8,6 +8,7 @@ find_package(ZLib)
 find_package(EXPAT)
 find_package(SQLiteCpp)
 find_package(sqlite3)
+find_package(PROJ4)
 
 add_definitions(-DNOMINMAX)
 

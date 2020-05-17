@@ -10,6 +10,7 @@
 #include <osmium/index/map/sparse_mem_array.hpp>
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/geom/wkb.hpp>
+#include <unordered_set>
 
 class OsmData : public DataSource
 {
@@ -37,8 +38,8 @@ private:
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
 
 	std::vector<std::string> discardedKeys_;
-	std::vector<std::string> areaKeys_;
 
+	QHash<QString, int> areas_;
 	QString dataSource_;
 	SQLite::Statement *queryAdd_;
 	SQLite::Statement *queryAddKV_;

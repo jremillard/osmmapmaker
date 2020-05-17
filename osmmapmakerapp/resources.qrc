@@ -3,7 +3,6 @@
       <file>resources/render-0.sql</file>
       <file>resources/render-1.sql</file>
       <file>resources/discarded.txt</file>
-      <file>resources/areas.txt</file>
       <file>resources/download.svg</file>
       <file>resources/plus.svg</file>
       <file>resources/minus.svg</file>
@@ -12,5 +11,6 @@
       <file>resources/downarrow.svg</file>
       <file>resources/leftarrow.svg</file>
       <file>resources/rightarrow.svg</file>
+      <file>resources/presets.json</file>
     </qresource>
 </RCC>

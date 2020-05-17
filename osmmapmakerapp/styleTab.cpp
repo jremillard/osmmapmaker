@@ -37,6 +37,17 @@ void StyleTab::setProject(Project *project)
 	project_ = NULL;
 	project_ = project;
 
+	pixelResolution_ = 0;
+
+	double latitude = 42.608089;
+	double lon = -71.571152;
+
+	project_->convertDataToMap(lon, latitude, &centerX_, &centerY_);
+
+	latitude = 0;
+	double zoomlevel = 15;
+	pixelResolution_ = 156543.03 * cos(latitude * 0.01745329251994329576923690768489) / pow(2,zoomlevel);
+
 	delete render_;
 	render_ = NULL;
 	render_ = new Render(project_);
