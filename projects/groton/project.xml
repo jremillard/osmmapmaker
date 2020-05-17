@@ -28,18 +28,8 @@
   <layer dataSource="Primary" k="building" type="area">
    <subLayer visible="true" name="">
     <area>
-     <color>#707070</color>
+     <color>#b0b0b0</color>
      <opacity>0.8</opacity>
-     <casingWidth>0</casingWidth>
-     <casingColor>#000000</casingColor>
-    </area>
-   </subLayer>
-  </layer>
-  <layer dataSource="Primary" k="landuse" type="area">
-   <subLayer visible="true" name="">
-    <area>
-     <color>#d0e1b6</color>
-     <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
     </area>
@@ -61,6 +51,26 @@
    <subLayer visible="true" name="">
     <area>
      <color>#7070ff</color>
+     <opacity>1</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+    </area>
+   </subLayer>
+  </layer>
+  <layer dataSource="Primary" k="natural" type="area">
+   <subLayer visible="true" name="">
+    <area>
+     <color>#aaaaff</color>
+     <opacity>1</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+    </area>
+   </subLayer>
+  </layer>
+  <layer dataSource="Primary" k="landuse" type="area">
+   <subLayer visible="true" name="">
+    <area>
+     <color>#d0e1b6</color>
      <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>

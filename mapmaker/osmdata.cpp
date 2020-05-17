@@ -102,46 +102,24 @@ void OsmData::importFile(SQLite::Database &db, QString fileName)
 
 OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSource) : db_(db) , dataSource_(dataSource)
 {
-	QFile jsonFile(":/resources/presets.json");
+	QFile jsonFile(":/resources/areaKeys.json");
 	jsonFile.open(QFile::ReadOnly);
-	QJsonDocument presetDoc = QJsonDocument::fromJson(jsonFile.readAll());
+	QJsonDocument areaKeysDoc = QJsonDocument::fromJson(jsonFile.readAll());
 
-	QJsonObject presets = presetDoc.object();
+	QJsonObject areaKey = areaKeysDoc.object().value("areaKeys").toObject();
 
-	for (auto presetIter = presets.begin(); presetIter != presets.end(); ++presetIter)
+	for (auto areaIter = areaKey.begin(); areaIter != areaKey.end(); ++areaIter)
 	{
-		QJsonObject preset = presetIter.value().toObject();
+		areaKeys_.insert(areaIter.key(), 0);
 
-		QJsonArray geoTypes = preset.value("geometry").toArray();
+		QJsonObject blackList = areaIter.value().toObject();
 
-		bool isArea = false;
-		bool isLine = false;
-
-		for (auto geo : geoTypes)
+		for (auto blackListIter = blackList.begin(); blackListIter != blackList.end(); ++blackListIter)
 		{
-			if (geo.toString() == "area")
-				isArea = true;
-			if (geo.toString() == "line")
-				isLine = true;
-		}
-
-		if (isArea && isLine == false) // exclusive area's
-		{
-			QJsonObject tags = preset.value("tags").toObject();
-			for (auto tagsIter = tags.begin(); tagsIter != tags.end(); ++tagsIter)
-			{
-				QString val = tagsIter.value().toString();
-				QString key = tagsIter.key();
-				if (key != "brand:wikidata") // wikidata isn't going to be a primary key.
-				{
-					if (val == "*")
-						areas_.insert(key + QString(":::"), 0);
-					else
-						areas_.insert(key + QString(":::") + val, 0);
-				}
-			}
+			areaKeyValBlackList_.insert(areaIter.key() + ":::" + blackListIter.key(),0);
 		}
 	}
+
 
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
@@ -215,24 +193,38 @@ void OsmDataImportHandler::node(const osmium::Node& node)
 
 void OsmDataImportHandler::way(const osmium::Way& way)
 {
-	bool line = true;
-
 	try
 	{
-		for (const osmium::Tag &tag : way.tags())
+		bool area = false;
+
+		if (way.is_closed())
 		{
-			QString tagName = QString(tag.key()) + ":::";
+			for (const osmium::Tag &tag : way.tags())
+			{
+				QString keyName = QString(tag.key());
 
-			if (areas_.find(tagName) != areas_.end())
-				line = false;
+				if (areaKeys_.find(keyName) != areaKeys_.end())
+				{
+					area = true;
 
-			tagName += tag.value();
+					QString keyVal = QString(tag.key()) + ":::" + QString(tag.value());
 
-			if (areas_.find(tagName) != areas_.end())
-				line = false;
+					if (areaKeyValBlackList_.find(keyVal) != areaKeyValBlackList_.end())
+						area = false;
+				}
+			}
+
+			// area tag overrides everything
+			for (const osmium::Tag &tag : way.tags())
+			{
+				if (strcmp(tag.key(),"area") == 0 && strcmp( tag.value() ,"yes") == 0)
+					area = true;
+				else if (strcmp(tag.key(),"area") == 0 && strcmp(tag.value(),"no") == 0)
+					area = false;
+			}
 		}
 
-		if (line)
+		if (area == false)
 		{
 			queryAdd_->bind(1, OET_LINE);
 			queryAdd_->bind(2, dataSource_.toStdString());

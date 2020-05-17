@@ -288,10 +288,7 @@ void Project::createView(SQLite::Database &db, const QString &viewName, const QS
 
 	createViewSql += QString("\nfrom entity\n");
 
-	if (type == OET_LINE)
-		createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and (entity.type == %3 or entity.type == %4) and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg(type).arg(OET_AREA);
-	else
-		createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and entity.type == %3 and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg( type);
+	createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and entity.type == %3 and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg( type);
 
 	for (QString a : attributes)
 	{

@@ -39,7 +39,8 @@ private:
 
 	std::vector<std::string> discardedKeys_;
 
-	QHash<QString, int> areas_;
+	QHash<QString, int> areaKeys_;
+	QHash<QString, int> areaKeyValBlackList_;
 	QString dataSource_;
 	SQLite::Statement *queryAdd_;
 	SQLite::Statement *queryAddKV_;

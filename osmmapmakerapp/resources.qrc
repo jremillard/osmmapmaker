@@ -12,5 +12,6 @@
       <file>resources/leftarrow.svg</file>
       <file>resources/rightarrow.svg</file>
       <file>resources/presets.json</file>
+      <file>resources/areaKeys.json</file>
     </qresource>
 </RCC>
