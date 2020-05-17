@@ -2,18 +2,46 @@
 <osmmapmakerproject>
  <openStreetMapFileSource name="Groton">
   <dataSource>Primary</dataSource>
-  <lastUpdateDate></lastUpdateDate>
-  <lastImportTimeS>0</lastImportTimeS>
+  <lastUpdateDate>2020-05-17T12:13:25</lastUpdateDate>
+  <importDurationS>12</importDurationS>
   <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
  </openStreetMapFileSource>
- <openStreetMapFileSource name="Groton2">
-  <dataSource>Secondary</dataSource>
-  <lastUpdateDate></lastUpdateDate>
-  <lastImportTimeS>0</lastImportTimeS>
-  <fileName>C:\Users\Jason\Documents\Map Maker\groton2.osm</fileName>
- </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
-  <layer dataSource="Primary" k="highway" type="line">
+  <layer type="line" dataSource="Primary" k="power">
+   <subLayer visible="true" name="">
+    <line>
+     <color>#707070</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+  </layer>
+  <layer type="area" dataSource="Primary" k="building">
+   <subLayer visible="true" name="">
+    <area>
+     <color>#d6d6c2</color>
+     <opacity>0.8</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+    </area>
+   </subLayer>
+  </layer>
+  <layer type="line" dataSource="Primary" k="admin_level">
+   <subLayer visible="true" name="">
+    <line>
+     <color>#000000</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+  </layer>
+  <layer type="line" dataSource="Primary" k="highway">
    <subLayer visible="true" name="">
     <line>
      <color>#ffffff</color>
@@ -25,20 +53,10 @@
     </line>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="building" type="area">
-   <subLayer visible="true" name="">
-    <area>
-     <color>#b0b0b0</color>
-     <opacity>0.8</opacity>
-     <casingWidth>0</casingWidth>
-     <casingColor>#000000</casingColor>
-    </area>
-   </subLayer>
-  </layer>
-  <layer dataSource="Primary" k="waterway" type="line">
+  <layer type="line" dataSource="Primary" k="waterway">
    <subLayer visible="true" name="">
     <line>
-     <color>#0000ff</color>
+     <color>#ccdddd</color>
      <casingColor>#ffffff</casingColor>
      <width>1</width>
      <casingWidth>0</casingWidth>
@@ -47,27 +65,27 @@
     </line>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="water" type="area">
+  <layer type="area" dataSource="Primary" k="water">
    <subLayer visible="true" name="">
     <area>
-     <color>#7070ff</color>
+     <color>#ccdddd</color>
      <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
     </area>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="natural" type="area">
+  <layer type="area" dataSource="Primary" k="natural">
    <subLayer visible="true" name="">
     <area>
-     <color>#aaaaff</color>
+     <color>#ddeeee</color>
      <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
     </area>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="landuse" type="area">
+  <layer type="area" dataSource="Primary" k="landuse">
    <subLayer visible="true" name="">
     <area>
      <color>#d0e1b6</color>

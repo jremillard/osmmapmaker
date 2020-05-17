@@ -59,7 +59,8 @@ Render::Render(Project *project)
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
-		p["auto_index"] = "true";
+		p["auto_index"] = "false";
+		p["index_table"] = "entitySpatialIndex";
 		p["use_spatial_index"] = "true";
 
 		QString layerName = QString("%1-%2").arg(projectLayer->key()).arg(styleIndex);

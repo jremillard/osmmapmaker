@@ -4,7 +4,7 @@
 DataSource::DataSource()
 {
 	dataName_ = "Primary";
-	lastImportTimeS_ = 0;
+	importDurationS_ = 0;
 }
 
 DataSource::DataSource(QDomElement projectNode)
@@ -19,14 +19,14 @@ DataSource::DataSource(QDomElement projectNode)
 	el = projectNode.firstChildElement("lastUpdateDate");
 	if (el.isNull() == false && el.text().isEmpty() == false)
 	{
-		lastImport_ = QDateTime::fromString( el.text());
+		lastImport_ = QDateTime::fromString( el.text(), Qt::ISODate);
 	}
 
-	lastImportTimeS_ = 0;
-	el = projectNode.firstChildElement("lastImportTimeS");
+	importDurationS_ = 0;
+	el = projectNode.firstChildElement("importDurationS");
 	if (el.isNull() == false && el.text().isEmpty() == false)
 	{
-		lastImportTimeS_ = el.text().toInt();
+		importDurationS_ = el.text().toInt();
 	}
 }
 
@@ -46,10 +46,11 @@ void DataSource::saveXML(QDomDocument &doc, QDomElement &parentElement)
 	lastUpdateDateElement.appendChild(doc.createTextNode(lastImport_.toString(Qt::ISODate)));
 	parentElement.appendChild(lastUpdateDateElement);
 
-	QDomElement lastImportTimeSElement = doc.createElement("lastImportTimeS");
-	lastImportTimeSElement.appendChild(doc.createTextNode(QString::number(lastImportTimeS_)));
+	QDomElement lastImportTimeSElement = doc.createElement("importDurationS");
+	lastImportTimeSElement.appendChild(doc.createTextNode(QString::number(importDurationS_)));
 	parentElement.appendChild(lastImportTimeSElement);
 }
+
 
 
 QString DataSource::primarySourceName()
@@ -88,3 +89,26 @@ void DataSource::setImportTime(QDateTime time)
 {
 	lastImport_ = time;
 }
+
+int DataSource::importDurationS()
+{
+	return importDurationS_;
+}
+
+void DataSource::setImportDurationS(int timeS)
+{
+	importDurationS_ = timeS;
+}
+
+void DataSource::cleanDataSource(SQLite::Database &db)
+{
+	// clean out the entity, entityKV deleted with a trigger.
+	SQLite::Statement removeDataStatement(db, "DELETE FROM entity WHERE source = ?");
+	removeDataStatement.bind(1, dataName().toStdString());
+	removeDataStatement.exec();
+
+	// clean out the spatial index, can't setup a trigger for it because it is a virtual table.
+	SQLite::Statement removeSpatialIndextatement(db, "DELETE FROM entitySpatialIndex WHERE NOT EXISTS (SELECT * FROM entitySpatialIndex,entity WHERE entitySpatialIndex.id = entity.id)");
+	removeSpatialIndextatement.exec();
+}
+

@@ -86,14 +86,13 @@ void OsmData::importFile(SQLite::Database &db, QString fileName)
 	// fed through our "handler".
 	osmium::io::Reader reader{ input_file };
 
-	osmium::apply(reader, location_handler, handler);
+	//osmium::apply(reader, location_handler, handler);
 
-	/* for areas from relations
-	osmium::apply(reader, location_handler, mp_manager.handler([&handler](osmium::memory::Buffer&& buffer) {
+	// for areas from relations
+	osmium::apply(reader, location_handler, handler, mp_manager.handler([&handler](osmium::memory::Buffer&& buffer) {
 		osmium::apply(buffer, handler);
 	}));
 
-	*/
 	reader.close();
 
 
@@ -123,6 +122,7 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
+	queryAddSpatialIndex_ = new SQLite::Statement(db_, "INSERT INTO entitySpatialIndex(id, minX, maxX,minY, maxY) VALUES (?,?,?,?,?)");
 
 	{
 		QFile file(":/resources/discarded.txt");
@@ -145,6 +145,7 @@ OsmDataImportHandler::~OsmDataImportHandler()
 {
 	delete queryAdd_;
 	delete queryAddKV_;
+	delete queryAddSpatialIndex_;
 }
 
 
@@ -184,6 +185,11 @@ void OsmDataImportHandler::node(const osmium::Node& node)
 		queryAdd_->reset();
 
 		addTagsToDb(entityId, node.tags());
+
+		osmium::Location loc = node.location();
+
+		osmium::Box bbBox(loc, loc);
+		addSpatialIndexToDb(entityId, bbBox);
 	}
 	else
 	{
@@ -225,19 +231,13 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 		}
 
 		if (area == false)
-		{
 			queryAdd_->bind(1, OET_LINE);
-			queryAdd_->bind(2, dataSource_.toStdString());
-			std::string pt = factory_.create_linestring(way);
-			queryAdd_->bind(3, pt.c_str(), pt.size());
-		}
 		else
-		{
 			queryAdd_->bind(1, OET_AREA);
-			queryAdd_->bind(2, dataSource_.toStdString());
-			std::string pt = factory_.create_linestring(way);
-			queryAdd_->bind(3, pt.c_str(), pt.size());
-		}
+
+		queryAdd_->bind(2, dataSource_.toStdString());
+		std::string pt = factory_.create_linestring(way);
+		queryAdd_->bind(3, pt.c_str(), pt.size());
 
 		queryAdd_->exec();
 
@@ -246,6 +246,9 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 		queryAdd_->reset();
 
 		addTagsToDb(entityId, way.tags());
+
+		osmium::Box bbBox = way.envelope();
+		addSpatialIndexToDb(entityId, bbBox);
 	}
 	catch (osmium::geometry_error &)
 	{
@@ -271,9 +274,36 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 {
 	try
 	{
-		bool line = true;
+		bool addArea = false;
 
-		if (line == false)
+		if (area.from_way() == false)
+		{
+			for (const osmium::Tag &tag : area.tags())
+			{
+				QString keyName = QString(tag.key());
+
+				if (areaKeys_.find(keyName) != areaKeys_.end())
+				{
+					addArea = true;
+
+					QString keyVal = QString(tag.key()) + ":::" + QString(tag.value());
+
+					if (areaKeyValBlackList_.find(keyVal) != areaKeyValBlackList_.end())
+						addArea = false;
+				}
+			}
+
+			// area tag overrides everything
+			for (const osmium::Tag &tag : area.tags())
+			{
+				if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "yes") == 0)
+					addArea = true;
+				else if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "no") == 0)
+					addArea = false;
+			}
+		}
+
+		if (addArea)
 		{
 			queryAdd_->bind(1, OET_AREA);
 			queryAdd_->bind(2, dataSource_.toStdString());
@@ -286,12 +316,30 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 			queryAdd_->reset();
 
 			addTagsToDb(entityId, area.tags());
+
+			osmium::Box bbBox = area.envelope();
+			addSpatialIndexToDb(entityId, bbBox);
 		}
 	}
 	catch (osmium::geometry_error &)
 	{
 		// eat it.
 	}
+}
+
+void OsmDataImportHandler::addSpatialIndexToDb(long long entityId, const osmium::Box &bbBox)
+{
+	// We don't do "contained within" kind of query's, don't need to expend it.
+
+	queryAddSpatialIndex_->bind(1, entityId);
+	queryAddSpatialIndex_->bind(2, bbBox.bottom_left().x());
+	queryAddSpatialIndex_->bind(3, bbBox.top_right().x());
+	queryAddSpatialIndex_->bind(4, bbBox.bottom_left().y());
+	queryAddSpatialIndex_->bind(5, bbBox.top_right().y());
+
+	queryAddSpatialIndex_->exec();
+	queryAddSpatialIndex_->reset();
+
 }
 
 void OsmDataImportHandler::addTagsToDb(long long entityId, const osmium::TagList &tagList)

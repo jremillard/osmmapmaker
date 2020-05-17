@@ -35,6 +35,8 @@ public:
 
 private:
 	void addTagsToDb(long long id, const osmium::TagList &);
+	void addSpatialIndexToDb(long long entityId, const osmium::Box &bbBox);
+
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
 
 	std::vector<std::string> discardedKeys_;
@@ -44,6 +46,7 @@ private:
 	QString dataSource_;
 	SQLite::Statement *queryAdd_;
 	SQLite::Statement *queryAddKV_;
+	SQLite::Statement *queryAddSpatialIndex_;
 
 	SQLite::Database &db_;
 };

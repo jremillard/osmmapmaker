@@ -104,7 +104,7 @@ void DataTab::on_dataSources_currentIndexChanged(int index)
 					else
 						when = importTime.toString();
 
-					ui->lastImportDate->setText(tr("%1 - %2").arg(when, importTime.toString()));
+					ui->lastImportDate->setText(tr("%1 - %2 - Duration %3s").arg(when, importTime.toString(),QString::number(output->importDurationS())));
 				}
 
 				ui->dataSourceNameID->setText(output->dataName());
@@ -157,24 +157,23 @@ void DataTab::on_OSMFileImport_clicked()
 			{
 				SQLite::Database *db = project_->renderDatabase();
 
-				importName = output->userName();
+				QDateTime startTime = QDateTime::currentDateTime();
 
 				SQLite::Transaction transaction(*db);
-
-				SQLite::Statement removeDataStatement(*db, "DELETE FROM entity WHERE source = ?");
-				removeDataStatement.bind(1, output->dataName().toStdString());
-				removeDataStatement.exec();
-
+				output->cleanDataSource(*db);
 				output->importData(*db);
 				transaction.commit();
 
-				project_->createViews();
+				QDateTime endTime = QDateTime::currentDateTime();
 
-				QDateTime now = QDateTime::currentDateTime();
+				output->setImportTime(endTime);
 
-				output->setImportTime(now);
+				long long int importTimeMS = startTime.secsTo(endTime);
+
+				output->setImportDurationS(importTimeMS);
 
 				on_dataSources_currentIndexChanged(ui->dataSources->currentIndex());
+
 				break;
 			}
 		}

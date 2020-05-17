@@ -31,17 +31,22 @@ public:
 	virtual QDateTime importTime();
 	virtual void setImportTime(QDateTime time);
 
+	virtual int importDurationS();
+	virtual void setImportDurationS(int timeS);
+
 	virtual void importData(SQLite::Database &db) = 0;
+	virtual void cleanDataSource(SQLite::Database &db);
 
 	static QString primarySourceName();
 
 	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
 
 protected:
+
 	QString userName_;
 	QString dataName_;
 	QDateTime lastImport_;
-	int lastImportTimeS_;
+	int importDurationS_;
 };
 
 
