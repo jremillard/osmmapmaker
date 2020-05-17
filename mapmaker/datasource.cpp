@@ -108,7 +108,7 @@ void DataSource::cleanDataSource(SQLite::Database &db)
 	removeDataStatement.exec();
 
 	// clean out the spatial index, can't setup a trigger for it because it is a virtual table.
-	SQLite::Statement removeSpatialIndextatement(db, "DELETE FROM entitySpatialIndex WHERE NOT EXISTS (SELECT * FROM entitySpatialIndex,entity WHERE entitySpatialIndex.id = entity.id)");
+	SQLite::Statement removeSpatialIndextatement(db, "DELETE FROM entitySpatialIndex WHERE NOT EXISTS (SELECT * FROM entitySpatialIndex,entity WHERE entitySpatialIndex.pkid = entity.id)");
 	removeSpatialIndextatement.exec();
 }
 

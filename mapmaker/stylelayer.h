@@ -57,6 +57,8 @@ public:
 
 	double casingWidth_;
 	QColor casingColor_;
+	QString fillImage_;
+	double fillImageOpacity_;
 };
 
 class StyleLayer

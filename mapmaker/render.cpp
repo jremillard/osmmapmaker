@@ -38,6 +38,8 @@ Render::Render(Project *project)
 
 	map_ = Map(100, 100);
 
+	map_.set_base_path(project->assetDirectory().string());
+
 	map_.set_background(color( project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue()));
 	map_.set_srs(project->mapSRS());
 
@@ -54,7 +56,8 @@ Render::Render(Project *project)
 
 		parameters p;
 		p["type"] = "sqlite";
-		p["file"] = nativePath.toUtf8().constBegin();
+		p["file"] = "render.sqlite";
+		p["base"] = project->assetDirectory().string();
 		p["table"] = projectLayer->key().toStdString() + "_v";
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
@@ -159,6 +162,60 @@ Render::Render(Project *project)
 					if (area.visible_ == false)
 						continue;
 
+					if (area.opacity_ > 0)
+					{
+						feature_type_style style;
+
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
+
+						polygon_symbolizer area_sym;
+
+						put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
+						put(area_sym, keys::fill_opacity, area.opacity_);
+
+						if (area.casingWidth_ > 0)
+							put(area_sym, keys::gamma, 0);
+						else
+							put(area_sym, keys::gamma, 1);
+
+						r.append(std::move(area_sym));
+
+						style.add_rule(std::move(r));
+
+						QString styleLayer = QString("%1-%2-%3-fill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+						lyr.add_style(styleLayer.toStdString());
+					}
+
+					if ( area.fillImage_.isEmpty() == false)
+					{
+						feature_type_style style;
+
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
+
+						polygon_pattern_symbolizer area_pattern;
+
+						path fillImagePath = project->assetDirectory() / area.fillImage_.toStdString();
+
+						put(area_pattern, keys::file, fillImagePath.string());
+						put(area_pattern, keys::opacity, area.fillImageOpacity_);
+						
+						r.append(std::move(area_pattern));
+
+						style.add_rule(std::move(r));
+
+						QString styleLayer = QString("%1-%2-%3-imageFill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+						lyr.add_style(styleLayer.toStdString());
+
+					}
+
 					if (area.casingWidth_ > 0)
 					{
 						feature_type_style style;
@@ -184,31 +241,6 @@ Render::Render(Project *project)
 
 					}
 
-					feature_type_style style;
-
-					rule r;
-					//r.set_filter(parse_expression("[highway]='track'"));
-
-					polygon_symbolizer area_sym;
-
-					put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
-					put(area_sym, keys::fill_opacity, area.opacity_);
-
-					if (area.casingWidth_ > 0)
-						put(area_sym, keys::gamma, 0);
-					else
-						put(area_sym, keys::gamma, 1);
-
-					r.append(std::move(area_sym));
-
-					style.add_rule(std::move(r));
-
-					QString styleLayer = QString("%1-%2-%3").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-					lyr.add_style(styleLayer.toStdString());
-
 					++subLayerIndex;
 				}
 
@@ -221,19 +253,12 @@ Render::Render(Project *project)
 		map_.add_layer(lyr);
 		++styleIndex;
 	}
+
+	/*
+	path mapnikXML = project->assetDirectory() / "mapnik.xml";
+	save_map(map_, mapnikXML.string());
+	*/
 }
-
-void Render::GetBoundingBox(double *centerX, double *centerY, double *pixelResolution)
-{
-
-	*pixelResolution = map_.scale();
-
-	box2d<double> box = map_.get_current_extent();
-
-	*centerX = box.center().x;
-	*centerY = box.center().y;
-}
-
 
 QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
 {
@@ -260,10 +285,6 @@ QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double ce
 
 	ren.apply();
 
-	//save_to_file(buf, "c:\\remillard\\documents\\demo.png", "png");
-
-	//save_map(map_, "c:\\remillard\\documents\\map.xml");
-
 	QImage img = QImage(map_.width(), map_.height(), QImage::Format_ARGB32);
 
 	for (std::size_t row = 0; row < buf.height(); ++row)
@@ -281,8 +302,6 @@ QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double ce
 
 		memcpy(img.scanLine(row), rowPtr, map_.width()*sizeof(image_rgba8::pixel_type));
 	}
-
-	//img.save("c:\\remillard\\documents\\demo2.png");
 
 	return img;
 }

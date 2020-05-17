@@ -13,8 +13,6 @@ public:
 
 	QImage RenderImage(int imageWithPixels, int imageHeightPixels, double leftLinear, double bottomLinear, double pixelResolution);
 
-	void GetBoundingBox(double *leftLinear, double *bottomLinear, double *pixelResolution);
-
 private:
 	mapnik::Map map_;
 };

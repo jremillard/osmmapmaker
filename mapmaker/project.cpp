@@ -85,6 +85,7 @@ Project::Project(path fileName)
 	QString nativePath = QString::fromStdWString(renderDbPath.native());
 	db_ = new SQLite::Database(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
 	db_->exec("PRAGMA cache_size = -256000");
+	db_->exec("PRAGMA default_cache_size = 256000");
 
 	upgradeRenderDatabase();
 }
@@ -155,14 +156,19 @@ SQLite::Database* Project::renderDatabase()
 }
 
 
-path Project::renderDatabasePath()
+path Project::assetDirectory()
 {
 	path dbPath = projectPath_;
-	dbPath.replace_extension(".sqlite");
-	
+	dbPath.replace_extension("");
+	if (exists(dbPath) == false)
+		create_directory(dbPath);
 	return dbPath;
 }
 
+path Project::renderDatabasePath()
+{
+	return assetDirectory() /= "render.sqlite";
+}
 
 path Project::projectPath()
 {

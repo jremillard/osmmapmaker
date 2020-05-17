@@ -40,6 +40,7 @@ public:
 	path renderDatabasePath();
 	SQLite::Database* renderDatabase();
 
+	path assetDirectory();
 	path projectPath();
 
 	void createViews();

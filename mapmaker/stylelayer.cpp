@@ -43,6 +43,8 @@ Area::Area()
 
 	casingWidth_ = 0;
 	casingColor_ = QColor(Qt::black);
+
+	fillImageOpacity_ = 1.0;
 }
 
 //////////////////////////////////////////
@@ -112,17 +114,19 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 		{
 			Area area;
 
-			QDomElement lineNode = subLayers.at(i).firstChildElement("area");
+			QDomElement areaNode = subLayers.at(i).firstChildElement("area");
 
-			if (lineNode.isNull() == false)
+			if (areaNode.isNull() == false)
 			{
 				area.name_ = subLayers.at(i).attributes().namedItem("name").nodeValue();
 				area.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
 
-				area.color_ = lineNode.firstChildElement("color").text();
-				area.casingColor_ = lineNode.firstChildElement("casingColor").text();
-				area.casingWidth_ = lineNode.firstChildElement("casingWidth").text().toDouble();
-				area.opacity_ = lineNode.firstChildElement("opacity").text().toDouble();
+				area.color_ = areaNode.firstChildElement("color").text();
+				area.casingColor_ = areaNode.firstChildElement("casingColor").text();
+				area.casingWidth_ = areaNode.firstChildElement("casingWidth").text().toDouble();
+				area.opacity_ = areaNode.firstChildElement("opacity").text().toDouble();
+				area.fillImage_ = areaNode.firstChildElement("fillImage").text();
+				area.fillImageOpacity_ = areaNode.firstChildElement("fillImageOpacity").text().toDouble();
 			}
 
 			areas_.push_back(area);
@@ -244,6 +248,15 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			QDomElement casingColorNode = doc.createElement("casingColor");
 			casingColorNode.appendChild(doc.createTextNode(area.casingColor_.name()));
 			lineNode.appendChild(casingColorNode);
+
+			QDomElement fillImageNode = doc.createElement("fillImage");
+			fillImageNode.appendChild(doc.createTextNode(area.fillImage_));
+			lineNode.appendChild(fillImageNode);
+
+			QDomElement fillImageOpacityNode = doc.createElement("fillImageOpacity");
+			fillImageOpacityNode.appendChild(doc.createTextNode(QString::number(area.fillImageOpacity_)));
+			lineNode.appendChild(fillImageOpacityNode);
+			
 
 			subLayerNode.appendChild(lineNode);
 			break;

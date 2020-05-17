@@ -30,6 +30,7 @@ private slots:
 	// map
 	void on_mapBackgroundColor_editingFinished();
 	void on_mapUpdateMap_clicked();
+	void on_mapBackgroundColorPick_clicked();
 
 	// layer
 	void on_layerShowAll_clicked();
@@ -40,12 +41,16 @@ private slots:
 	void on_layerUpdateMap_clicked();
 
 	// area
-	void on_areaShowAll_clicked();
+	void on_areaVisible_clicked();
 	void on_areaColor_editingFinished();
 	void on_areaOpacity_editingFinished();
 	void on_areaBorderThickness_editingFinished();
 	void on_areaBorderColor_editingFinished();
+	void on_areaFillImage_editingFinished();
 	void on_areaUpdateMap_clicked();
+	void on_areaColorPick_clicked();
+	void on_areaBorderColorPick_clicked();
+	void on_areaFillImageSelect_clicked();
 
 	// line
 	void on_lineVisible_clicked();
@@ -56,7 +61,10 @@ private slots:
 	void on_lineCasingColor_editingFinished();
 	void on_lineSmooth_editingFinished();
 	void on_lineOpacity_editingFinished();
+	void on_areaFillImageOpacity_editedFinished();
 	void on_lineUpdateMap_clicked();
+	void on_lineCasingColorPick_clicked();
+	void on_lineColorPick_clicked();
 
 private:
 	void showEvent(QShowEvent *event);

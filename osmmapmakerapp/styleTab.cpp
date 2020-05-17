@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QMessageBox>
+#include <QColorDialog>
 
 #include <render.h>
 
@@ -44,7 +45,6 @@ void StyleTab::setProject(Project *project)
 
 	project_->convertDataToMap(lon, latitude, &centerX_, &centerY_);
 
-	latitude = 0;
 	double zoomlevel = 15;
 	pixelResolution_ = 156543.03 * cos(latitude * 0.01745329251994329576923690768489) / pow(2,zoomlevel);
 
@@ -324,6 +324,8 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 
 				ui->areaBorderThickness->setValue(area.casingWidth_);
 				ui->areaBorderColor->setText(area.casingColor_.name());
+				ui->areaFillImage->setText(area.fillImage_);
+				ui->areaFillImageOpacity->setValue(area.fillImageOpacity_);
 
 				break;
 			}
@@ -344,6 +346,18 @@ void StyleTab::on_mapBackgroundColor_editingFinished()
 {
 	project_->setBackgroundColor(QColor(ui->mapBackgroundColor->text()));
 }
+
+void StyleTab::on_mapBackgroundColorPick_clicked()
+{
+	QColor newColor = QColorDialog::getColor(QColor(ui->mapBackgroundColor->text()), this);
+
+	if (newColor.isValid())
+	{
+		ui->mapBackgroundColor->setText(newColor.name());
+		on_mapBackgroundColor_editingFinished();
+	}
+}
+
 
 ////////// layer
 
@@ -445,7 +459,7 @@ void StyleTab::on_areaUpdateMap_clicked()
 	freshRender();
 }
 
-void StyleTab::on_areaShowAll_clicked()
+void StyleTab::on_areaVisible_clicked()
 {
 	saveArea();
 }
@@ -470,6 +484,43 @@ void StyleTab::on_areaBorderColor_editingFinished()
 	saveArea();
 }
 
+void StyleTab::on_areaFillImage_editingFinished()
+{
+	saveArea();
+}
+
+void StyleTab::on_areaFillImageOpacity_editedFinished()
+{
+	saveArea();
+}
+
+
+void StyleTab::on_areaColorPick_clicked()
+{
+	QColor newColor = QColorDialog::getColor(QColor(ui->areaColor->text()), this);
+
+	if (newColor.isValid())
+	{
+		ui->areaColor->setText(newColor.name());
+		saveArea();
+	}
+}
+
+void StyleTab::on_areaBorderColorPick_clicked()
+{
+	QColor newColor = QColorDialog::getColor(QColor(ui->areaBorderColor->text()), this);
+
+	if (newColor.isValid())
+	{
+		ui->areaBorderColor->setText(newColor.name());
+		saveArea();
+	}
+}
+
+void StyleTab::on_areaFillImageSelect_clicked()
+{
+}
+
 void StyleTab::saveArea()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
@@ -490,6 +541,8 @@ void StyleTab::saveArea()
 
 	area.casingWidth_ = ui->areaBorderThickness->value();
 	area.casingColor_ = ui->areaBorderColor->text();
+	area.fillImage_ = ui->areaFillImage->text();
+	area.fillImageOpacity_ = ui->areaFillImageOpacity->value();
 
 	layer->setSubLayerArea(subLayerIndex, area);
 }
@@ -542,6 +595,28 @@ void StyleTab::on_lineOpacity_editingFinished()
 	lineSave();
 }
 
+void StyleTab::on_lineCasingColorPick_clicked()
+{
+	QColor newColor = QColorDialog::getColor(QColor(ui->lineCasingColor->text()), this);
+
+	if (newColor.isValid())
+	{
+		ui->lineCasingColor->setText(newColor.name());
+		lineSave();
+	}
+}
+
+void StyleTab::on_lineColorPick_clicked()
+{
+	QColor newColor = QColorDialog::getColor(QColor(ui->lineColor->text()), this);
+
+	if (newColor.isValid())
+	{
+		ui->lineColor->setText(newColor.name());
+		lineSave();
+	}
+}
+
 void StyleTab::lineSave()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
@@ -578,13 +653,7 @@ void StyleTab::freshRender()
 	render_ = NULL;
 	render_ = new Render(project_);
 
-	if (pixelResolution_ <= 0 || pixelResolution_ != pixelResolution_)
-		render_->GetBoundingBox(&centerX_, &centerY_, &pixelResolution_);
-
 	renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
-
-	if (pixelResolution_ <= 0 || pixelResolution_ != pixelResolution_)
-		render_->GetBoundingBox(&centerX_, &centerY_, &pixelResolution_);
 
 	repaint();
 }

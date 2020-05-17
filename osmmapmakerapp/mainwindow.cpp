@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	project_ = NULL;
 
-	openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton\\project.xml");
+	openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton.osmmap.xml");
 
 	setCursor(Qt::ArrowCursor);
 }

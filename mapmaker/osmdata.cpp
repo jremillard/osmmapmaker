@@ -122,7 +122,7 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
-	queryAddSpatialIndex_ = new SQLite::Statement(db_, "INSERT INTO entitySpatialIndex(id, minX, maxX,minY, maxY) VALUES (?,?,?,?,?)");
+	queryAddSpatialIndex_ = new SQLite::Statement(db_, "INSERT INTO entitySpatialIndex(pkid, xmin, xmax,ymin, ymax) VALUES (?,?,?,?,?)");
 
 	{
 		QFile file(":/resources/discarded.txt");
@@ -332,10 +332,12 @@ void OsmDataImportHandler::addSpatialIndexToDb(long long entityId, const osmium:
 	// We don't do "contained within" kind of query's, don't need to expend it.
 
 	queryAddSpatialIndex_->bind(1, entityId);
-	queryAddSpatialIndex_->bind(2, bbBox.bottom_left().x());
-	queryAddSpatialIndex_->bind(3, bbBox.top_right().x());
-	queryAddSpatialIndex_->bind(4, bbBox.bottom_left().y());
-	queryAddSpatialIndex_->bind(5, bbBox.top_right().y());
+
+	queryAddSpatialIndex_->bind(2, bbBox.bottom_left().lon_without_check());
+	queryAddSpatialIndex_->bind(3, bbBox.top_right().lon_without_check());
+
+	queryAddSpatialIndex_->bind(4, bbBox.bottom_left().lat_without_check());
+	queryAddSpatialIndex_->bind(5, bbBox.top_right().lat_without_check());
 
 	queryAddSpatialIndex_->exec();
 	queryAddSpatialIndex_->reset();

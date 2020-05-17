@@ -174,6 +174,16 @@
           </property>
          </spacer>
         </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="mapUpdateMap">
+          <property name="text">
+           <string>Update Map</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="mapBackgroundColor"/>
+        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="label_27">
           <property name="font">
@@ -190,13 +200,16 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="mapBackgroundColor"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="mapUpdateMap">
+        <item row="1" column="2">
+         <widget class="QPushButton" name="mapBackgroundColorPick">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Update Map</string>
+           <string>...</string>
           </property>
          </widget>
         </item>
@@ -308,27 +321,51 @@
       </widget>
       <widget class="QWidget" name="pageArea">
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="2" column="1" colspan="2">
-         <widget class="QLineEdit" name="areaColor"/>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_18">
+          <property name="text">
+           <string>Border Thickness</string>
+          </property>
+         </widget>
         </item>
-        <item row="10" column="1" colspan="2">
+        <item row="3" column="1">
+         <widget class="QDoubleSpinBox" name="areaOpacity">
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_17">
+          <property name="text">
+           <string>Fill Color</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="areaBorderThickness"/>
+        </item>
+        <item row="12" column="1">
          <widget class="QPushButton" name="areaDelete">
           <property name="text">
            <string>Delete</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1" colspan="2">
-         <widget class="QLineEdit" name="areaBorderColor"/>
-        </item>
-        <item row="8" column="1" colspan="2">
-         <widget class="QPushButton" name="areaCopy">
+        <item row="9" column="1">
+         <widget class="QPushButton" name="areaUpdateMap">
           <property name="text">
-           <string>Copy</string>
+           <string>Update Map</string>
           </property>
          </widget>
         </item>
-        <item row="9" column="2">
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="areaBorderColor"/>
+        </item>
+        <item row="11" column="2">
          <spacer name="verticalSpacer_4">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -340,6 +377,50 @@
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_23">
+          <property name="text">
+           <string>Visible</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QPushButton" name="areaCopy">
+          <property name="text">
+           <string>Copy</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_22">
+          <property name="text">
+           <string>Opacity</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QLineEdit" name="areaFillImage"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="label_24">
+          <property name="text">
+           <string>Border Color</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="2">
+         <widget class="QPushButton" name="areaFillImageSelect">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0" colspan="3">
          <widget class="QLabel" name="label_25">
@@ -357,6 +438,39 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="areaColorPick">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QPushButton" name="areaBorderColorPick">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Fill Image</string>
+          </property>
+         </widget>
+        </item>
         <item row="1" column="1">
          <widget class="QCheckBox" name="areaVisible">
           <property name="layoutDirection">
@@ -367,60 +481,60 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1" colspan="2">
-         <widget class="QDoubleSpinBox" name="areaBorderThickness"/>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="areaColor"/>
         </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_17">
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_21">
           <property name="text">
-           <string>Fill Color</string>
+           <string>Image Opacity</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_24">
-          <property name="text">
-           <string>Border Color</string>
+        <item row="8" column="1">
+         <widget class="QDoubleSpinBox" name="areaFillImageOpacity">
+          <property name="maximum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
           </property>
          </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_18">
-          <property name="text">
-           <string>Border Thickness</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_23">
-          <property name="text">
-           <string>Visible</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1" colspan="2">
-         <widget class="QPushButton" name="areaUpdateMap">
-          <property name="text">
-           <string>Update Map</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_22">
-          <property name="text">
-           <string>Opacity</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1" colspan="2">
-         <widget class="QDoubleSpinBox" name="areaOpacity"/>
         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="pageLine">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="3" column="1">
-         <widget class="QDoubleSpinBox" name="lineWidth"/>
+        <item row="8" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Opacity</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="1">
+         <widget class="QPushButton" name="lineDelete">
+          <property name="text">
+           <string>Delete</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Visible</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="lineVisible">
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
         </item>
         <item row="6" column="0">
          <widget class="QLabel" name="label_8">
@@ -429,8 +543,12 @@
           </property>
          </widget>
         </item>
-        <item row="8" column="1">
-         <widget class="QDoubleSpinBox" name="lineOpacity"/>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Color</string>
+          </property>
+         </widget>
         </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="label_5">
@@ -448,12 +566,55 @@
           </property>
          </widget>
         </item>
-        <item row="8" column="0">
-         <widget class="QLabel" name="label_3">
+        <item row="9" column="1">
+         <widget class="QPushButton" name="lineUpdateMap">
           <property name="text">
-           <string>Opacity</string>
+           <string>Update Map</string>
           </property>
          </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Width</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Smothness</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QPushButton" name="lineCopy">
+          <property name="text">
+           <string>Copy</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Dash Array</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QDoubleSpinBox" name="lineSmooth"/>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="lineCasingColor"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="lineCasingWidth"/>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="lineDashArray"/>
+        </item>
+        <item row="8" column="1">
+         <widget class="QDoubleSpinBox" name="lineOpacity"/>
         </item>
         <item row="11" column="1">
          <spacer name="verticalSpacer_2">
@@ -468,39 +629,8 @@
           </property>
          </spacer>
         </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="lineCasingColor"/>
-        </item>
-        <item row="10" column="1">
-         <widget class="QPushButton" name="lineCopy">
-          <property name="text">
-           <string>Copy</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Width</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Visible</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Smothness</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QDoubleSpinBox" name="lineSmooth"/>
+        <item row="3" column="1">
+         <widget class="QDoubleSpinBox" name="lineWidth"/>
         </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_7">
@@ -509,50 +639,32 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QCheckBox" name="lineVisible">
-          <property name="layoutDirection">
-           <enum>Qt::LeftToRight</enum>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Color</string>
-          </property>
-         </widget>
-        </item>
-        <item row="12" column="1">
-         <widget class="QPushButton" name="lineDelete">
-          <property name="text">
-           <string>Delete</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QDoubleSpinBox" name="lineCasingWidth"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Dash Array</string>
-          </property>
-         </widget>
-        </item>
         <item row="2" column="1">
          <widget class="QLineEdit" name="lineColor"/>
         </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineDashArray"/>
-        </item>
-        <item row="9" column="1">
-         <widget class="QPushButton" name="lineUpdateMap">
+        <item row="2" column="2">
+         <widget class="QPushButton" name="lineColorPick">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="text">
-           <string>Update Map</string>
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="2">
+         <widget class="QPushButton" name="lineCasingColorPick">
+          <property name="maximumSize">
+           <size>
+            <width>23</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>...</string>
           </property>
          </widget>
         </item>
