@@ -92,11 +92,6 @@ void StyleTab::on_styleNew_clicked()
 
 		switch (type)
 		{
-			case ST_LABEL:
-			{
-			}
-			break;
-
 			case ST_POINT:
 			{
 			}
@@ -217,9 +212,6 @@ void StyleTab::updateTree()
 
 		switch(s->layerType())
 		{
-			case ST_LABEL:
-				names.push_back(tr("Label"));
-				break;
 			case ST_POINT:
 				names.push_back(tr("Point"));
 				break;
@@ -283,12 +275,6 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 
 		switch (layer->layerType())
 		{
-			case ST_LABEL:
-			{
-				ui->styleDetail->setCurrentWidget(ui->pageLabel);
-				break;
-			}
-
 			case ST_POINT:
 			{
 				ui->styleDetail->setCurrentWidget(ui->pagePoint);

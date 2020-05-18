@@ -14,3 +14,4 @@ CMakeFiles/
 *.osm
 */x64/
 */Debug/
+*.ttf

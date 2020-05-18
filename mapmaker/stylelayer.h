@@ -9,7 +9,6 @@
 
 enum StyleLayerType
 {
-	ST_LABEL,
 	ST_POINT,
 	ST_LINE,
 	ST_AREA

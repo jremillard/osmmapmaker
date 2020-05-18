@@ -150,7 +150,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="pageMap">
        <layout class="QGridLayout" name="gridLayout_5">
@@ -217,10 +217,74 @@
       </widget>
       <widget class="QWidget" name="pageLayer">
        <layout class="QGridLayout" name="gridLayout">
+        <item row="6" column="1">
+         <widget class="QPushButton" name="layerUpdateMap">
+          <property name="text">
+           <string>Update Map</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="layerShowAll">
+          <property name="text">
+           <string>Show All</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="layerHideAll">
+          <property name="text">
+           <string>Hide All</string>
+          </property>
+         </widget>
+        </item>
         <item row="8" column="1">
          <widget class="QPushButton" name="layerDelete">
           <property name="text">
            <string>Delete Layer</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_26">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Layer Properties</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="layerMoveUp">
+          <property name="text">
+           <string>Move Layer Up</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="layerMoveDown">
+          <property name="text">
+           <string>Move Layer Down</string>
           </property>
          </widget>
         </item>
@@ -253,69 +317,21 @@
           </property>
          </spacer>
         </item>
-        <item row="5" column="1">
-         <widget class="QPushButton" name="layerMoveDown">
-          <property name="text">
-           <string>Move Layer Down</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QPushButton" name="layerMoveUp">
-          <property name="text">
-           <string>Move Layer Up</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLabel" name="label_26">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Layer Properties</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <spacer name="horizontalSpacer_3">
+        <item row="1" column="2">
+         <spacer name="horizontalSpacer_4">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>20</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="layerShowAll">
-          <property name="text">
-           <string>Show All</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="layerHideAll">
-          <property name="text">
-           <string>Hide All</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QPushButton" name="layerUpdateMap">
-          <property name="text">
-           <string>Update Map</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
@@ -791,7 +807,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="pageLabel"/>
      </widget>
     </item>
    </layout>

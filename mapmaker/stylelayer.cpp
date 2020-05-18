@@ -72,11 +72,7 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 		selectors_.push_back(selectors);
 	}
 
-	if (typeStr == "label")
-	{
-		type_ = ST_LABEL;
-	}
-	else if (typeStr == "line")
+	if (typeStr == "line")
 	{
 		type_ = ST_LINE;		
 
@@ -171,12 +167,6 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 		switch (layerType())
 		{
-		case ST_LABEL:
-		{
-			layerElement.setAttribute("type", "label");
-			break;
-		}
-
 		case ST_POINT:
 		{
 			layerElement.setAttribute("type", "point");
@@ -281,7 +271,6 @@ OsmEntityType StyleLayer::dataType()
 {
 	switch (type_)
 	{
-	case ST_LABEL: return OET_POINT;
 	case ST_POINT: return OET_POINT;
 	case ST_LINE: return OET_LINE;
 	case ST_AREA: return OET_AREA;
@@ -299,6 +288,11 @@ void StyleLayer::showAll()
 		line.visible_ = true;
 	}
 
+	for (auto &area : areas_)
+	{
+		area.visible_ = true;
+	}
+
 }
 
 void StyleLayer::hideAll()
@@ -306,6 +300,11 @@ void StyleLayer::hideAll()
 	for (auto &line : lines_)
 	{
 		line.visible_ = false;
+	}
+
+	for (auto &area : areas_)
+	{
+		area.visible_ = false;
 	}
 }
 

@@ -242,7 +242,7 @@ void Project::createViews()
 
 	for (auto projectLayer : styleLayers())
 	{
-		std::vector<QString> attributes;
+		std::vector<QString> attributes{ "name" };
 
 		/*
 		std::vector<QString> attributes{

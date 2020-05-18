@@ -32,7 +32,6 @@ NewStopLeveStyle::NewStopLeveStyle(Project *project, QWidget *parent):
 
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-	ui->styleType->addItem(tr("Label"), StyleLayerType::ST_LABEL);
 	ui->styleType->addItem(tr("Point"),StyleLayerType::ST_POINT);
 	ui->styleType->addItem(tr("Line"), StyleLayerType::ST_LINE);
 	ui->styleType->addItem(tr("Area"), StyleLayerType::ST_AREA);
