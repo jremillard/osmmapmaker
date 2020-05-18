@@ -40,8 +40,6 @@ Render::Render(Project *project)
 
 	map_ = Map(100, 100);
 
-	map_.set_base_path(project->assetDirectory().string());
-
 	map_.set_background(color( project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue()));
 	map_.set_srs(project->mapSRS());
 
@@ -196,9 +194,10 @@ Render::Render(Project *project)
 
 						polygon_pattern_symbolizer area_pattern;
 
+						// base path on map property doesn't work for C++, seems to be just an xml thing, put in full path for everything.
 						path fillImagePath = project->assetDirectory() / area.fillImage_.toStdString();
-
 						put(area_pattern, keys::file, fillImagePath.string());
+
 						put(area_pattern, keys::opacity, area.fillImageOpacity_);
 						
 						r.append(std::move(area_pattern));
@@ -281,6 +280,7 @@ Render::Render(Project *project)
 		{
 			case ST_POINT:
 			{
+				dot_symbolizer dot;
 				break;
 			}
 
@@ -339,17 +339,11 @@ Render::Render(Project *project)
 					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
 					placement_finder->defaults.format_defaults.text_size = 11.0;
 
-					//placement_finder->defaults.format_defaults.line_spacing = 0.0;
-					//placement_finder->defaults.format_defaults.character_spacing = 0.0;
-
 					placement_finder->defaults.format_defaults.fill = color(0, 0, 0);
 					placement_finder->defaults.format_defaults.halo_fill = color(0xFF, 0xFF, 0xFF);
 					placement_finder->defaults.format_defaults.halo_radius = 1.5;
 
 					placement_finder->defaults.layout_defaults.wrap_width = 30.0; // must be double, not int
-					//placement_finder->defaults.layout_defaults.wrap_before = true;
-					//placement_finder->defaults.layout_defaults.wrap_char = ' ';
-
 
 					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
 
@@ -373,11 +367,8 @@ Render::Render(Project *project)
 		++styleIndex;
 	}
 
-
-	/*
-	path mapnikXML = project->assetDirectory() / "mapnik.xml";
-	save_map(map_, mapnikXML.string());
-	*/
+	//path mapnikXML = project->assetDirectory() / "mapnik.xml";
+	//save_map(map_, mapnikXML.string());
 }
 
 QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)

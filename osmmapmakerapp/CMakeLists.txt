@@ -13,8 +13,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-set(SRC_FILES main.cpp mainwindow.cpp dataTab.cpp outputTab.cpp styleTab.cpp newtoplevelstyle.cpp)
-set(UI_FILES mainwindow.ui dataTab.ui outputTab.ui styleTab.ui newtoplevelstyle.ui)
+set(SRC_FILES main.cpp mainwindow.cpp dataTab.cpp outputTab.cpp styleTab.cpp newtoplevelstyle.cpp subLayerTextPage.cpp)
+set(UI_FILES mainwindow.ui dataTab.ui outputTab.ui styleTab.ui newtoplevelstyle.ui subLayerTextPage.ui)
 
 find_library(mapnik NAMES mapnik)
 

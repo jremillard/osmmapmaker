@@ -9,12 +9,15 @@
 #include <render.h>
 
 #include "newtoplevelstyle.h"
+#include "subLayerTextPage.h"
 
 StyleTab::StyleTab(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::StyleTab)
 {
 	ui->setupUi(this);
+	ui->lineTabWidget->addTab(new SubLayerTextPage(this),"Labels");
+
 	project_ = NULL;
 
 	centerX_ = 0;
