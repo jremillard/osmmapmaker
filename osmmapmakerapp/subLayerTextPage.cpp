@@ -14,6 +14,11 @@ SubLayerTextPage::~SubLayerTextPage()
 {
 }
 
+void SubLayerTextPage::on_hasLabel_clicked()
+{
+	emit editingFinished();
+}
+
 void SubLayerTextPage::on_text_editingFinished()
 {
 	emit editingFinished();

@@ -22,6 +22,7 @@ signals:
 	void editingFinished();
 
 private slots:
+	void on_hasLabel_clicked();
 	void on_text_editingFinished();
 	void on_height_editingFinished();
 	void on_color_editingFinished();
