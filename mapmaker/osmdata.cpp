@@ -230,14 +230,17 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 			}
 		}
 
-		if (area == false)
-			queryAdd_->bind(1, OET_LINE);
-		else
-			queryAdd_->bind(1, OET_AREA);
 
-		queryAdd_->bind(2, dataSource_.toStdString());
-		std::string pt = factory_.create_linestring(way);
-		queryAdd_->bind(3, pt.c_str(), pt.size());
+		if (area == false)
+		{
+			queryAdd_->bind(1, OET_LINE);
+
+			queryAdd_->bind(2, dataSource_.toStdString());
+
+			std::string pt = factory_.create_linestring(way);
+			queryAdd_->bind(3, pt.c_str(), pt.size());
+
+		}
 
 		queryAdd_->exec();
 
@@ -276,31 +279,28 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 	{
 		bool addArea = false;
 
-		if (area.from_way() == false)
+		for (const osmium::Tag &tag : area.tags())
 		{
-			for (const osmium::Tag &tag : area.tags())
+			QString keyName = QString(tag.key());
+
+			if (areaKeys_.find(keyName) != areaKeys_.end())
 			{
-				QString keyName = QString(tag.key());
+				addArea = true;
 
-				if (areaKeys_.find(keyName) != areaKeys_.end())
-				{
-					addArea = true;
+				QString keyVal = QString(tag.key()) + ":::" + QString(tag.value());
 
-					QString keyVal = QString(tag.key()) + ":::" + QString(tag.value());
-
-					if (areaKeyValBlackList_.find(keyVal) != areaKeyValBlackList_.end())
-						addArea = false;
-				}
-			}
-
-			// area tag overrides everything
-			for (const osmium::Tag &tag : area.tags())
-			{
-				if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "yes") == 0)
-					addArea = true;
-				else if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "no") == 0)
+				if (areaKeyValBlackList_.find(keyVal) != areaKeyValBlackList_.end())
 					addArea = false;
 			}
+		}
+
+		// area tag overrides everything
+		for (const osmium::Tag &tag : area.tags())
+		{
+			if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "yes") == 0)
+				addArea = true;
+			else if (strcmp(tag.key(), "area") == 0 && strcmp(tag.value(), "no") == 0)
+				addArea = false;
 		}
 
 		if (addArea)
