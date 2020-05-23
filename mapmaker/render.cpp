@@ -250,9 +250,30 @@ Render::Render(Project *project)
 		++styleIndex;
 	}
 
+	// render labels
 	for (auto projectLayerI = layers.rbegin(); projectLayerI != layers.rend(); ++projectLayerI)
 	{
 		StyleLayer *projectLayer = *projectLayerI;;
+
+		bool layerHasLable = false;
+
+		std::vector<QString> names = projectLayer->subLayerNames();
+
+		for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+		{
+			Label label = projectLayer->label(subLayerIndex);
+			if (label.visible_)
+			{
+				layerHasLable = true;
+				break;
+			}
+		}
+
+		if (layerHasLable == false)
+		{
+			++styleIndex;
+			continue;
+		}
 
 		parameters p;
 		p["type"] = "sqlite";
@@ -274,8 +295,6 @@ Render::Render(Project *project)
 
 		lyr.set_srs(project->dataSRS());
 
-		std::vector<QString> names = projectLayer->subLayerNames();
-
 		switch (projectLayer->layerType())
 		{
 			case ST_POINT:
@@ -291,34 +310,39 @@ Render::Render(Project *project)
 				{
 					feature_type_style style;
 
-					rule r;
-					//r.set_filter(parse_expression("[highway]='track'"));
+					Label label = projectLayer->label(subLayerIndex);
 
-					text_symbolizer text_sym;
-					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
+					if (label.visible_)
+					{
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
 
-					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-					placement_finder->defaults.format_defaults.text_size = 10.0;
-					placement_finder->defaults.format_defaults.fill = color(0, 0, 0);
-					placement_finder->defaults.format_defaults.halo_fill = color(0xFF, 0xFF, 0xFF);
-					placement_finder->defaults.format_defaults.halo_radius = 1.0;
+						text_symbolizer text_sym;
+						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-					placement_finder->defaults.expressions.label_spacing = 100.0;
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+						placement_finder->defaults.format_defaults.text_size = label.height_;
+						placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
+						placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
+						placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
 
-					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression("[name]")));
+						placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_;
 
-					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(LINE_PLACEMENT);
+						placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
 
-					put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
+						placement_finder->defaults.expressions.label_placement = enumeration_wrapper(LINE_PLACEMENT);
 
-					r.append(std::move(text_sym));
+						put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
 
-					style.add_rule(std::move(r));
+						r.append(std::move(text_sym));
 
-					QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+						style.add_rule(std::move(r));
 
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-					lyr.add_style(styleLayer.toStdString());
+						QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+						lyr.add_style(styleLayer.toStdString());
+					}
 				}
 				break;
 			}
@@ -328,43 +352,46 @@ Render::Render(Project *project)
 
 				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 				{
-					feature_type_style style;
+					Label label = projectLayer->label(subLayerIndex);
 
-					rule r;
-					//r.set_filter(parse_expression("[highway]='track'"));
+					if (label.visible_)
+					{
+						feature_type_style style;
 
-					text_symbolizer text_sym;
-					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
+						rule r;
+						//r.set_filter(parse_expression("[highway]='track'"));
 
-					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-					placement_finder->defaults.format_defaults.text_size = 11.0;
+						text_symbolizer text_sym;
+						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-					placement_finder->defaults.format_defaults.fill = color(0, 0, 0);
-					placement_finder->defaults.format_defaults.halo_fill = color(0xFF, 0xFF, 0xFF);
-					placement_finder->defaults.format_defaults.halo_radius = 1.5;
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+						placement_finder->defaults.format_defaults.text_size = label.height_;
+						placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
+						placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
+						placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
 
-					placement_finder->defaults.layout_defaults.wrap_width = 30.0; // must be double, not int
+						placement_finder->defaults.layout_defaults.wrap_width = label.maxWrapWidth_;
 
-					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
+						placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
 
-					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression("[name]")));
+						placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
 
-					put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
+						put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
 
-					r.append(std::move(text_sym));
+						r.append(std::move(text_sym));
 
-					style.add_rule(std::move(r));
+						style.add_rule(std::move(r));
 
-					QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+						QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
 
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-					lyr.add_style(styleLayer.toStdString());
+						map_.insert_style(styleLayer.toStdString(), std::move(style));
+						lyr.add_style(styleLayer.toStdString());
+					}
 				}
 			}
 		}
 
 		map_.add_layer(lyr);
-		++styleIndex;
 	}
 
 	//path mapnikXML = project->assetDirectory() / "mapnik.xml";

@@ -7,7 +7,7 @@
   <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
  </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
-  <layer dataSource="Primary" k="power" type="line">
+  <layer type="line" dataSource="Primary" k="power">
    <subLayer name="" visible="true">
     <line>
      <color>#707070</color>
@@ -19,7 +19,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="building" type="area">
+  <layer type="area" dataSource="Primary" k="building">
    <subLayer name="" visible="true">
     <area>
      <color>#d6d6c2</color>
@@ -31,7 +31,7 @@
     </area>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="admin_level" type="line">
+  <layer type="line" dataSource="Primary" k="admin_level">
    <subLayer name="" visible="true">
     <line>
      <color>#000000</color>
@@ -43,7 +43,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="highway" type="line">
+  <layer type="line" dataSource="Primary" k="highway">
    <subLayer name="" visible="true">
     <line>
      <color>#ffffff</color>
@@ -53,9 +53,18 @@
      <opacity>1</opacity>
      <smooth>1</smooth>
     </line>
+    <label>
+     <text>[name]</text>
+     <height>11</height>
+     <color>#101010</color>
+     <haloSize>0.5</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>99</lineLaxSpacing>
+     <maxWrapWidth>3</maxWrapWidth>
+    </label>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="amenity" type="area">
+  <layer type="area" dataSource="Primary" k="amenity">
    <subLayer name="" visible="true">
     <area>
      <color>#ffff7f</color>
@@ -67,7 +76,7 @@
     </area>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="waterway" type="line">
+  <layer type="line" dataSource="Primary" k="waterway">
    <subLayer name="" visible="true">
     <line>
      <color>#a7dedf</color>
@@ -79,19 +88,19 @@
     </line>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="water" type="area">
+  <layer type="area" dataSource="Primary" k="water">
    <subLayer name="" visible="true">
     <area>
      <color>#ccdddd</color>
      <opacity>1</opacity>
-     <casingWidth>0</casingWidth>
+     <casingWidth>5</casingWidth>
      <casingColor>#000000</casingColor>
      <fillImage></fillImage>
      <fillImageOpacity>0</fillImageOpacity>
     </area>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="natural" type="area">
+  <layer type="area" dataSource="Primary" k="natural">
    <subLayer name="" visible="true">
     <area>
      <color>#d7e0cf</color>
@@ -101,9 +110,18 @@
      <fillImage>wetland_64.png</fillImage>
      <fillImageOpacity>0.5</fillImageOpacity>
     </area>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
    </subLayer>
   </layer>
-  <layer dataSource="Primary" k="landuse" type="area">
+  <layer type="area" dataSource="Primary" k="landuse">
    <subLayer name="" visible="true">
     <area>
      <color>#d0e1b6</color>

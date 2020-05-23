@@ -9,14 +9,30 @@
 #include <render.h>
 
 #include "newtoplevelstyle.h"
-#include "subLayerTextPage.h"
 
 StyleTab::StyleTab(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::StyleTab)
 {
+	lineLabelPage_ = NULL;
+	areaLabelPage_ = NULL;
+	pointLabelPage_ = NULL;
+
 	ui->setupUi(this);
-	ui->lineTabWidget->addTab(new SubLayerTextPage(this),"Labels");
+
+	lineLabelPage_ = new SubLayerTextPage(this);
+	areaLabelPage_ = new SubLayerTextPage(this);
+
+	bool r = connect(lineLabelPage_, &SubLayerTextPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
+	assert(r);
+
+	connect(areaLabelPage_, &SubLayerTextPage::editingFinished, this, &StyleTab::on_editingFinishedAreaLabel);
+	assert(r);
+	//connect(pointLabelPage_, SubLayerTextPage::editingFinished, this, StyleTab::on_editingFinishedPointLabel);
+	assert(r);
+
+	ui->lineTabWidget->addTab(lineLabelPage_,"Labels");
+	ui->areaTabWidget->addTab(areaLabelPage_, "Labels");
 
 	project_ = NULL;
 
@@ -31,6 +47,10 @@ StyleTab::StyleTab(QWidget *parent) :
 
 StyleTab::~StyleTab()
 {
+	delete lineLabelPage_;
+	delete areaLabelPage_;
+	delete pointLabelPage_;
+
 	delete ui;
 	project_ = NULL;
 	delete render_;
@@ -281,6 +301,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 			case ST_POINT:
 			{
 				ui->styleDetail->setCurrentWidget(ui->pagePoint);
+
 				break;
 			}
 
@@ -297,6 +318,8 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				ui->lineCasingColor->setText(line.casingColor_.name());
 				ui->lineSmooth->setValue(line.smooth_);
 				ui->lineOpacity->setValue(line.opacity_);
+
+				lineLabelPage_->Load(layer->label(subLayerIndex));
 
 				break;
 			}
@@ -316,17 +339,23 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				ui->areaFillImage->setText(area.fillImage_);
 				ui->areaFillImageOpacity->setValue(area.fillImageOpacity_);
 
+				areaLabelPage_->Load(layer->label(subLayerIndex));
+
 				break;
 			}
 
 			default:
 				assert(false);
 		}
+
+		Label label = layer->label(subLayerIndex);
+
+
 	}
 }
 
 ////////// map tab
-void StyleTab::on_mapUpdateMap_clicked()
+void StyleTab::on_updateMap_clicked()
 {
 	freshRender();
 }
@@ -420,11 +449,6 @@ void StyleTab::on_layerMoveDown_clicked()
 	}
 }
 
-void StyleTab::on_layerUpdateMap_clicked()
-{
-	freshRender();
-}
-
 void StyleTab::on_layerDelete_clicked()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
@@ -443,10 +467,6 @@ void StyleTab::on_layerDelete_clicked()
 }
 
 ////////// area tab
-void StyleTab::on_areaUpdateMap_clicked()
-{
-	freshRender();
-}
 
 void StyleTab::on_areaVisible_clicked()
 {
@@ -478,7 +498,7 @@ void StyleTab::on_areaFillImage_editingFinished()
 	saveArea();
 }
 
-void StyleTab::on_areaFillImageOpacity_editedFinished()
+void StyleTab::on_areaFillImageOpacity_editingFinished()
 {
 	saveArea();
 }
@@ -510,6 +530,11 @@ void StyleTab::on_areaFillImageSelect_clicked()
 {
 }
 
+void StyleTab::on_editingFinishedAreaLabel()
+{
+	saveArea();
+}
+
 void StyleTab::saveArea()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
@@ -533,6 +558,10 @@ void StyleTab::saveArea()
 	area.fillImage_ = ui->areaFillImage->text();
 	area.fillImageOpacity_ = ui->areaFillImageOpacity->value();
 
+	Label label = layer->label(subLayerIndex);
+	areaLabelPage_->SaveTo(&label);
+	layer->setLabel(subLayerIndex, label);
+
 	layer->setSubLayerArea(subLayerIndex, area);
 }
 
@@ -542,6 +571,12 @@ void StyleTab::on_pointUpdateMap_clicked()
 {
 	freshRender();
 }
+
+void StyleTab::on_editingFinishedPointLabel()
+{
+	// savePoint();
+}
+
 
 //////// line tab
 void StyleTab::on_lineVisible_clicked()
@@ -606,6 +641,11 @@ void StyleTab::on_lineColorPick_clicked()
 	}
 }
 
+void StyleTab::on_editingFinishedLineLabel()
+{
+	lineSave();
+}
+
 void StyleTab::lineSave()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
@@ -629,11 +669,10 @@ void StyleTab::lineSave()
 	line.opacity_ = ui->lineOpacity->value();
 
 	layer->setSubLayerLine(subLayerIndex, line);
-}
 
-void StyleTab::on_lineUpdateMap_clicked()
-{
-	freshRender();
+	Label lb = layer->label(subLayerIndex);
+	lineLabelPage_->SaveTo(&lb);
+	layer->setLabel(subLayerIndex,lb);
 }
 
 void StyleTab::freshRender()

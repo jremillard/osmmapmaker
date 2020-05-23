@@ -47,8 +47,19 @@ Area::Area()
 	fillImageOpacity_ = 1.0;
 }
 
-//////////////////////////////////////////
+Label::Label()
+{
+	visible_ = true;
+	text_ = "[name]";
+	height_ = 10;
+	color_ = QColor(Qt::black);
+	haloSize_ = 0;
+	haloColor_ = QColor(Qt::black);
+	lineLaxSpacing_ = 0;
+	maxWrapWidth_ = 30;
+}
 
+//////////////////////////////////////////
 
 StyleLayer::StyleLayer(QString dataSource, QString key, StyleLayerType type)
 {
@@ -70,6 +81,9 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 		std::vector<StyleSelector> selectors;
 
 		selectors_.push_back(selectors);
+		Label label;
+		label.visible_ = false;
+		labels_.push_back(label);
 	}
 
 	if (typeStr == "line")
@@ -134,6 +148,27 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 		// TODO
 	}
 
+	for (int i = 0; i < subLayers.length(); ++i)
+	{
+		QDomElement labelNode = subLayers.at(i).firstChildElement("label");
+
+		if (labelNode.isNull() == false)
+		{
+			Label layerLabel = labels_[i];
+
+			layerLabel.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
+			layerLabel.text_ = labelNode.firstChildElement("text").text();
+			layerLabel.height_ = labelNode.firstChildElement("height").text().toDouble();
+			layerLabel.color_ = labelNode.firstChildElement("color").text();
+			layerLabel.haloSize_ = labelNode.firstChildElement("haloSize").text().toDouble();
+			layerLabel.haloColor_ = labelNode.firstChildElement("haloColor").text();
+			layerLabel.lineLaxSpacing_ = labelNode.firstChildElement("lineLaxSpacing").text().toDouble();
+			layerLabel.maxWrapWidth_ = labelNode.firstChildElement("maxWrapWidth").text().toDouble();
+
+			labels_[i] = layerLabel;
+		}
+	}
+
 	if (key_.isNull())
 	{
 		// TODO
@@ -161,7 +196,7 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 	std::vector<QString> subLayerNamesV = subLayerNames();
 
-	for (size_t i = 0; i < subLayerNamesV.size(); ++i)
+	for (size_t subLayerIndex = 0; subLayerIndex < subLayerNamesV.size(); ++subLayerIndex)
 	{
 		QDomElement subLayerNode = doc.createElement("subLayer");
 
@@ -179,7 +214,7 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 			QDomElement lineNode = doc.createElement("line");
 
-			Line line = subLayerLine(i);
+			Line line = subLayerLine(subLayerIndex);
 
 			subLayerNode.setAttribute("name", line.name_);
 			subLayerNode.setAttribute("visible", line.visible_ ? "true" : "false");
@@ -216,46 +251,81 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 		{
 			layerElement.setAttribute("type", "area");
 
-			QDomElement lineNode = doc.createElement("area");
+			QDomElement areaNode = doc.createElement("area");
 
-			Area area = subLayerArea(i);
+			Area area = subLayerArea(subLayerIndex);
 
 			subLayerNode.setAttribute("name", area.name_);
 			subLayerNode.setAttribute("visible", area.visible_ ? "true" : "false");
 
 			QDomElement colorNode = doc.createElement("color");
 			colorNode.appendChild(doc.createTextNode(area.color_.name()));
-			lineNode.appendChild(colorNode);
+			areaNode.appendChild(colorNode);
 
 			QDomElement opacityNode = doc.createElement("opacity");
 			opacityNode.appendChild(doc.createTextNode(QString::number(area.opacity_)));
-			lineNode.appendChild(opacityNode);
+			areaNode.appendChild(opacityNode);
 
 			QDomElement casingWidthNode = doc.createElement("casingWidth");
 			casingWidthNode.appendChild(doc.createTextNode(QString::number(area.casingWidth_)));
-			lineNode.appendChild(casingWidthNode);
+			areaNode.appendChild(casingWidthNode);
 
 			QDomElement casingColorNode = doc.createElement("casingColor");
 			casingColorNode.appendChild(doc.createTextNode(area.casingColor_.name()));
-			lineNode.appendChild(casingColorNode);
+			areaNode.appendChild(casingColorNode);
 
 			QDomElement fillImageNode = doc.createElement("fillImage");
 			fillImageNode.appendChild(doc.createTextNode(area.fillImage_));
-			lineNode.appendChild(fillImageNode);
+			areaNode.appendChild(fillImageNode);
 
 			QDomElement fillImageOpacityNode = doc.createElement("fillImageOpacity");
 			fillImageOpacityNode.appendChild(doc.createTextNode(QString::number(area.fillImageOpacity_)));
-			lineNode.appendChild(fillImageOpacityNode);
+			areaNode.appendChild(fillImageOpacityNode);
 			
-
-			subLayerNode.appendChild(lineNode);
-			break;
+			subLayerNode.appendChild(areaNode);
 
 			break;
 		}
 
 		default:
 			assert(false);
+		}
+
+		if (labels_[subLayerIndex].visible_)
+		{
+			Label label = labels_[subLayerIndex];
+
+			QDomElement labelNode = doc.createElement("label");
+
+			QDomElement labelTagNode = doc.createElement("text");
+			labelTagNode.appendChild(doc.createTextNode(label.text_));
+			labelNode.appendChild(labelTagNode);
+
+			QDomElement heightNode = doc.createElement("height");
+			heightNode.appendChild(doc.createTextNode(QString::number(label.height_)));
+			labelNode.appendChild(heightNode);
+
+			QDomElement colorNode = doc.createElement("color");
+			colorNode.appendChild(doc.createTextNode(label.color_.name()));
+			labelNode.appendChild(colorNode);
+
+			QDomElement haloSizeNode = doc.createElement("haloSize");
+			haloSizeNode.appendChild(doc.createTextNode(QString::number(label.haloSize_)));
+			labelNode.appendChild(haloSizeNode);
+
+			QDomElement haloColorNode = doc.createElement("haloColor");
+			haloColorNode.appendChild(doc.createTextNode(label.haloColor_.name()));
+			labelNode.appendChild(haloColorNode);
+
+			QDomElement lineLaxSpacingNode = doc.createElement("lineLaxSpacing");
+			lineLaxSpacingNode.appendChild(doc.createTextNode(QString::number(label.lineLaxSpacing_)));
+			labelNode.appendChild(lineLaxSpacingNode);
+
+			QDomElement maxWrapWidthNode = doc.createElement("maxWrapWidth");
+			maxWrapWidthNode.appendChild(doc.createTextNode(QString::number(label.maxWrapWidth_)));
+			labelNode.appendChild(maxWrapWidthNode);
+
+			subLayerNode.appendChild(labelNode);
 		}
 
 		layerElement.appendChild(subLayerNode);
@@ -337,6 +407,37 @@ std::vector<QString> StyleLayer::subLayerNames()
 	return ret;
 }
 
+std::vector<QString> StyleLayer::requiredKeys()
+{
+	std::vector<QString> keys;
+
+	QRegularExpression re("\\[(\\w+)\\]");
+
+	// labels name tags
+	for (int subLayerIndex = 0; subLayerIndex < labels_.size(); ++subLayerIndex)
+	{
+		if (labels_[subLayerIndex].visible_)
+		{
+			QRegularExpressionMatchIterator i = re.globalMatch(labels_[subLayerIndex].text_);
+
+			while (i.hasNext()) 
+			{
+				QRegularExpressionMatch match = i.next();
+				keys.push_back(match.captured(1));
+			}
+		}
+	}
+
+	// remove dups
+	sort(keys.begin(), keys.end());
+	keys.erase(std::unique(keys.begin(), keys.end()), keys.end());
+
+	// primary key should't be listed here, it is always in the table
+	keys.erase(std::remove(keys.begin(), keys.end(), key()), keys.end());
+
+	return keys;
+}
+
 std::vector<StyleSelector> StyleLayer::subLayerSelectors(size_t i)
 {
 	return selectors_[i];
@@ -362,9 +463,9 @@ void StyleLayer::setSubLayerArea(size_t i, const Area &area)
 	{
 		areas_.push_back(area);
 		selectors_.push_back(std::vector<StyleSelector>());
+		labels_.push_back(Label());
 	}
 }
-
 
 Line StyleLayer::subLayerLine(size_t i)
 {
@@ -381,6 +482,18 @@ void StyleLayer::setSubLayerLine(size_t i, const Line &line)
 	{
 		lines_.push_back(line);
 		selectors_.push_back(std::vector<StyleSelector>());
+		labels_.push_back(Label());
 	}
 }
+
+Label StyleLayer::label(size_t i)
+{
+	return labels_[i];
+}
+
+void StyleLayer::setLabel(size_t i, const Label &lb)
+{
+	labels_[i] = lb;
+}
+
 

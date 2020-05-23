@@ -60,6 +60,22 @@ public:
 	double fillImageOpacity_;
 };
 
+class Label
+{
+public:
+	Label();
+
+	bool visible_;
+	QString text_;
+	double height_;
+	QColor color_;
+	double haloSize_;
+	QColor haloColor_;
+	double lineLaxSpacing_;
+	double maxWrapWidth_;
+};
+
+
 class StyleLayer
 {
 public:
@@ -86,8 +102,13 @@ public:
 	Area subLayerArea(size_t i);
 	void setSubLayerArea(size_t i, const Area &area);
 
+	Label label(size_t i);
+	void setLabel(size_t i, const Label &lb);
+
 	void showAll();
 	void hideAll();
+
+	std::vector<QString> requiredKeys();
 
 private:
 	StyleLayerType type_;
@@ -96,5 +117,6 @@ private:
 
 	std::vector<Line > lines_;
 	std::vector<Area> areas_;
+	std::vector<Label> labels_;
 	std::vector<std::vector<StyleSelector>  > selectors_;
 };
