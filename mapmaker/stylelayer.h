@@ -17,17 +17,25 @@ enum StyleLayerType
 class StyleSelector
 {
 public:
+	StyleSelector(const QString &key);
 	StyleSelector();
 	~StyleSelector();
 
-	void GetAnds(std::vector<QString> *keys, std::vector<QString> *values);
-	void SetAnds(const std::vector<QString> &keys, const std::vector<QString> &values);
+	QString mapniKExpression();
+
+	void clear();
+	size_t conditionCount() const;
+	void setCondition(size_t i, const QString &key, const std::vector<QString> &values);
+	void condition(size_t i, QString *key, std::vector<QString> *values) const;
+
+	void insertCondition(size_t i, const QString &key, const std::vector<QString> &values);
+	void deleteCondition(size_t i);
+
 
 private:
 	std::vector<QString> keys_;
-	std::vector<QString> values_;
+	std::vector< std::vector<QString>> values_;
 };
-
 
 class Line
 {
@@ -93,8 +101,8 @@ public:
 
 	std::vector<QString> subLayerNames();
 
-	std::vector<StyleSelector> subLayerSelectors(size_t i);
-	void setSubLayerSelectors(size_t i, const std::vector<StyleSelector> &selections);
+	StyleSelector subLayerSelectors(size_t i);
+	void setSubLayerSelectors(size_t i, const StyleSelector &selections);
 
 	Line subLayerLine(size_t i);
 	void setSubLayerLine(size_t i, const Line &lines);
@@ -118,5 +126,6 @@ private:
 	std::vector<Line > lines_;
 	std::vector<Area> areas_;
 	std::vector<Label> labels_;
-	std::vector<std::vector<StyleSelector>  > selectors_;
+	std::vector<StyleSelector> selectors_;
 };
+

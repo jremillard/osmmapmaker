@@ -244,15 +244,6 @@ void Project::createViews()
 	{
 		std::vector<QString> attributes = projectLayer->requiredKeys();
 
-		/*
-		std::vector<QString> attributes{
-			"name", "surface", "oneway",
-			"service","maxspeed","lanes","access",
-			"ref","tracktype","bicycle","foot",
-			"layer","lit","bridge","footway","width","sidewalk",
-			"bus","horse","direction","cycleway","operator" };
-		*/
-
 		QString key = projectLayer->key();
 		createView(*db, key + "_v", projectLayer->dataSource(), projectLayer->dataType(), key, attributes);
 	}
@@ -280,25 +271,25 @@ void Project::createView(SQLite::Database &db, const QString &viewName, const QS
 	*/
 
 	QString createViewSql;
-	createViewSql += QString("CREATE VIEW %1 as \n").arg(viewName);
+	createViewSql += QString("CREATE VIEW \"%1\" as \n").arg(viewName);
 	createViewSql += QString("select\n");
 	createViewSql += QString("	entity.id,\n");
 	createViewSql += QString("	entity.geom,\n");
-	createViewSql += QString("	%1.value as %1,\n").arg(primaryKey);
+	createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(primaryKey);
 
 	for (QString a : attributes)
 	{
-		createViewSql += QString("	%1.value as %1,\n").arg(a);
+		createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(a);
 	}
 	createViewSql.chop(2); // don't want the last comma.
 
 	createViewSql += QString("\nfrom entity\n");
 
-	createViewSql += QString("JOIN entityKV as %1 on entity.source == '%2' and entity.type == %3 and entity.id == %1.id and %1.key == '%1'").arg(primaryKey).arg(dataSource).arg( type);
+	createViewSql += QString("JOIN entityKV as \"%1\" on entity.source == '%2' and entity.type == %3 and entity.id == \"%1\".id and \"%1\".key == '%1'").arg(primaryKey).arg(dataSource).arg( type);
 
 	for (QString a : attributes)
 	{
-		createViewSql += QString("	left outer join entityKV as %1 on entity.id = %1.id and %1.key == '%1'\n").arg(a);
+		createViewSql += QString("	left outer join entityKV as \"%1\" on entity.id = \"%1\".id and \"%1\".key == '%1'\n").arg(a);
 	}
 
 	db.exec(createViewSql.toStdString());

@@ -7,8 +7,13 @@
   <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
  </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
-  <layer k="power" dataSource="Primary" type="line">
-   <subLayer name="" visible="true">
+  <layer type="line" k="power" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="power">
+      <value>line</value>
+     </condition>
+    </selector>
     <line>
      <color>#707070</color>
      <casingColor>#ffffff</casingColor>
@@ -19,8 +24,13 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="building" dataSource="Primary" type="area">
-   <subLayer name="" visible="true">
+  <layer type="area" k="building" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="building">
+      <value>*</value>
+     </condition>
+    </selector>
     <area>
      <color>#d6d6c2</color>
      <opacity>0.8</opacity>
@@ -31,8 +41,13 @@
     </area>
    </subLayer>
   </layer>
-  <layer k="admin_level" dataSource="Primary" type="line">
-   <subLayer name="" visible="true">
+  <layer type="line" k="admin_level" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="admin_level">
+      <value>*</value>
+     </condition>
+    </selector>
     <line>
      <color>#000000</color>
      <casingColor>#ffffff</casingColor>
@@ -43,8 +58,18 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="highway" dataSource="Primary" type="line">
-   <subLayer name="" visible="true">
+  <layer type="line" k="highway" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="highway">
+      <value>secondary</value>
+      <value>residential</value>
+      <value>primary</value>
+      <value>tertiary</value>
+      <value>trunk</value>
+      <value>motorway</value>
+     </condition>
+    </selector>
     <line>
      <color>#ffffff</color>
      <casingColor>#000000</casingColor>
@@ -64,11 +89,19 @@
     </label>
    </subLayer>
   </layer>
-  <layer k="amenity" dataSource="Primary" type="area">
-   <subLayer name="" visible="true">
+  <layer type="area" k="amenity" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="amenity">
+      <value>parking</value>
+     </condition>
+     <condition key="gtc:parking">
+      <value>yes</value>
+     </condition>
+    </selector>
     <area>
-     <color>#ffff7f</color>
-     <opacity>0.2</opacity>
+     <color>#efeebc</color>
+     <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
      <fillImage></fillImage>
@@ -76,8 +109,13 @@
     </area>
    </subLayer>
   </layer>
-  <layer k="waterway" dataSource="Primary" type="line">
-   <subLayer name="" visible="true">
+  <layer type="line" k="waterway" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="waterway">
+      <value>*</value>
+     </condition>
+    </selector>
     <line>
      <color>#a7dedf</color>
      <casingColor>#ffffff</casingColor>
@@ -88,27 +126,21 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="water" dataSource="Primary" type="area">
-   <subLayer name="" visible="true">
+  <layer type="area" k="natural" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="natural">
+      <value>wetland</value>
+      <value>water</value>
+     </condition>
+    </selector>
     <area>
      <color>#ccdddd</color>
      <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
      <fillImage></fillImage>
-     <fillImageOpacity>0</fillImageOpacity>
-    </area>
-   </subLayer>
-  </layer>
-  <layer k="natural" dataSource="Primary" type="area">
-   <subLayer name="" visible="true">
-    <area>
-     <color>#d7e0cf</color>
-     <opacity>0.5</opacity>
-     <casingWidth>0.1</casingWidth>
-     <casingColor>#3d3d3d</casingColor>
-     <fillImage>wetland_64.png</fillImage>
-     <fillImageOpacity>0.5</fillImageOpacity>
+     <fillImageOpacity>1</fillImageOpacity>
     </area>
     <label>
      <text>[name]</text>
@@ -121,8 +153,15 @@
     </label>
    </subLayer>
   </layer>
-  <layer k="landuse" dataSource="Primary" type="area">
-   <subLayer name="" visible="true">
+  <layer type="area" k="landuse" dataSource="Primary">
+   <subLayer visible="true" name="">
+    <selector>
+     <condition key="landuse">
+      <value>conservation</value>
+      <value>forest</value>
+      <value>recreation_ground</value>
+     </condition>
+    </selector>
     <area>
      <color>#d0e1b6</color>
      <opacity>1</opacity>

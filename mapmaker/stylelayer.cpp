@@ -5,20 +5,91 @@ StyleSelector::StyleSelector()
 {
 }
 
+StyleSelector::StyleSelector(const QString &key)
+{
+	keys_.push_back(key);
+	values_.push_back(std::vector<QString>() = { QString("*") });
+}
+
 StyleSelector::~StyleSelector()
 {
 }
 
-void StyleSelector::GetAnds(std::vector<QString> *keys, std::vector<QString> *values)
+void StyleSelector::clear()
 {
-	*keys = keys_;
-	*values= values_;
+	keys_.clear();
+	values_.clear();
 }
 
-void StyleSelector::SetAnds(const std::vector<QString> &keys, const std::vector<QString> &values)
+QString StyleSelector::mapniKExpression()
 {
-	keys_ = keys;
-	values_ = values;
+	QString exp;
+
+	if (keys_.size() > 0)
+	{
+		exp += "(";
+
+		for (size_t i = 0; i < keys_.size(); ++i)
+		{
+			if (values_[i].size() == 0)
+			{
+				exp += QString("([%0] = null)").arg(keys_[i]);
+			}
+			else if (values_[i].size() == 1 && values_[i][0] == "*")
+			{
+				exp += "1 > 0";
+			}
+			else
+			{
+				exp += "(";
+				for (size_t v = 0; v < values_[i].size(); ++v)
+				{
+					// TODO escape '
+					exp += QString("([%0]='%1')").arg(keys_[i]).arg(values_[i][v]);
+
+					if (v + 1 < values_[i].size())
+						exp += " or ";
+				}
+				exp += ")";
+			}
+
+			if (i + 1 < keys_.size())
+				exp += " and ";
+		}
+
+		exp += ")";
+	}
+
+	return exp;
+}
+
+size_t StyleSelector::conditionCount() const
+{
+	return keys_.size();
+}
+
+void StyleSelector::setCondition(size_t i, const QString &key, const std::vector<QString> &values)
+{
+	keys_[i] = key;
+	values_[i] = values;
+}
+
+void StyleSelector::condition(size_t i, QString *key, std::vector<QString> *values) const
+{
+	*key = keys_[i];
+	*values = values_[i];
+}
+
+void StyleSelector::insertCondition(size_t i, const QString &key, const std::vector<QString> &values)
+{
+	keys_.insert(keys_.begin() + i, key);
+	values_.insert(values_.begin() + i, values);
+}
+
+void StyleSelector::deleteCondition(size_t i)
+{
+	keys_.erase(keys_.begin() + i);
+	values_.erase(values_.begin() + i);
 }
 
 //////////////////////////////////////////
@@ -78,9 +149,43 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 	QDomNodeList subLayers = layerNode.elementsByTagName("subLayer");
 	for (int i = 0; i < subLayers.length(); ++i)
 	{
-		std::vector<StyleSelector> selectors;
+		StyleSelector selector;
 
-		selectors_.push_back(selectors);
+		QDomElement selectNode = subLayers.at(i).firstChildElement("selector");
+
+		if (selectNode.isNull() == false)
+		{
+			QDomNodeList conditionsNodes = selectNode.elementsByTagName("condition");
+
+			for (size_t condIndex = 0; condIndex < conditionsNodes.count(); ++condIndex)
+			{
+				QString key = conditionsNodes.at(condIndex).attributes().namedItem("key").nodeValue();
+
+				QDomElement condElement = conditionsNodes.at(condIndex).toElement();
+
+				QDomNodeList valueNodes = condElement.elementsByTagName("value");
+
+				std::vector<QString> values;
+
+				for (size_t valueIndex = 0; valueIndex < valueNodes.size(); ++valueIndex)
+				{
+					QDomElement valNode = valueNodes.at(valueIndex).toElement();
+
+					values.push_back(valNode.text());
+				}
+
+				if (values.size() > 0 && key.isEmpty() == false)
+					selector.insertCondition(condIndex, key, values);
+			}
+		}
+
+		// no selector, add one in that is key=*, which does nothing.
+		if (selector.conditionCount() == 0)
+		{
+			selector.insertCondition(0, key_, std::vector<QString>() = { QString("*") });
+		}
+
+		selectors_.push_back(selector);
 		Label label;
 		label.visible_ = false;
 		labels_.push_back(label);
@@ -200,6 +305,35 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 	{
 		QDomElement subLayerNode = doc.createElement("subLayer");
 
+		// selector first
+		QDomElement selectorNode = doc.createElement("selector");
+
+		StyleSelector selector = selectors_[subLayerIndex];
+
+		for (size_t condIndex = 0; condIndex < selector.conditionCount(); ++condIndex)
+		{
+			QDomElement conditionNode = doc.createElement("condition");
+
+			QString key;
+			std::vector<QString> values;
+			selector.condition(condIndex,&key,&values );
+
+			conditionNode.setAttribute("key",key );
+
+			for (size_t valIndex = 0; valIndex < values.size(); ++valIndex)
+			{
+				QDomElement valueNode = doc.createElement("value");
+				valueNode.appendChild(doc.createTextNode(values[valIndex]));
+				conditionNode.appendChild(valueNode);
+			}
+
+			selectorNode.appendChild(conditionNode);
+		}
+
+		subLayerNode.appendChild(selectorNode);
+
+		// line, area, point
+
 		switch (layerType())
 		{
 		case ST_POINT:
@@ -290,6 +424,8 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 		default:
 			assert(false);
 		}
+
+		// text labels
 
 		if (labels_[subLayerIndex].visible_)
 		{
@@ -385,23 +521,30 @@ std::vector<QString> StyleLayer::subLayerNames()
 
 	for (auto &s : selectors_)
 	{
-		if (s.size() > 0)
+		QString key;
+		std::vector<QString> values;
+
+		s.condition(0, &key, &values);
+
+		int maxValueDisplay = 35;
+		QString valueStr;
+		for (int x = 0; x < values.size(); ++x)
 		{
-			std::vector<QString> keys, values;
-			s[0].GetAnds(&keys, &values);
-			QString name;
-			for (size_t i = 0; i < keys.size(); ++i)
+			valueStr += values[x];
+			if (valueStr.size() > maxValueDisplay)
 			{
-				name += QString("%0=%1").arg(keys[i], values[i]);
-				if (i + 1 < keys.size())
-					name += ", ";
+				valueStr = valueStr.left(maxValueDisplay) + "...";
+				break;
 			}
-			ret.push_back(name);
+
+			if (x + 1 < values.size())
+				valueStr += ", ";
 		}
-		else
-		{
-			ret.push_back("All");
-		}	
+
+		if (valueStr == "*")
+			valueStr = "All";
+					
+		ret.push_back(valueStr);
 	}
 
 	return ret;
@@ -428,6 +571,18 @@ std::vector<QString> StyleLayer::requiredKeys()
 		}
 	}
 
+	for (int subLayerIndex = 0; subLayerIndex < selectors_.size(); ++subLayerIndex)
+	{
+		int keyCounditions = selectors_[subLayerIndex].conditionCount();
+		for (int keyIndex = 1; keyIndex < keyCounditions; ++keyIndex)
+		{
+			QString key;
+			std::vector<QString> values;
+			selectors_[subLayerIndex].condition(keyIndex, &key, &values);
+			keys.push_back(key);
+		}
+	}
+
 	// remove dups
 	sort(keys.begin(), keys.end());
 	keys.erase(std::unique(keys.begin(), keys.end()), keys.end());
@@ -438,12 +593,12 @@ std::vector<QString> StyleLayer::requiredKeys()
 	return keys;
 }
 
-std::vector<StyleSelector> StyleLayer::subLayerSelectors(size_t i)
+StyleSelector StyleLayer::subLayerSelectors(size_t i)
 {
 	return selectors_[i];
 }
 
-void StyleLayer::setSubLayerSelectors(size_t i, const std::vector<StyleSelector> &selections)
+void StyleLayer::setSubLayerSelectors(size_t i, const StyleSelector &selections)
 {
 	selectors_[i] = selections;
 }
@@ -462,7 +617,7 @@ void StyleLayer::setSubLayerArea(size_t i, const Area &area)
 	else if (i == areas_.size())
 	{
 		areas_.push_back(area);
-		selectors_.push_back(std::vector<StyleSelector>());
+		selectors_.push_back(StyleSelector(key_));
 		labels_.push_back(Label());
 	}
 }
@@ -481,7 +636,7 @@ void StyleLayer::setSubLayerLine(size_t i, const Line &line)
 	else if (i == lines_.size())
 	{
 		lines_.push_back(line);
-		selectors_.push_back(std::vector<StyleSelector>());
+		selectors_.push_back(StyleSelector(key_));
 		labels_.push_back(Label());
 	}
 }
@@ -495,5 +650,6 @@ void StyleLayer::setLabel(size_t i, const Label &lb)
 {
 	labels_[i] = lb;
 }
+
 
 

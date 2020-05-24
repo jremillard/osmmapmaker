@@ -17,6 +17,9 @@ StyleTab::StyleTab(QWidget *parent) :
 	lineLabelPage_ = NULL;
 	areaLabelPage_ = NULL;
 	pointLabelPage_ = NULL;
+	lineSelectPage_ = NULL;
+	areaSelectPage_ = NULL;
+	pointSelectPage_ = NULL;
 
 	ui->setupUi(this);
 
@@ -34,6 +37,19 @@ StyleTab::StyleTab(QWidget *parent) :
 	ui->lineTabWidget->addTab(lineLabelPage_,"Labels");
 	ui->areaTabWidget->addTab(areaLabelPage_, "Labels");
 
+	lineSelectPage_ = new SubLayerSelectPage(this);
+	areaSelectPage_ = new SubLayerSelectPage(this);
+
+	r = connect(lineSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
+	assert(r);
+	r = connect(areaSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedAreaLabel);
+	assert(r);
+	//bool r = connect(lineSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
+	assert(r);
+
+	ui->lineTabWidget->addTab(lineSelectPage_, "Select");
+	ui->areaTabWidget->addTab(areaSelectPage_, "Select");
+
 	project_ = NULL;
 
 	centerX_ = 0;
@@ -50,6 +66,10 @@ StyleTab::~StyleTab()
 	delete lineLabelPage_;
 	delete areaLabelPage_;
 	delete pointLabelPage_;
+
+	delete lineSelectPage_;
+	delete areaSelectPage_;
+	delete pointSelectPage_;
 
 	delete ui;
 	project_ = NULL;
@@ -320,6 +340,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				ui->lineOpacity->setValue(line.opacity_);
 
 				lineLabelPage_->Load(layer->label(subLayerIndex));
+				lineSelectPage_->Load(project_->renderDatabase(),layer->dataSource(), layer->subLayerSelectors(subLayerIndex));
 
 				break;
 			}
@@ -340,6 +361,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				ui->areaFillImageOpacity->setValue(area.fillImageOpacity_);
 
 				areaLabelPage_->Load(layer->label(subLayerIndex));
+				areaSelectPage_->Load(project_->renderDatabase(), layer->dataSource(), layer->subLayerSelectors(subLayerIndex));
 
 				break;
 			}
@@ -562,6 +584,10 @@ void StyleTab::saveArea()
 	areaLabelPage_->SaveTo(&label);
 	layer->setLabel(subLayerIndex, label);
 
+	StyleSelector select = layer->subLayerSelectors(subLayerIndex);
+	areaSelectPage_->SaveTo(&select);
+	layer->setSubLayerSelectors(subLayerIndex, select);
+
 	layer->setSubLayerArea(subLayerIndex, area);
 }
 
@@ -672,7 +698,11 @@ void StyleTab::lineSave()
 
 	Label lb = layer->label(subLayerIndex);
 	lineLabelPage_->SaveTo(&lb);
-	layer->setLabel(subLayerIndex,lb);
+	layer->setLabel(subLayerIndex, lb);
+
+	StyleSelector select = layer->subLayerSelectors(subLayerIndex);
+	lineSelectPage_->SaveTo(&select);
+	layer->setSubLayerSelectors(subLayerIndex, select);
 }
 
 void StyleTab::freshRender()

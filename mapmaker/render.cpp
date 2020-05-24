@@ -91,12 +91,14 @@ Render::Render(Project *project)
 					if (line.visible_ == false)
 						continue;
 
+					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+
 					if (line.casingWidth_ > 0)
 					{
 						feature_type_style style;
 
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						line_symbolizer line_sym;
 						put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
@@ -121,7 +123,7 @@ Render::Render(Project *project)
 					feature_type_style style;
 
 					rule r;
-					//r.set_filter(parse_expression("[highway]='track'"));
+					r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
@@ -153,6 +155,8 @@ Render::Render(Project *project)
 
 				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 				{
+					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+
 					Area area = projectLayer->subLayerArea(subLayerIndex);
 					if (area.visible_ == false)
 						continue;
@@ -162,7 +166,7 @@ Render::Render(Project *project)
 						feature_type_style style;
 
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						polygon_symbolizer area_sym;
 
@@ -190,7 +194,7 @@ Render::Render(Project *project)
 						feature_type_style style;
 
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						polygon_pattern_symbolizer area_pattern;
 
@@ -217,7 +221,7 @@ Render::Render(Project *project)
 						feature_type_style style;
 
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						line_symbolizer line_sym;
 						put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
@@ -310,12 +314,13 @@ Render::Render(Project *project)
 				{
 					feature_type_style style;
 
+					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
 					Label label = projectLayer->label(subLayerIndex);
 
 					if (label.visible_)
 					{
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						text_symbolizer text_sym;
 						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
@@ -353,13 +358,14 @@ Render::Render(Project *project)
 				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 				{
 					Label label = projectLayer->label(subLayerIndex);
+					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
 
 					if (label.visible_)
 					{
 						feature_type_style style;
 
 						rule r;
-						//r.set_filter(parse_expression("[highway]='track'"));
+						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
 
 						text_symbolizer text_sym;
 						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();

@@ -4,6 +4,7 @@
 
 #include <project.h>
 #include "subLayerTextPage.h"
+#include "sublayerselectpage.h"
 
 class Render;
 
@@ -84,6 +85,9 @@ private:
 	SubLayerTextPage *lineLabelPage_;
 	SubLayerTextPage *areaLabelPage_;
 	SubLayerTextPage *pointLabelPage_;
+	SubLayerSelectPage *lineSelectPage_;
+	SubLayerSelectPage *areaSelectPage_;
+	SubLayerSelectPage *pointSelectPage_;
 
 	int renderImageLeft();
 
