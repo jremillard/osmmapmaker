@@ -262,15 +262,6 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 
 void OsmDataImportHandler::relation(const osmium::Relation& relation)
 {
-	bool line = true;
-
-	try
-	{
-	}
-	catch (osmium::geometry_error &)
-	{
-		// eat it.
-	}
 }
 
 void OsmDataImportHandler::area(const osmium::Area& area)
@@ -305,7 +296,11 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 
 		if (addArea)
 		{
-			queryAdd_->bind(1, OET_AREA);
+			if (addArea)
+				queryAdd_->bind(1, OET_AREA);
+			else
+				queryAdd_->bind(1, OET_LINE);
+
 			queryAdd_->bind(2, dataSource_.toStdString());
 			std::string pt = factory_.create_multipolygon(area);
 			queryAdd_->bind(3, pt.c_str(), pt.size());
@@ -319,6 +314,10 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 
 			osmium::Box bbBox = area.envelope();
 			addSpatialIndexToDb(entityId, bbBox);
+		}
+		else
+		{
+			// not sure what is going on with this.
 		}
 	}
 	catch (osmium::geometry_error &)

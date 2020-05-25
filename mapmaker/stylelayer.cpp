@@ -514,8 +514,67 @@ void StyleLayer::hideAll()
 	}
 }
 
+size_t StyleLayer::subLayerCount() const
+{
+	return selectors_.size();
+}
 
-std::vector<QString> StyleLayer::subLayerNames()
+
+void StyleLayer::subLayerMove(size_t currentIndex, int direction)
+{
+	switch (type_)
+	{
+		case ST_POINT:
+			break;
+		case ST_LINE:
+			std::iter_swap(lines_.begin() + currentIndex, lines_.begin() + currentIndex + direction);
+			break;
+		case ST_AREA:
+			std::iter_swap(areas_.begin() + currentIndex, areas_.begin() + currentIndex + direction);
+			break;
+	}
+
+	std::iter_swap(labels_.begin() + currentIndex, labels_.begin() + currentIndex + direction);
+	std::iter_swap(selectors_.begin() + currentIndex, selectors_.begin() + currentIndex + direction);
+}
+
+void StyleLayer::removeSubLayer(size_t currentIndex)
+{
+	switch (type_)
+	{
+	case ST_POINT:
+		break;
+	case ST_LINE:
+		lines_.erase(lines_.begin() + currentIndex);
+		break;
+	case ST_AREA:
+		areas_.erase(areas_.begin() + currentIndex );
+		break;
+	}
+
+	labels_.erase(labels_.begin() + currentIndex);
+	selectors_.erase(selectors_.begin() + currentIndex);
+}
+
+
+QString StyleLayer::virtualSQLTableName() const
+{
+	switch (type_)
+	{
+	case ST_POINT:
+		return key_ + "_" + dataSource_ + "_point_v";;
+	case ST_LINE:
+		return key_ + "_" + dataSource_ + "_line_v";;
+	case ST_AREA:
+		return key_ + "_" + dataSource_ + "_area_v";;
+	default:
+		assert(false);
+	}
+
+}
+
+
+std::vector<QString> StyleLayer::subLayerNames() const
 {
 	std::vector<QString> ret;
 
@@ -527,24 +586,45 @@ std::vector<QString> StyleLayer::subLayerNames()
 		s.condition(0, &key, &values);
 
 		int maxValueDisplay = 35;
-		QString valueStr;
+		QString valueStrPrimary;
 		for (int x = 0; x < values.size(); ++x)
 		{
-			valueStr += values[x];
-			if (valueStr.size() > maxValueDisplay)
-			{
-				valueStr = valueStr.left(maxValueDisplay) + "...";
-				break;
-			}
-
+			valueStrPrimary += values[x];
 			if (x + 1 < values.size())
-				valueStr += ", ";
+				valueStrPrimary += ", ";
 		}
 
-		if (valueStr == "*")
-			valueStr = "All";
+
+		QString secondaryKeys;
+		for (int condition = 1; condition < s.conditionCount(); ++condition)
+		{
+			s.condition(condition, &key, &values);
+			secondaryKeys += QString("%0=").arg(key);
+			if (condition + 1 < s.conditionCount())
+				secondaryKeys += ", ";
+		}
+
+		QString name;
+
+		if (valueStrPrimary.size() > maxValueDisplay)
+		{
+			name = valueStrPrimary.left(maxValueDisplay) + "...";
+		}
+		else
+		{
+			if (secondaryKeys.isEmpty())
+				name = valueStrPrimary;
+			else
+				name = valueStrPrimary + ", " + secondaryKeys;
+
+			if (name.size() > maxValueDisplay)
+				name = name.left(maxValueDisplay) + "...";
+		}
+
+		if (name == "*")
+			name = "All";
 					
-		ret.push_back(valueStr);
+		ret.push_back(name);
 	}
 
 	return ret;

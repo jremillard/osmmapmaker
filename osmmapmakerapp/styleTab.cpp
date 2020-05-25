@@ -14,6 +14,8 @@ StyleTab::StyleTab(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::StyleTab)
 {
+	supressTreeSelection_ = false;
+
 	lineLabelPage_ = NULL;
 	areaLabelPage_ = NULL;
 	pointLabelPage_ = NULL;
@@ -114,7 +116,7 @@ void StyleTab::paintEvent(QPaintEvent *event)
 	}
 }
 
-void StyleTab::on_styleNew_clicked()
+void StyleTab::on_treeNew_clicked()
 {
 	if (project_->dataSources().size() == 0)
 	{
@@ -123,18 +125,37 @@ void StyleTab::on_styleNew_clicked()
 		msgBox.exec();
 		return;
 	}
+	
+	bool toplevelStyle = false;
 
-	NewStopLeveStyle dlg(project_, this);
-	if (dlg.exec() == QDialog::Accepted)
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	if (project_->styleLayers().size() == 0 || currentItem == NULL || currentItem->data(0, Qt::UserRole).toInt() < 0)
 	{
-		QString key = dlg.styleKey();
-		QString dataSource = dlg.dataSource();
-		StyleLayerType type = dlg.styleType();
+		// always do top level style if project is empty, nothing is elected, or they have the map node selected.
+		// otherwise, don't know what style to stick the sub style on.
+		toplevelStyle = true;
+	}
+	else
+	{
+		// othewise we need to ask why kind of new styl 
 
-		StyleLayer *l = new StyleLayer(dataSource,key, type);
+	}
 
-		switch (type)
+	if ( toplevelStyle)
+	{
+		// top level style, don't eed
+		NewStopLeveStyle dlg(project_, this);
+		if (dlg.exec() == QDialog::Accepted)
 		{
+			QString key = dlg.styleKey();
+			QString dataSource = dlg.dataSource();
+			StyleLayerType type = dlg.styleType();
+
+			StyleLayer *l = new StyleLayer(dataSource, key, type);
+
+			switch (type)
+			{
 			case ST_POINT:
 			{
 			}
@@ -153,13 +174,240 @@ void StyleTab::on_styleNew_clicked()
 				l->setSubLayerArea(0, area);
 			}
 			break;
+			}
+
+			// stick at the top so people can see it.
+			project_->addStyleLayer(0, l);
+			updateTree();
+		}
+	}
+	else if (currentItem->parent() == NULL)
+	{
+		int layerIndex = currentItem->data(0, Qt::UserRole).toInt();
+
+		std::vector< StyleLayer*> layers = project_->styleLayers();
+
+		StyleLayer* layer = layers[layerIndex];
+
+		size_t insertIndex = layer->subLayerNames().size();
+
+		switch (layer->dataType())
+		{
+			case OET_POINT:
+				break;
+
+			case OET_LINE:
+			{
+				Line line;
+				line.color_ = QColor(Qt::red);
+				line.width_ = 2;
+				line.opacity_ = 0.5;
+
+				layer->setSubLayerLine(insertIndex, line);
+
+			}
+				break;
+			case OET_AREA:
+			{
+				Area area;
+				area.color_ = QColor(Qt::red);
+				area.opacity_ = 0.5;
+
+				layer->setSubLayerArea(insertIndex, area);
+			}
+
+				break;
 		}
 
-		
-		project_->addStyleLayer(project_->styleLayers().size(), l);
+		Label label;
+		label.visible_ = true;
+		label.text_ = QString("[name] + ' - ' + [%0]").arg(layer->key());
+
+		layer->setLabel(insertIndex, label);
+
 		updateTree();
+
+		for (int i = 0; i < ui->styleTree->topLevelItemCount(); ++i)
+		{
+			QTreeWidgetItem *item = ui->styleTree->topLevelItem(i);
+			if (item->data(0, Qt::UserRole).toInt() == layerIndex)
+			{
+				ui->styleTree->setCurrentItem(item);
+				item->setExpanded(true);
+				break;
+			}
+		}
 	}
 
+}
+
+void StyleTab::on_treeCopy_clicked()
+{
+}
+
+void StyleTab::on_treeDelete_clicked()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	if (currentItem != NULL)
+	{
+		std::vector< StyleLayer*> layers = project_->styleLayers();
+
+		if (currentItem->parent() == NULL)
+		{
+			// top level layer delete.
+			int index = currentItem->data(0, Qt::UserRole).toInt();
+
+			if (index >= 0 && index < layers.size())
+			{
+
+				StyleLayer* layer = layers[index];
+				project_->removeStyleLayer(layer);;
+				delete layer;
+
+				updateTree();
+
+				for (int i = 0; i < ui->styleTree->topLevelItemCount(); ++i)
+				{
+					QTreeWidgetItem *item = ui->styleTree->topLevelItem(i);
+					if (item->data(0, Qt::UserRole).toInt() == index)
+					{
+						ui->styleTree->setCurrentItem(item);
+						break;
+					}
+				}
+			}
+			else
+			{
+				// they tried to delete the map node
+			}
+		}
+		else 
+		{
+			size_t selectedLayerIndex = currentItem->parent()->data(0, Qt::UserRole).toUInt();
+
+			StyleLayer* layer = layers[selectedLayerIndex];
+
+			size_t subLayerIndex = currentItem->data(0, Qt::UserRole).toUInt();
+
+			if (layer->subLayerCount() > 1)
+			{
+
+				layer->removeSubLayer(subLayerIndex);
+
+				updateTree();
+
+				for (int layerIndex = 0; layerIndex < ui->styleTree->topLevelItemCount(); ++layerIndex)
+				{
+					QTreeWidgetItem *parentItem = ui->styleTree->topLevelItem(layerIndex);
+
+					if (parentItem->data(0, Qt::UserRole).toUInt() == selectedLayerIndex)
+					{
+						parentItem->setExpanded(true);
+
+						for (int childIndex = 0; childIndex < parentItem->childCount(); ++childIndex)
+						{
+							QTreeWidgetItem *subLayerItem = parentItem->child(childIndex);
+
+							if (subLayerItem->data(0, Qt::UserRole).toUInt() == subLayerIndex)
+							{
+								ui->styleTree->setCurrentItem(subLayerItem);
+								break;
+							}
+						}
+
+						break;
+					}
+				}
+			}
+			else
+			{
+				// lame hack don't delet the last layer, user can select top level node if this is what they want.
+			}
+		}
+	}
+}
+
+void StyleTab::on_treeUp_clicked()
+{
+	moveTreeItem(-1);
+}
+
+void StyleTab::on_treeDown_clicked()
+{
+	moveTreeItem(1);
+}
+
+void StyleTab::moveTreeItem(int direction)
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+
+	if (currentItem != NULL && currentItem->parent() != NULL)
+	{
+		size_t selectedLayerIndex = currentItem->parent()->data(0, Qt::UserRole).toUInt();
+
+		StyleLayer* layer = layers[selectedLayerIndex];
+
+		size_t subLayerIndex = currentItem->data(0, Qt::UserRole).toUInt();
+
+		if (subLayerIndex + direction >= 0 && subLayerIndex + direction < layer->subLayerNames().size())
+		{
+			layer->subLayerMove(subLayerIndex, direction);
+
+			updateTree();
+
+			for (int layerIndex = 0; layerIndex < ui->styleTree->topLevelItemCount(); ++layerIndex)
+			{
+				QTreeWidgetItem *parentItem = ui->styleTree->topLevelItem(layerIndex);
+
+				if (parentItem->data(0,Qt::UserRole).toUInt() == selectedLayerIndex)
+				{
+					parentItem->setExpanded(true);
+
+					for (int childIndex = 0; childIndex < parentItem->childCount(); ++childIndex)
+					{
+						QTreeWidgetItem *subLayerItem = parentItem->child(childIndex);
+
+						if (subLayerItem->data(0,Qt::UserRole).toUInt() == subLayerIndex + direction)
+						{
+							ui->styleTree->setCurrentItem(subLayerItem);
+							break;
+						}
+					}
+
+					break;
+				}
+			}
+		}
+	}
+	else if (currentItem != NULL && currentItem->parent() == NULL)
+	{
+		size_t index = currentItem->data(0, Qt::UserRole).toUInt();
+
+		if (index + direction < layers.size() && index +direction >= 0)
+		{
+			StyleLayer* layer = layers[index];
+
+			project_->removeStyleLayer(layer);;
+
+			index += direction;
+			project_->addStyleLayer(index, layer);
+
+			updateTree();
+
+			for (int i = 0; i < ui->styleTree->topLevelItemCount(); ++i)
+			{
+				QTreeWidgetItem *item = ui->styleTree->topLevelItem(i);
+				if (item->data(0, Qt::UserRole).toInt() == index)
+				{
+					ui->styleTree->setCurrentItem(item);
+					break;
+				}
+			}
+		}
+	}
 }
 
 void StyleTab::on_zoomIn_clicked()
@@ -229,7 +477,6 @@ void StyleTab::resizeEvent(QResizeEvent *mevent)
 	repaint();
 }
 
-
 int StyleTab::renderImageLeft()
 {
 	return ui->styleGroup->width() + ui->styleGroup->pos().x() + 3;
@@ -237,7 +484,9 @@ int StyleTab::renderImageLeft()
 
 void StyleTab::updateTree()
 {
+	supressTreeSelection_ = true;
 	ui->styleTree->clear();
+	supressTreeSelection_ = false;
 
 	QStringList names;
 	names.push_back(tr("Map"));
@@ -249,7 +498,7 @@ void StyleTab::updateTree()
 	size_t layerIndex = 0;
 	for (auto s : project_->styleLayers())
 	{
-		QString name = tr("%0=*").arg(s->key());
+		QString name = tr("%0").arg(s->key());
 		QStringList names;
 		names.push_back(name);
 
@@ -297,6 +546,9 @@ void StyleTab::updateTree()
 
 void StyleTab::on_styleTree_itemSelectionChanged()
 {
+	if (supressTreeSelection_)
+		return;
+
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
 
 	if (currentItem == NULL || (currentItem->parent() == NULL && currentItem->data(0, Qt::UserRole).toInt() < 0))
@@ -410,9 +662,6 @@ void StyleTab::on_layerShowAll_clicked()
 
 	StyleLayer* layer = layers[index];
 	layer->showAll();
-
-	freshRender();
-
 }
 
 void StyleTab::on_layerHideAll_clicked()
@@ -424,68 +673,6 @@ void StyleTab::on_layerHideAll_clicked()
 
 	StyleLayer* layer = layers[index];
 	layer->hideAll();
-
-	freshRender();
-
-}
-
-void StyleTab::on_layerMoveUp_clicked()
-{
-	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
-
-	std::vector< StyleLayer*> layers = project_->styleLayers();
-	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
-
-	if (index > 0)
-	{
-		StyleLayer* layer = layers[index];
-
-		project_->removeStyleLayer(layer);;
-
-		--index;
-		project_->addStyleLayer(index, layer);
-
-		updateTree();
-		freshRender();
-	}
-}
-
-void StyleTab::on_layerMoveDown_clicked()
-{
-	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
-
-	std::vector< StyleLayer*> layers = project_->styleLayers();
-	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
-
-	if (index + 1 < layers.size())
-	{
-		StyleLayer* layer = layers[index];
-
-		project_->removeStyleLayer(layer);;
-
-		++index;
-		project_->addStyleLayer(index, layer);
-
-		updateTree();
-		freshRender();
-	}
-}
-
-void StyleTab::on_layerDelete_clicked()
-{
-	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
-
-	std::vector< StyleLayer*> layers = project_->styleLayers();
-	size_t index = currentItem->data(0, Qt::UserRole).toUInt();
-
-	StyleLayer* layer = layers[index];
-	project_->removeStyleLayer(layer);;
-	delete layer;
-
-	updateTree();
-	freshRender();
-	if ( layers.size() == 1)
-		ui->styleDetail->setCurrentIndex(0);
 }
 
 ////////// area tab

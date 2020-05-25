@@ -3,6 +3,9 @@
 
 #include <QPushButton>
 
+#include <QDesktopServices>
+#include <QUrl>
+
 NewStopLeveStyle::NewStopLeveStyle(Project *project, QWidget *parent):
 	QDialog(parent),
 	ui(new Ui::NewStopLeveStyle)
@@ -32,13 +35,19 @@ NewStopLeveStyle::NewStopLeveStyle(Project *project, QWidget *parent):
 
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-	ui->styleType->addItem(tr("Point"),StyleLayerType::ST_POINT);
-	ui->styleType->addItem(tr("Line"), StyleLayerType::ST_LINE);
 	ui->styleType->addItem(tr("Area"), StyleLayerType::ST_AREA);
+	ui->styleType->addItem(tr("Line"), StyleLayerType::ST_LINE);
+	ui->styleType->addItem(tr("Point"), StyleLayerType::ST_POINT);
 }
 
 NewStopLeveStyle::~NewStopLeveStyle()
 {
+}
+
+void NewStopLeveStyle::on_keyHelp_clicked()
+{
+	QString helpURL = QString("https://wiki.openstreetmap.org/wiki/Key:%0").arg(ui->key->text());
+	QDesktopServices::openUrl(QUrl(helpURL));
 }
 
 QString NewStopLeveStyle::styleKey()

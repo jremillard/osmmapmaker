@@ -99,7 +99,12 @@ public:
 	StyleLayerType layerType();
 	OsmEntityType dataType();
 
-	std::vector<QString> subLayerNames();
+	std::vector<QString> subLayerNames() const;
+
+	size_t subLayerCount() const;
+
+	void removeSubLayer(size_t i);
+	void subLayerMove(size_t i, int offset);
 
 	StyleSelector subLayerSelectors(size_t i);
 	void setSubLayerSelectors(size_t i, const StyleSelector &selections);
@@ -117,6 +122,8 @@ public:
 	void hideAll();
 
 	std::vector<QString> requiredKeys();
+
+	QString virtualSQLTableName() const;
 
 private:
 	StyleLayerType type_;

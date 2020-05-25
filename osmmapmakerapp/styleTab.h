@@ -25,7 +25,13 @@ public:
 private slots:
 	void on_zoomIn_clicked();
 	void on_zoomOut_clicked();
-	void on_styleNew_clicked();
+
+	void on_treeNew_clicked();
+	void on_treeDelete_clicked();
+	void on_treeCopy_clicked();
+	void on_treeUp_clicked();
+	void on_treeDown_clicked();
+
 	void on_styleTree_itemSelectionChanged();
 	void on_pointUpdateMap_clicked();
 	void on_updateMap_clicked();
@@ -37,9 +43,6 @@ private slots:
 	// layer
 	void on_layerShowAll_clicked();
 	void on_layerHideAll_clicked();
-	void on_layerMoveUp_clicked();
-	void on_layerMoveDown_clicked();
-	void on_layerDelete_clicked();
 
 	// point
 	void on_editingFinishedPointLabel();
@@ -81,6 +84,8 @@ private:
 	void freshRender();
 	void lineSave();
 	void saveArea();
+	void moveTreeItem(int direction);
+
 
 	SubLayerTextPage *lineLabelPage_;
 	SubLayerTextPage *areaLabelPage_;
@@ -92,6 +97,7 @@ private:
 	int renderImageLeft();
 
 	bool mouseTracking_;
+	bool supressTreeSelection_;
 	QPoint mouseTrackingStart_;
 	QPoint mouseTrackingCurrent_;
 

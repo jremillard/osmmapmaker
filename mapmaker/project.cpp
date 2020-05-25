@@ -10,6 +10,8 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
 
+#include <set>
+
 static PJ_CONTEXT *proj_context = NULL;
 
 
@@ -240,12 +242,42 @@ void Project::createViews()
 
 	SQLite::Transaction transaction(*db);
 
+	std::set<QString> dataSources;
+
 	for (auto projectLayer : styleLayers())
 	{
-		std::vector<QString> attributes = projectLayer->requiredKeys();
+		dataSources.insert(projectLayer->key());
+	}
 
-		QString key = projectLayer->key();
-		createView(*db, key + "_v", projectLayer->dataSource(), projectLayer->dataType(), key, attributes);
+	for (auto &dataSourceI : dataSources)
+	{
+		std::map<QString, std::vector<QString>> views;
+
+		for (auto projectLayer : styleLayers())
+		{
+			std::vector<QString> attributes = projectLayer->requiredKeys();
+
+			QString key = projectLayer->key();
+
+			auto vi = views.find(key);
+			if (vi != views.end())
+			{
+				vi->second.insert(vi->second.end(), attributes.begin(), attributes.end());
+				// remove dups
+				sort(vi->second.begin(), vi->second.end());
+				vi->second.erase(std::unique(vi->second.begin(), vi->second.end()), vi->second.end());
+			}
+			else
+			{
+				views[key] = attributes;
+			}
+		}
+
+		for (auto projectLayer : styleLayers())
+		{
+			QString key = projectLayer->key();
+			createView(*db, projectLayer->virtualSQLTableName(), projectLayer->dataSource(), projectLayer->dataType(), key, views[key]);
+		}
 	}
 
 	transaction.commit();

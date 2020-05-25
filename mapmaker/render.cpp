@@ -58,7 +58,7 @@ Render::Render(Project *project)
 		p["type"] = "sqlite";
 		p["file"] = "render.sqlite";
 		p["base"] = project->assetDirectory().string();
-		p["table"] = projectLayer->key().toStdString() + "_v";
+		p["table"] = projectLayer->virtualSQLTableName().toStdString();
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
@@ -66,7 +66,7 @@ Render::Render(Project *project)
 		p["index_table"] = "entitySpatialIndex";
 		p["use_spatial_index"] = "true";
 
-		QString layerName = QString("%1-%2").arg(projectLayer->key()).arg(styleIndex);
+		QString layerName = QString("%0-%1").arg(projectLayer->key()).arg(styleIndex);
 
 		layer lyr(layerName.toStdString());
 
@@ -74,8 +74,26 @@ Render::Render(Project *project)
 
 		lyr.set_srs(project->dataSRS());
 
-		switch (projectLayer->layerType())
+		std::vector<QString> names = projectLayer->subLayerNames();
+
+		QString exclusiveExpression;
+
+		for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 		{
+			StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+
+			QString layerExp = selector.mapniKExpression();
+			if (exclusiveExpression.isEmpty() == false)
+			{
+				layerExp += " and not " + exclusiveExpression;
+			}
+
+			exclusiveExpression = layerExp;
+
+			auto expression = parse_expression(layerExp.toStdString());
+
+			switch (projectLayer->layerType())
+			{
 			case ST_POINT:
 			{
 				break;
@@ -83,51 +101,20 @@ Render::Render(Project *project)
 
 			case ST_LINE:
 			{
-				std::vector<QString> names = projectLayer->subLayerNames();
+				Line line = projectLayer->subLayerLine(subLayerIndex);
+				if (line.visible_ == false)
+					continue;
 
-				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				if (line.casingWidth_ > 0)
 				{
-					Line line = projectLayer->subLayerLine(subLayerIndex);
-					if (line.visible_ == false)
-						continue;
-
-					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
-
-					if (line.casingWidth_ > 0)
-					{
-						feature_type_style style;
-
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
-
-						line_symbolizer line_sym;
-						put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
-						put(line_sym, keys::stroke_width, line.width_ + line.casingWidth_*2.0);
-						//put(line_sym, keys::stroke_linecap, ROUND_CAP);
-						//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
-						put(line_sym, keys::stroke_opacity, line.opacity_);
-						put(line_sym, keys::smooth, line.smooth_);
-
-						r.append(std::move(line_sym));
-
-						style.add_rule(std::move(r));
-
-						QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-						lyr.add_style(styleLayer.toStdString());
-
-					}
-
 					feature_type_style style;
 
 					rule r;
-					r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
+					r.set_filter(expression);
 
 					line_symbolizer line_sym;
-					put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
-					put(line_sym, keys::stroke_width, line.width_);
+					put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
+					put(line_sym, keys::stroke_width, line.width_ + line.casingWidth_*2.0);
 					//put(line_sym, keys::stroke_linecap, ROUND_CAP);
 					//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
 					put(line_sym, keys::stroke_opacity, line.opacity_);
@@ -137,116 +124,129 @@ Render::Render(Project *project)
 
 					style.add_rule(std::move(r));
 
-					QString styleLayer = QString("%1-%2-%3").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+					QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
 
 					map_.insert_style(styleLayer.toStdString(), std::move(style));
 
 					lyr.add_style(styleLayer.toStdString());
 
-					++subLayerIndex;
 				}
+
+				feature_type_style style;
+
+				rule r;
+				r.set_filter(expression);
+
+				line_symbolizer line_sym;
+				put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
+				put(line_sym, keys::stroke_width, line.width_);
+				//put(line_sym, keys::stroke_linecap, ROUND_CAP);
+				//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
+				put(line_sym, keys::stroke_opacity, line.opacity_);
+				put(line_sym, keys::smooth, line.smooth_);
+
+				r.append(std::move(line_sym));
+
+				style.add_rule(std::move(r));
+
+				QString styleLayer = QString("%0-%1-%2").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+				map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+				lyr.add_style(styleLayer.toStdString());
+
 
 				break;
 			}
 
 			case ST_AREA:
 			{
-				std::vector<QString> names = projectLayer->subLayerNames();
+				Area area = projectLayer->subLayerArea(subLayerIndex);
+				if (area.visible_ == false)
+					continue;
 
-				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				if (area.opacity_ > 0)
 				{
-					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+					feature_type_style style;
 
-					Area area = projectLayer->subLayerArea(subLayerIndex);
-					if (area.visible_ == false)
-						continue;
+					rule r;
+					r.set_filter(expression);
 
-					if (area.opacity_ > 0)
-					{
-						feature_type_style style;
+					polygon_symbolizer area_sym;
 
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
-
-						polygon_symbolizer area_sym;
-
-						put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
-						put(area_sym, keys::fill_opacity, area.opacity_);
-
-						if (area.casingWidth_ > 0)
-							put(area_sym, keys::gamma, 0);
-						else
-							put(area_sym, keys::gamma, 1);
-
-						r.append(std::move(area_sym));
-
-						style.add_rule(std::move(r));
-
-						QString styleLayer = QString("%1-%2-%3-fill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-						lyr.add_style(styleLayer.toStdString());
-					}
-
-					if ( area.fillImage_.isEmpty() == false)
-					{
-						feature_type_style style;
-
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
-
-						polygon_pattern_symbolizer area_pattern;
-
-						// base path on map property doesn't work for C++, seems to be just an xml thing, put in full path for everything.
-						path fillImagePath = project->assetDirectory() / area.fillImage_.toStdString();
-						put(area_pattern, keys::file, fillImagePath.string());
-
-						put(area_pattern, keys::opacity, area.fillImageOpacity_);
-						
-						r.append(std::move(area_pattern));
-
-						style.add_rule(std::move(r));
-
-						QString styleLayer = QString("%1-%2-%3-imageFill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-						lyr.add_style(styleLayer.toStdString());
-
-					}
+					put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
+					put(area_sym, keys::fill_opacity, area.opacity_);
 
 					if (area.casingWidth_ > 0)
-					{
-						feature_type_style style;
+						put(area_sym, keys::gamma, 0);
+					else
+						put(area_sym, keys::gamma, 1);
 
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
+					r.append(std::move(area_sym));
 
-						line_symbolizer line_sym;
-						put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
-						put(line_sym, keys::stroke_width, area.casingWidth_);
-						put(line_sym, keys::stroke_opacity, area.opacity_);
-						put(line_sym, keys::smooth, 0.0);
+					style.add_rule(std::move(r));
 
-						r.append(std::move(line_sym));
+					QString styleLayer = QString("%0-%1-%2-fill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
 
-						style.add_rule(std::move(r));
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
 
-						QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+					lyr.add_style(styleLayer.toStdString());
+				}
 
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
+				if (area.fillImage_.isEmpty() == false)
+				{
+					feature_type_style style;
 
-						lyr.add_style(styleLayer.toStdString());
+					rule r;
+					r.set_filter(expression);
 
-					}
+					polygon_pattern_symbolizer area_pattern;
 
-					++subLayerIndex;
+					// base path on map property doesn't work for C++, seems to be just an xml thing, put in full path for everything.
+					path fillImagePath = project->assetDirectory() / area.fillImage_.toStdString();
+					put(area_pattern, keys::file, fillImagePath.string());
+
+					put(area_pattern, keys::opacity, area.fillImageOpacity_);
+
+					r.append(std::move(area_pattern));
+
+					style.add_rule(std::move(r));
+
+					QString styleLayer = QString("%0-%1-%2-imageFill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+					lyr.add_style(styleLayer.toStdString());
+
+				}
+
+				if (area.casingWidth_ > 0)
+				{
+					feature_type_style style;
+
+					rule r;
+					r.set_filter(expression);
+
+					line_symbolizer line_sym;
+					put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
+					put(line_sym, keys::stroke_width, area.casingWidth_);
+					put(line_sym, keys::stroke_opacity, area.opacity_);
+					put(line_sym, keys::smooth, 0.0);
+
+					r.append(std::move(line_sym));
+
+					style.add_rule(std::move(r));
+
+					QString styleLayer = QString("%0-%1-%2-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
+
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+
+					lyr.add_style(styleLayer.toStdString());
+
 				}
 
 				break;
-
-				break;
+			}
 			}
 		}
 
@@ -283,7 +283,7 @@ Render::Render(Project *project)
 		p["type"] = "sqlite";
 		p["file"] = "render.sqlite";
 		p["base"] = project->assetDirectory().string();
-		p["table"] = projectLayer->key().toStdString() + "_v";
+		p["table"] = projectLayer->virtualSQLTableName().toStdString();
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
@@ -291,7 +291,7 @@ Render::Render(Project *project)
 		p["index_table"] = "entitySpatialIndex";
 		p["use_spatial_index"] = "true";
 
-		QString layerName = QString("%1-%2-Label").arg(projectLayer->key()).arg(styleIndex);
+		QString layerName = QString("%0-%1-Label").arg(projectLayer->key()).arg(styleIndex);
 
 		layer lyr(layerName.toStdString());
 
@@ -299,8 +299,25 @@ Render::Render(Project *project)
 
 		lyr.set_srs(project->dataSRS());
 
-		switch (projectLayer->layerType())
+		QString exclusiveExpression;
+		for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 		{
+			StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+
+			QString layerExp = selector.mapniKExpression();
+			if (exclusiveExpression.isEmpty() == false)
+			{
+				layerExp += " and not " + exclusiveExpression;
+			}
+
+			exclusiveExpression = layerExp;
+
+			auto expression = parse_expression(layerExp.toStdString());
+
+			Label label = projectLayer->label(subLayerIndex);
+
+			switch (projectLayer->layerType())
+			{
 			case ST_POINT:
 			{
 				dot_symbolizer dot;
@@ -309,91 +326,90 @@ Render::Render(Project *project)
 
 			case ST_LINE:
 			{
+				Line line = projectLayer->subLayerLine(subLayerIndex);
+				if (line.visible_ == false)
+					continue;
 
-				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				feature_type_style style;
+
+				if (label.visible_)
 				{
-					feature_type_style style;
+					rule r;
+					r.set_filter(expression);
 
-					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
-					Label label = projectLayer->label(subLayerIndex);
+					text_symbolizer text_sym;
+					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-					if (label.visible_)
-					{
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
+					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+					placement_finder->defaults.format_defaults.text_size = label.height_;
+					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
+					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
+					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
 
-						text_symbolizer text_sym;
-						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
+					placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_;
+					placement_finder->defaults.expressions.largest_bbox_only = false; // line multipolygon, get labels on every line.
 
-						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-						placement_finder->defaults.format_defaults.text_size = label.height_;
-						placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
-						placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
-						placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
+					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
 
-						placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_;
+					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(LINE_PLACEMENT);
 
-						placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
+					put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
 
-						placement_finder->defaults.expressions.label_placement = enumeration_wrapper(LINE_PLACEMENT);
+					r.append(std::move(text_sym));
 
-						put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
+					style.add_rule(std::move(r));
 
-						r.append(std::move(text_sym));
+					QString styleLayer = QString("%0-%1-%2-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
 
-						style.add_rule(std::move(r));
-
-						QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
-						lyr.add_style(styleLayer.toStdString());
-					}
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+					lyr.add_style(styleLayer.toStdString());
 				}
-				break;
 			}
+			break;
 
 			case ST_AREA:
 			{
+				Area area = projectLayer->subLayerArea(subLayerIndex);
+				if (area.visible_ == false)
+					continue;
 
-				for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
+				if (label.visible_)
 				{
-					Label label = projectLayer->label(subLayerIndex);
-					StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
+					feature_type_style style;
 
-					if (label.visible_)
-					{
-						feature_type_style style;
+					rule r;
+					r.set_filter(expression);
 
-						rule r;
-						r.set_filter(parse_expression(selector.mapniKExpression().toStdString()));
+					text_symbolizer text_sym;
+					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-						text_symbolizer text_sym;
-						text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
+					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+					placement_finder->defaults.format_defaults.text_size = label.height_;
+					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
+					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
+					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
 
-						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-						placement_finder->defaults.format_defaults.text_size = label.height_;
-						placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
-						placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
-						placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
+					placement_finder->defaults.layout_defaults.wrap_width = label.maxWrapWidth_;
 
-						placement_finder->defaults.layout_defaults.wrap_width = label.maxWrapWidth_;
+					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
 
-						placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
+					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
 
-						placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
+					put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
 
-						put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
+					r.append(std::move(text_sym));
 
-						r.append(std::move(text_sym));
+					style.add_rule(std::move(r));
 
-						style.add_rule(std::move(r));
+					QString styleLayer = QString("%0-%1-%2-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
 
-						QString styleLayer = QString("%1-%2-%3-Label").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-						map_.insert_style(styleLayer.toStdString(), std::move(style));
-						lyr.add_style(styleLayer.toStdString());
-					}
+					map_.insert_style(styleLayer.toStdString(), std::move(style));
+					lyr.add_style(styleLayer.toStdString());
 				}
+			}
+			break;
+
+
 			}
 		}
 

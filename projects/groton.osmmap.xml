@@ -2,13 +2,13 @@
 <osmmapmakerproject>
  <openStreetMapFileSource name="Groton">
   <dataSource>Primary</dataSource>
-  <lastUpdateDate>2020-05-22T23:59:48</lastUpdateDate>
-  <importDurationS>15</importDurationS>
-  <fileName>C:\Users\Jason\Documents\Map Maker\groton.osm</fileName>
+  <lastUpdateDate>2020-05-24T20:00:55</lastUpdateDate>
+  <importDurationS>36</importDurationS>
+  <fileName>C:\Remillard\Documents\osmmapmaker\projects\groton2.osm</fileName>
  </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
   <layer type="line" k="power" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
      <condition key="power">
       <value>line</value>
@@ -25,7 +25,7 @@
    </subLayer>
   </layer>
   <layer type="area" k="building" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
      <condition key="building">
       <value>*</value>
@@ -42,7 +42,7 @@
    </subLayer>
   </layer>
   <layer type="line" k="admin_level" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
      <condition key="admin_level">
       <value>*</value>
@@ -59,15 +59,129 @@
    </subLayer>
   </layer>
   <layer type="line" k="highway" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
      <condition key="highway">
-      <value>secondary</value>
+      <value>track</value>
+     </condition>
+     <condition key="operator">
+      <value>Groton Trails Committee</value>
+      <value>Massachusetts Audubon Society</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#09733e</color>
+     <casingColor>#000000</casingColor>
+     <width>3</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>1</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+     </condition>
+     <condition key="operator">
+      <value>Groton Trails Committee</value>
+      <value>Massachusetts Audubon Society</value>
+      <value>Groton School</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#09733e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1.75</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>1</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+      <value>footway</value>
+     </condition>
+     <condition key="access">
+      <value>private</value>
+      <value>restricted</value>
+      <value>no</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ff0000</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.5</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+      <value>track</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1.75</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>cycleway</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0000ff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>3</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>14</height>
+     <color>#000000</color>
+     <haloSize>1</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
       <value>residential</value>
-      <value>primary</value>
-      <value>tertiary</value>
-      <value>trunk</value>
-      <value>motorway</value>
+      <value>bridleway</value>
      </condition>
     </selector>
     <line>
@@ -88,9 +202,99 @@
      <maxWrapWidth>3</maxWrapWidth>
     </label>
    </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>secondary</value>
+      <value>primary</value>
+      <value>tertiary</value>
+      <value>trunk</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#d8b8b0</color>
+     <casingColor>#ffffff</casingColor>
+     <width>3</width>
+     <casingWidth>1.5</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>service</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#000000</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.1</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>footway</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>*</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0055ff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>5</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name] + ' - ' + [highway]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
   </layer>
   <layer type="area" k="amenity" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
      <condition key="amenity">
       <value>parking</value>
@@ -100,7 +304,7 @@
      </condition>
     </selector>
     <area>
-     <color>#efeebc</color>
+     <color>#efedb1</color>
      <opacity>1</opacity>
      <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
@@ -108,36 +312,16 @@
      <fillImageOpacity>1</fillImageOpacity>
     </area>
    </subLayer>
-  </layer>
-  <layer type="line" k="waterway" dataSource="Primary">
-   <subLayer visible="true" name="">
+   <subLayer name="" visible="false">
     <selector>
-     <condition key="waterway">
-      <value>*</value>
-     </condition>
-    </selector>
-    <line>
-     <color>#a7dedf</color>
-     <casingColor>#ffffff</casingColor>
-     <width>2</width>
-     <casingWidth>0</casingWidth>
-     <opacity>1</opacity>
-     <smooth>0</smooth>
-    </line>
-   </subLayer>
-  </layer>
-  <layer type="area" k="natural" dataSource="Primary">
-   <subLayer visible="true" name="">
-    <selector>
-     <condition key="natural">
-      <value>wetland</value>
-      <value>water</value>
+     <condition key="amenity">
+      <value>school</value>
      </condition>
     </selector>
     <area>
-     <color>#ccdddd</color>
-     <opacity>1</opacity>
-     <casingWidth>0</casingWidth>
+     <color>#f1f3d8</color>
+     <opacity>0.5</opacity>
+     <casingWidth>0.25</casingWidth>
      <casingColor>#000000</casingColor>
      <fillImage></fillImage>
      <fillImageOpacity>1</fillImageOpacity>
@@ -153,22 +337,117 @@
     </label>
    </subLayer>
   </layer>
-  <layer type="area" k="landuse" dataSource="Primary">
-   <subLayer visible="true" name="">
+  <layer type="line" k="landuse" dataSource="Primary">
+   <subLayer name="" visible="true">
     <selector>
      <condition key="landuse">
       <value>conservation</value>
       <value>forest</value>
-      <value>recreation_ground</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#5e5e5e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+    </line>
+   </subLayer>
+  </layer>
+  <layer type="line" k="waterway" dataSource="Primary">
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="waterway">
+      <value>stream</value>
+      <value>river</value>
+      <value>canal</value>
+      <value>rapids</value>
+      <value>drain</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#a5dddd</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+    </line>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+  </layer>
+  <layer type="area" k="natural" dataSource="Primary">
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="natural">
+      <value>water</value>
      </condition>
     </selector>
     <area>
-     <color>#d0e1b6</color>
+     <color>#ccdddd</color>
      <opacity>1</opacity>
-     <casingWidth>0.1</casingWidth>
+     <casingWidth>0.2</casingWidth>
+     <casingColor>#9e9e9e</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
+   </subLayer>
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="natural">
+      <value>wetland</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#ccdddd</color>
+     <opacity>0.5</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+     <fillImage>wetland_64.png</fillImage>
+     <fillImageOpacity>0.5</fillImageOpacity>
+    </area>
+   </subLayer>
+  </layer>
+  <layer type="area" k="waterway" dataSource="Primary">
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="waterway">
+      <value>riverbank</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#ccdddd</color>
+     <opacity>1</opacity>
+     <casingWidth>0</casingWidth>
      <casingColor>#000000</casingColor>
      <fillImage></fillImage>
-     <fillImageOpacity>0</fillImageOpacity>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
+   </subLayer>
+  </layer>
+  <layer type="area" k="leisure" dataSource="Primary">
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="leisure">
+      <value>nature_reserve</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#c3dcb1</color>
+     <opacity>1</opacity>
+     <casingWidth>0.35</casingWidth>
+     <casingColor>#000000</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
     </area>
     <label>
      <text>[name]</text>
@@ -177,8 +456,49 @@
      <haloSize>0</haloSize>
      <haloColor>#000000</haloColor>
      <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>40</maxWrapWidth>
+     <maxWrapWidth>30</maxWrapWidth>
     </label>
+   </subLayer>
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="leisure">
+      <value>recreation_ground</value>
+      <value>park</value>
+      <value>playground</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#c3dcb1</color>
+     <opacity>0.5</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
+    <label>
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+    </label>
+   </subLayer>
+   <subLayer name="" visible="true">
+    <selector>
+     <condition key="leisure">
+      <value>pitch</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#ffffff</color>
+     <opacity>0.1</opacity>
+     <casingWidth>1</casingWidth>
+     <casingColor>#000000</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
    </subLayer>
   </layer>
  </map>

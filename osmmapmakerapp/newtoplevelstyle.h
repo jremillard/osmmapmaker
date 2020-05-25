@@ -28,6 +28,7 @@ public slots:
 	void on_key_textEdited(const QString &text);
 	void on_keyList_itemSelectionChanged();
 	void on_keyList_itemDoubleClicked(QListWidgetItem *item);
+	void on_keyHelp_clicked();
 
 private:
 	std::vector<QString> keys_;

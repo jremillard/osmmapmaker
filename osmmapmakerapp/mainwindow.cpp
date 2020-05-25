@@ -41,6 +41,14 @@ void MainWindow::openProject(path projectPath)
 	StyleTab *styleTab = dynamic_cast<StyleTab*>(ui->tabWidget->widget(1));
 	styleTab->setProject(project_);
 
+	if (project_->dataSources().size() == 0)
+	{
+		ui->tabWidget->setCurrentIndex(0);
+	}
+	else
+	{
+		ui->tabWidget->setCurrentIndex(1);
+	}
 }
 
 MainWindow::~MainWindow()
