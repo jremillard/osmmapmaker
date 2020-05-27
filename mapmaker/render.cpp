@@ -420,7 +420,7 @@ Render::Render(Project *project)
 	//save_map(map_, mapnikXML.string());
 }
 
-QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
+void Render::SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
 {
 	map_.resize(imageWithPixels, imageHeightPixels);
 
@@ -433,12 +433,21 @@ QImage Render::RenderImage(int imageWithPixels, int imageHeightPixels, double ce
 		double widthLin = (double)imageWithPixels * pixelResolution;
 		double heightLin = (double)imageHeightPixels * pixelResolution;
 
-		box2d<double> box(centerX-widthLin/2.0, centerY - heightLin / 2.0, centerX + widthLin / 2.0, centerY + heightLin / 2.0);
+		box2d<double> box(centerX - widthLin / 2.0, centerY - heightLin / 2.0, centerX + widthLin / 2.0, centerY + heightLin / 2.0);
 		map_.zoom_to_box(box);
 	}
+}
 
-	box2d<double> bb = map_.get_current_extent();
+void Render::SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top)
+{
+	map_.resize(imageWithPixels, imageHeightPixels);
+	box2d<double> box(left, bottom, right, top);
+	map_.zoom_to_box(box);
+}
 
+
+QImage Render::RenderImage()
+{
 	image_rgba8 buf(map_.width(), map_.height());
 
 	agg_renderer<image_rgba8> ren(map_, buf);

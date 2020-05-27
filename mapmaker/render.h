@@ -11,7 +11,11 @@ class Render
 public:
 	Render(Project *project);
 
-	QImage RenderImage(int imageWithPixels, int imageHeightPixels, double leftLinear, double bottomLinear, double pixelResolution);
+	QImage RenderImage();
+
+	void SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution);
+	void SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top);
+
 
 private:
 	mapnik::Map map_;

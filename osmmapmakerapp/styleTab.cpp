@@ -416,7 +416,8 @@ void StyleTab::on_zoomIn_clicked()
 
 	pixelResolution_ /= 1.5;
 
-	renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	renderedImage_ = render_->RenderImage();
 
 	repaint();
 }
@@ -428,7 +429,8 @@ void StyleTab::on_zoomOut_clicked()
 
 	pixelResolution_ *= 1.5;
 
-	renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	renderedImage_ = render_->RenderImage();
 
 	repaint();
 }
@@ -457,7 +459,8 @@ void StyleTab::mouseReleaseEvent(QMouseEvent *mevent)
 		centerX_ -= offset.x() * pixelResolution_;
 		centerY_ += offset.y() * pixelResolution_;
 
-		renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+		render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+		renderedImage_ = render_->RenderImage();
 		repaint();
 	}
 
@@ -473,7 +476,9 @@ void StyleTab::resizeEvent(QResizeEvent *mevent)
 
 	ui->styleGroup->resize(ui->styleGroup->width(), height() - zoomButtonsSpacing * 2);
 
-	renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	renderedImage_ = render_->RenderImage();
+
 	repaint();
 }
 
@@ -898,7 +903,8 @@ void StyleTab::freshRender()
 	render_ = NULL;
 	render_ = new Render(project_);
 
-	renderedImage_ = render_->RenderImage(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	renderedImage_ = render_->RenderImage();
 
 	repaint();
 }

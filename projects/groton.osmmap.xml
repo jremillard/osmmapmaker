@@ -7,8 +7,8 @@
   <fileName>C:\Remillard\Documents\osmmapmaker\projects\groton2.osm</fileName>
  </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
-  <layer type="line" k="power" dataSource="Primary">
-   <subLayer name="" visible="false">
+  <layer type="line" dataSource="Primary" k="power">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="power">
       <value>line</value>
@@ -24,8 +24,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="area" k="building" dataSource="Primary">
-   <subLayer name="" visible="false">
+  <layer type="area" dataSource="Primary" k="building">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="building">
       <value>*</value>
@@ -41,8 +41,8 @@
     </area>
    </subLayer>
   </layer>
-  <layer type="line" k="admin_level" dataSource="Primary">
-   <subLayer name="" visible="false">
+  <layer type="line" dataSource="Primary" k="admin_level">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="admin_level">
       <value>*</value>
@@ -58,8 +58,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="line" k="highway" dataSource="Primary">
-   <subLayer name="" visible="false">
+  <layer type="line" dataSource="Primary" k="highway">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>track</value>
@@ -77,17 +77,8 @@
      <opacity>1</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>1</haloSize>
-     <haloColor>#ffffff</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -106,17 +97,8 @@
      <opacity>0.5</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>1</haloSize>
-     <haloColor>#ffffff</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -137,7 +119,7 @@
      <smooth>0</smooth>
     </line>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -153,7 +135,7 @@
      <smooth>0</smooth>
     </line>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>cycleway</value>
@@ -167,17 +149,8 @@
      <opacity>0.5</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>14</height>
-     <color>#000000</color>
-     <haloSize>1</haloSize>
-     <haloColor>#ffffff</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>residential</value>
@@ -192,17 +165,8 @@
      <opacity>1</opacity>
      <smooth>1</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>11</height>
-     <color>#101010</color>
-     <haloSize>0.5</haloSize>
-     <haloColor>#ffffff</haloColor>
-     <lineLaxSpacing>99</lineLaxSpacing>
-     <maxWrapWidth>3</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>secondary</value>
@@ -219,17 +183,8 @@
      <opacity>0.5</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>0</haloSize>
-     <haloColor>#000000</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>service</value>
@@ -244,7 +199,7 @@
      <smooth>0</smooth>
     </line>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>footway</value>
@@ -258,17 +213,8 @@
      <opacity>0.5</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>0</haloSize>
-     <haloColor>#000000</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="highway">
       <value>*</value>
@@ -282,19 +228,10 @@
      <opacity>0.5</opacity>
      <smooth>0</smooth>
     </line>
-    <label>
-     <text>[name] + ' - ' + [highway]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>0</haloSize>
-     <haloColor>#000000</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
   </layer>
-  <layer type="area" k="amenity" dataSource="Primary">
-   <subLayer name="" visible="false">
+  <layer type="area" dataSource="Primary" k="amenity">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="amenity">
       <value>parking</value>
@@ -312,7 +249,7 @@
      <fillImageOpacity>1</fillImageOpacity>
     </area>
    </subLayer>
-   <subLayer name="" visible="false">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="amenity">
       <value>school</value>
@@ -326,19 +263,10 @@
      <fillImage></fillImage>
      <fillImageOpacity>1</fillImageOpacity>
     </area>
-    <label>
-     <text>[name]</text>
-     <height>10</height>
-     <color>#000000</color>
-     <haloSize>0</haloSize>
-     <haloColor>#000000</haloColor>
-     <lineLaxSpacing>0</lineLaxSpacing>
-     <maxWrapWidth>30</maxWrapWidth>
-    </label>
    </subLayer>
   </layer>
-  <layer type="line" k="landuse" dataSource="Primary">
-   <subLayer name="" visible="true">
+  <layer type="line" dataSource="Primary" k="landuse">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="landuse">
       <value>conservation</value>
@@ -355,8 +283,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="line" k="waterway" dataSource="Primary">
-   <subLayer name="" visible="true">
+  <layer type="line" dataSource="Primary" k="waterway">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="waterway">
       <value>stream</value>
@@ -385,8 +313,8 @@
     </label>
    </subLayer>
   </layer>
-  <layer type="area" k="natural" dataSource="Primary">
-   <subLayer name="" visible="true">
+  <layer type="area" dataSource="Primary" k="natural">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="natural">
       <value>water</value>
@@ -401,7 +329,7 @@
      <fillImageOpacity>1</fillImageOpacity>
     </area>
    </subLayer>
-   <subLayer name="" visible="true">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="natural">
       <value>wetland</value>
@@ -417,8 +345,8 @@
     </area>
    </subLayer>
   </layer>
-  <layer type="area" k="waterway" dataSource="Primary">
-   <subLayer name="" visible="true">
+  <layer type="area" dataSource="Primary" k="waterway">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="waterway">
       <value>riverbank</value>
@@ -434,8 +362,8 @@
     </area>
    </subLayer>
   </layer>
-  <layer type="area" k="leisure" dataSource="Primary">
-   <subLayer name="" visible="true">
+  <layer type="area" dataSource="Primary" k="leisure">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="leisure">
       <value>nature_reserve</value>
@@ -459,7 +387,7 @@
      <maxWrapWidth>30</maxWrapWidth>
     </label>
    </subLayer>
-   <subLayer name="" visible="true">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="leisure">
       <value>recreation_ground</value>
@@ -485,7 +413,7 @@
      <maxWrapWidth>30</maxWrapWidth>
     </label>
    </subLayer>
-   <subLayer name="" visible="true">
+   <subLayer visible="true" name="">
     <selector>
      <condition key="leisure">
       <value>pitch</value>
