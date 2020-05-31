@@ -48,7 +48,7 @@ public:
 	std::string mapSRS();
 	std::string dataSRS();
 
-	void convertMapToData(double x, double y, double *lat, double *lon);
+	void convertMapToData(double x, double y, double *lon, double *lat);
 	void convertDataToMap(double lat, double lon, double *x, double *y);
 
 private:

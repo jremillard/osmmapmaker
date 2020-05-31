@@ -11,6 +11,7 @@
 #include <osmium/handler/node_locations_for_ways.hpp>
 #include <osmium/geom/wkb.hpp>
 #include <unordered_set>
+#include <geos_c.h>
 
 class OsmData : public DataSource
 {
@@ -38,6 +39,8 @@ private:
 	void addSpatialIndexToDb(long long entityId, const osmium::Box &bbBox);
 
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
+
+	GEOSContextHandle_t GEOSContextHandle_;
 
 	std::vector<std::string> discardedKeys_;
 

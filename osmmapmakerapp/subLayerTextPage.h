@@ -30,6 +30,9 @@ private slots:
 	void on_haloColor_editingFinished();
 	void on_lineMaxSpacing_editingFinished();
 	void on_maxWrapWidth_editingFinished();
+	void on_offset_editingFinished();
+	void on_colorPick_clicked();
+	void on_haloColorPick_clicked();
 
 private:
 

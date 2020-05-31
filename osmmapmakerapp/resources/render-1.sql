@@ -3,7 +3,9 @@ create table entity (
 	id integer primary key autoincrement, 
 	source string, 
 	type integer, 
-	geom blob
+	geom blob,
+	linearLengthM real ,
+	areaM real
 	);
 
 create table entityKV ( 

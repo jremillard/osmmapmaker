@@ -307,6 +307,8 @@ void Project::createView(SQLite::Database &db, const QString &viewName, const QS
 	createViewSql += QString("select\n");
 	createViewSql += QString("	entity.id,\n");
 	createViewSql += QString("	entity.geom,\n");
+	createViewSql += QString("	entity.linearLengthM as __length__,\n");
+	createViewSql += QString("	entity.areaM as __area__,\n");
 	createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(primaryKey);
 
 	for (QString a : attributes)

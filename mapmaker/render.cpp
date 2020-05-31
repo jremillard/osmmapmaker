@@ -38,6 +38,35 @@ Render::Render(Project *project)
 		mapnikInit = true;
 	}
 
+	auto zoomToScale = std::map<int, double>();
+	zoomToScale[0] = 1000000000;
+	zoomToScale[1] = 500000000;
+	zoomToScale[2] = 200000000;
+	zoomToScale[3] = 100000000;
+	zoomToScale[4] = 50000000;
+	zoomToScale[5] = 25000000;
+	zoomToScale[6] = 12500000;
+	zoomToScale[7] = 6500000;
+	zoomToScale[8] = 3000000;
+	zoomToScale[9] = 1500000;
+	zoomToScale[10] = 750000;
+	zoomToScale[11] = 400000;
+	zoomToScale[12] = 200000;
+	zoomToScale[13] = 100000;
+	zoomToScale[14] = 50000;
+	zoomToScale[15] = 25000;
+	zoomToScale[16] = 12500;
+	zoomToScale[17] = 5000;
+	zoomToScale[18] = 2500;
+	zoomToScale[19] = 1500;
+	zoomToScale[20] = 750;
+	zoomToScale[21] = 500;
+	zoomToScale[22] = 250;
+	zoomToScale[23] = 100;
+	zoomToScale[24] = 50;
+	zoomToScale[25] = 25;
+	zoomToScale[26] = 12.5;
+
 	map_ = Map(100, 100);
 
 	map_.set_background(color( project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue()));
@@ -58,7 +87,8 @@ Render::Render(Project *project)
 		p["type"] = "sqlite";
 		p["file"] = "render.sqlite";
 		p["base"] = project->assetDirectory().string();
-		p["table"] = projectLayer->virtualSQLTableName().toStdString();
+		//p["table"] = projectLayer->virtualSQLTableName().toStdString();
+		p["table"] = projectLayer->renderSQLSelect(false).toStdString();
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
@@ -111,6 +141,7 @@ Render::Render(Project *project)
 
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(zoomToScale[line.minZoom_]);
 
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
@@ -136,6 +167,7 @@ Render::Render(Project *project)
 
 				rule r;
 				r.set_filter(expression);
+				r.set_max_scale(zoomToScale[line.minZoom_]);
 
 				line_symbolizer line_sym;
 				put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
@@ -144,6 +176,9 @@ Render::Render(Project *project)
 				//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
 				put(line_sym, keys::stroke_opacity, line.opacity_);
 				put(line_sym, keys::smooth, line.smooth_);
+
+				if (line.dashArray_.size() > 0)
+					put(line_sym, keys::stroke_dasharray, line.dashArray_);
 
 				r.append(std::move(line_sym));
 
@@ -171,6 +206,7 @@ Render::Render(Project *project)
 
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(zoomToScale[area.minZoom_]);
 
 					polygon_symbolizer area_sym;
 
@@ -199,6 +235,7 @@ Render::Render(Project *project)
 
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(zoomToScale[area.minZoom_]);
 
 					polygon_pattern_symbolizer area_pattern;
 
@@ -226,6 +263,7 @@ Render::Render(Project *project)
 
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(zoomToScale[area.minZoom_]);
 
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
@@ -283,7 +321,8 @@ Render::Render(Project *project)
 		p["type"] = "sqlite";
 		p["file"] = "render.sqlite";
 		p["base"] = project->assetDirectory().string();
-		p["table"] = projectLayer->virtualSQLTableName().toStdString();
+		//p["table"] = projectLayer->virtualSQLTableName().toStdString();
+		p["table"] = projectLayer->renderSQLSelect(true).toStdString();
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
 		p["key_field"] = "id";
@@ -332,10 +371,11 @@ Render::Render(Project *project)
 
 				feature_type_style style;
 
-				if (label.visible_)
+				if (label.visible_ && label.mapnikText().isEmpty() == false)
 				{
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(std::max( zoomToScale[line.minZoom_], zoomToScale[label.minZoom_]));
 
 					text_symbolizer text_sym;
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
@@ -345,11 +385,12 @@ Render::Render(Project *project)
 					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
 					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
 					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
+					placement_finder->defaults.layout_defaults.dy = label.offsetY_;
 
 					placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_;
 					placement_finder->defaults.expressions.largest_bbox_only = false; // line multipolygon, get labels on every line.
 
-					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
+					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.mapnikText().toStdString())));
 
 					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(LINE_PLACEMENT);
 
@@ -373,12 +414,13 @@ Render::Render(Project *project)
 				if (area.visible_ == false)
 					continue;
 
-				if (label.visible_)
+				if (label.visible_ && label.mapnikText().isEmpty() == false)
 				{
 					feature_type_style style;
 
 					rule r;
 					r.set_filter(expression);
+					r.set_max_scale(std::max(zoomToScale[area.minZoom_], zoomToScale[label.minZoom_]));
 
 					text_symbolizer text_sym;
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
@@ -393,7 +435,7 @@ Render::Render(Project *project)
 
 					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
 
-					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.text_.toStdString())));
+					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.mapnikText().toStdString())));
 
 					put<text_placements_ptr>(text_sym, keys::text_placements_, placement_finder);
 
@@ -424,18 +466,11 @@ void Render::SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, doubl
 {
 	map_.resize(imageWithPixels, imageHeightPixels);
 
-	if (pixelResolution <= 0)
-	{
-		map_.zoom_all();
-	}
-	else
-	{
-		double widthLin = (double)imageWithPixels * pixelResolution;
-		double heightLin = (double)imageHeightPixels * pixelResolution;
+	double widthLin = (double)imageWithPixels * pixelResolution;
+	double heightLin = (double)imageHeightPixels * pixelResolution;
 
-		box2d<double> box(centerX - widthLin / 2.0, centerY - heightLin / 2.0, centerX + widthLin / 2.0, centerY + heightLin / 2.0);
-		map_.zoom_to_box(box);
-	}
+	box2d<double> box(centerX - widthLin / 2.0, centerY - heightLin / 2.0, centerX + widthLin / 2.0, centerY + heightLin / 2.0);
+	map_.zoom_to_box(box);
 }
 
 void Render::SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top)

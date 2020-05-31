@@ -25,6 +25,7 @@ public:
 private slots:
 	void on_zoomIn_clicked();
 	void on_zoomOut_clicked();
+	void on_zoom_editingFinished();
 
 	void on_treeNew_clicked();
 	void on_treeDelete_clicked();
@@ -59,6 +60,7 @@ private slots:
 	void on_lineCasingColorPick_clicked();
 	void on_lineColorPick_clicked();
 	void on_editingFinishedLineLabel();
+	void on_lineMinZoom_editingFinished();
 
 	// area
 	void on_areaVisible_clicked();
@@ -72,6 +74,7 @@ private slots:
 	void on_areaFillImageSelect_clicked();
 	void on_areaFillImageOpacity_editingFinished();
 	void on_editingFinishedAreaLabel();
+	void on_areaMinZoom_editingFinished();
 
 private:
 	void showEvent(QShowEvent *event);
@@ -82,10 +85,10 @@ private:
 	void resizeEvent(QResizeEvent *event);
 	void updateTree();
 	void freshRender();
-	void lineSave();
+	void saveLine();
 	void saveArea();
 	void moveTreeItem(int direction);
-
+	void updatePixelResultionFromZoom();
 
 	SubLayerTextPage *lineLabelPage_;
 	SubLayerTextPage *areaLabelPage_;

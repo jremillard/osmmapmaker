@@ -28,14 +28,14 @@
 // This will work for all input files keeping the index in memory.
 #include <osmium/index/map/flex_mem.hpp>
 
+
 // The type of index used. This must match the include file above
 using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
 
 // The location handler always depends on the index type
 using location_handler_type = osmium::handler::NodeLocationsForWays<index_type>;
 
-
-
+static const double detToM = 6356.0 * 1000.0 * 2.0 * (std::atan(1.0) * 4) / 360;
 
 OsmData::OsmData()
 {
@@ -119,8 +119,9 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 		}
 	}
 
+	GEOSContextHandle_ = GEOS_init_r();
 
-	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom) VALUES (?,?,?)");
+	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom, linearLengthM, areaM) VALUES (?,?,?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
 	queryAddSpatialIndex_ = new SQLite::Statement(db_, "INSERT INTO entitySpatialIndex(pkid, xmin, xmax,ymin, ymax) VALUES (?,?,?,?,?)");
 
@@ -177,6 +178,9 @@ void OsmDataImportHandler::node(const osmium::Node& node)
 		std::string pt = factory_.create_point(node);
 
 		queryAdd_->bind(3, pt.c_str(), pt.size());
+
+		queryAdd_->bind(4, 0); // 
+		queryAdd_->bind(5, 0);
 
 		queryAdd_->exec();
 
@@ -237,21 +241,32 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 
 			queryAdd_->bind(2, dataSource_.toStdString());
 
-			std::string pt = factory_.create_linestring(way);
-			queryAdd_->bind(3, pt.c_str(), pt.size());
+			std::string wkbBuffer = factory_.create_linestring(way);
+			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
+			GEOSGeometry *geom = GEOSGeomFromWKB_buf_r(GEOSContextHandle_, (const uchar*)wkbBuffer.c_str(), wkbBuffer.size());
+
+			double length;
+			if (GEOSLength_r(GEOSContextHandle_, geom, &length) == 0)
+			{
+				length = 0;
+			}
+			queryAdd_->bind(4, length*detToM);
+
+			double area = 0;
+			queryAdd_->bind(5, area);
+
+			queryAdd_->exec();
+
+			long long entityId = db_.getLastInsertRowid();
+
+			queryAdd_->reset();
+
+			addTagsToDb(entityId, way.tags());
+
+			osmium::Box bbBox = way.envelope();
+			addSpatialIndexToDb(entityId, bbBox);
 		}
-
-		queryAdd_->exec();
-
-		long long entityId = db_.getLastInsertRowid();
-
-		queryAdd_->reset();
-
-		addTagsToDb(entityId, way.tags());
-
-		osmium::Box bbBox = way.envelope();
-		addSpatialIndexToDb(entityId, bbBox);
 	}
 	catch (osmium::geometry_error &)
 	{
@@ -302,8 +317,23 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 				queryAdd_->bind(1, OET_LINE);
 
 			queryAdd_->bind(2, dataSource_.toStdString());
-			std::string pt = factory_.create_multipolygon(area);
-			queryAdd_->bind(3, pt.c_str(), pt.size());
+			std::string wkbBuffer = factory_.create_multipolygon(area);
+			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
+
+			GEOSGeometry *geom = GEOSGeomFromWKB_buf_r(GEOSContextHandle_, (const uchar*)wkbBuffer.c_str(), wkbBuffer.size());
+			
+			double lengthDeg;
+			if (GEOSLength_r(GEOSContextHandle_, geom, &lengthDeg) == 0)
+				lengthDeg = 0;
+			queryAdd_->bind(4, lengthDeg * detToM);
+
+			double areaDegSq;
+			if (GEOSArea_r(GEOSContextHandle_, geom, &areaDegSq) == 0)
+				areaDegSq = 0;
+			queryAdd_->bind(5, areaDegSq * detToM * detToM);
+
+			GEOSGeom_destroy_r(GEOSContextHandle_, geom);
+
 			queryAdd_->exec();
 
 			long long entityId = db_.getLastInsertRowid();
@@ -370,7 +400,6 @@ void OsmDataImportHandler::addTagsToDb(long long entityId, const osmium::TagList
 	}
 
 }
-
 
 
 

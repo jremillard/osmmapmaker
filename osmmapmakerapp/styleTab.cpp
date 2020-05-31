@@ -90,8 +90,8 @@ void StyleTab::setProject(Project *project)
 
 	project_->convertDataToMap(lon, latitude, &centerX_, &centerY_);
 
-	double zoomlevel = 15;
-	pixelResolution_ = 156543.03 * cos(latitude * 0.01745329251994329576923690768489) / pow(2,zoomlevel);
+	ui->zoom->setValue(15);
+	updatePixelResultionFromZoom();
 
 	delete render_;
 	render_ = NULL;
@@ -410,11 +410,26 @@ void StyleTab::moveTreeItem(int direction)
 	}
 }
 
+
+void StyleTab::on_zoom_editingFinished()
+{
+	renderedImage_ = QImage();
+
+	updatePixelResultionFromZoom();
+
+	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
+	renderedImage_ = render_->RenderImage();
+
+	repaint();
+}
+
 void StyleTab::on_zoomIn_clicked()
 {
 	renderedImage_ = QImage();
 
-	pixelResolution_ /= 1.5;
+	ui->zoom->setValue(ui->zoom->value() + 1);
+
+	updatePixelResultionFromZoom();
 
 	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
 	renderedImage_ = render_->RenderImage();
@@ -427,13 +442,24 @@ void StyleTab::on_zoomOut_clicked()
 {
 	renderedImage_ = QImage();
 
-	pixelResolution_ *= 1.5;
+	ui->zoom->setValue(ui->zoom->value() - 1);
+
+	updatePixelResultionFromZoom();
 
 	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
 	renderedImage_ = render_->RenderImage();
 
 	repaint();
 }
+
+void StyleTab::updatePixelResultionFromZoom()
+{
+	double latitude, lon;
+	project_->convertMapToData(centerX_, centerY_, &lon, &latitude);
+
+	pixelResolution_ = 156543.03 * cos(latitude * 0.01745329251994329576923690768489) / pow(2, ui->zoom->value());
+}
+
 
 void StyleTab::mouseMoveEvent(QMouseEvent *mevent)
 {
@@ -471,8 +497,14 @@ void StyleTab::resizeEvent(QResizeEvent *mevent)
 {
 	int zoomButtonsSpacing = 3;
 
-	ui->zoomIn->move(width() - ui->zoomIn->width() - zoomButtonsSpacing, zoomButtonsSpacing);
-	ui->zoomOut->move(width() - ui->zoomOut->width() - zoomButtonsSpacing, zoomButtonsSpacing*2+ ui->zoomIn->height());
+	ui->zoomIn->move(width() - ui->zoomIn->width() - zoomButtonsSpacing, 
+		zoomButtonsSpacing);
+	ui->zoomOut->move(
+		width() - ui->zoomOut->width() - zoomButtonsSpacing, 
+		zoomButtonsSpacing*2+ ui->zoomIn->height());
+	ui->zoom->move(
+		width() - ui->zoomIn->width() - zoomButtonsSpacing*2 - ui->zoom->width(), 
+		zoomButtonsSpacing + ui->zoomIn->height()/2);
 
 	ui->styleGroup->resize(ui->styleGroup->width(), height() - zoomButtonsSpacing * 2);
 
@@ -589,12 +621,22 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				Line line = layer->subLayerLine(subLayerIndex);
 
 				ui->lineVisible->setChecked(line.visible_);
+				ui->lineMinZoom->setValue(line.minZoom_);
 				ui->lineColor->setText(line.color_.name());
 				ui->lineWidth->setValue(line.width_);
 				ui->lineCasingWidth->setValue(line.casingWidth_);
 				ui->lineCasingColor->setText(line.casingColor_.name());
 				ui->lineSmooth->setValue(line.smooth_);
 				ui->lineOpacity->setValue(line.opacity_);
+
+				QString dashArrayStr = "";
+				for (auto pair : line.dashArray_)
+				{
+					if (dashArrayStr.length() > 0)
+						dashArrayStr += ", ";
+					dashArrayStr += QString::number(pair.first) + "," + QString::number(pair.second);
+				}
+				ui->lineDashArray->setText(dashArrayStr);
 
 				lineLabelPage_->Load(layer->label(subLayerIndex));
 				lineSelectPage_->Load(project_->renderDatabase(),layer->dataSource(), layer->subLayerSelectors(subLayerIndex));
@@ -609,6 +651,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 				Area area = layer->subLayerArea(subLayerIndex);
 
 				ui->areaVisible->setChecked(area.visible_);
+				ui->areaMinZoom->setValue(area.minZoom_);
 				ui->areaColor->setText(area.color_.name());
 				ui->areaOpacity->setValue(area.opacity_);
 
@@ -717,6 +760,10 @@ void StyleTab::on_areaFillImageOpacity_editingFinished()
 	saveArea();
 }
 
+void StyleTab::on_areaMinZoom_editingFinished()
+{
+	saveArea();
+}
 
 void StyleTab::on_areaColorPick_clicked()
 {
@@ -764,6 +811,7 @@ void StyleTab::saveArea()
 	Area area = layer->subLayerArea(subLayerIndex);
 
 	area.visible_ = ui->areaVisible->isChecked();
+	area.minZoom_ = ui->areaMinZoom->value();
 	area.color_ = ui->areaColor->text();
 	area.opacity_ = ui->areaOpacity->value();
 
@@ -799,43 +847,49 @@ void StyleTab::on_editingFinishedPointLabel()
 //////// line tab
 void StyleTab::on_lineVisible_clicked()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineColor_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineWidth_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineDashArray_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineCasingWidth_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineCasingColor_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineSmooth_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
 
 void StyleTab::on_lineOpacity_editingFinished()
 {
-	lineSave();
+	saveLine();
 }
+
+void StyleTab::on_lineMinZoom_editingFinished()
+{
+	saveLine();
+}
+
 
 void StyleTab::on_lineCasingColorPick_clicked()
 {
@@ -844,7 +898,7 @@ void StyleTab::on_lineCasingColorPick_clicked()
 	if (newColor.isValid())
 	{
 		ui->lineCasingColor->setText(newColor.name());
-		lineSave();
+		saveLine();
 	}
 }
 
@@ -855,16 +909,16 @@ void StyleTab::on_lineColorPick_clicked()
 	if (newColor.isValid())
 	{
 		ui->lineColor->setText(newColor.name());
-		lineSave();
+		saveLine();
 	}
 }
 
 void StyleTab::on_editingFinishedLineLabel()
 {
-	lineSave();
+	saveLine();
 }
 
-void StyleTab::lineSave()
+void StyleTab::saveLine()
 {
 	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
 
@@ -880,11 +934,24 @@ void StyleTab::lineSave()
 
 	line.visible_ = ui->lineVisible->isChecked();
 	line.color_ = ui->lineColor->text();
+	line.minZoom_ = ui->lineMinZoom->value();
 	line.width_ = ui->lineWidth->value();
 	line.casingWidth_ = ui->lineCasingWidth->value();
 	line.casingColor_ = ui->lineCasingColor->text();
 	line.smooth_ = ui->lineSmooth->value();
 	line.opacity_ = ui->lineOpacity->value();
+
+	QStringList dashArray = ui->lineDashArray->text().split(",");
+	for (QString &dash : dashArray)
+	{
+		dash = dash.trimmed();
+	}
+
+	line.dashArray_.clear();
+	for (size_t i = 0; i+1 < dashArray.size(); i += 2)
+	{
+		line.dashArray_.push_back(std::pair<double,double>(dashArray[i].toDouble(), dashArray[i+1].toDouble()));
+	}
 
 	layer->setSubLayerLine(subLayerIndex, line);
 

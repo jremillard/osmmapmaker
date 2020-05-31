@@ -37,29 +37,37 @@ private:
 	std::vector< std::vector<QString>> values_;
 };
 
-class Line
+class SubLayer
+{
+public:
+	SubLayer();
+	virtual ~SubLayer();
+
+	bool visible_;
+	QColor color_;
+	int minZoom_;
+};
+
+class Line : public SubLayer
 {
 public:
 	Line();
 
 	QString name_;
-	bool visible_;
-	QColor color_;
 	QColor casingColor_;
 	double width_;
 	double casingWidth_;
 	double opacity_;
 	double smooth_;
+	std::vector< std::pair<double, double> > dashArray_;
 };
 
-class Area
+class Area : public SubLayer
 {
 public:
 	Area();
 
 	QString name_;
-	bool visible_;
-	QColor color_;
 	double opacity_;
 
 	double casingWidth_;
@@ -68,19 +76,20 @@ public:
 	double fillImageOpacity_;
 };
 
-class Label
+class Label : public SubLayer
 {
 public:
 	Label();
 
-	bool visible_;
+	QString mapnikText();
+
 	QString text_;
 	double height_;
-	QColor color_;
 	double haloSize_;
 	QColor haloColor_;
 	double lineLaxSpacing_;
 	double maxWrapWidth_;
+	double offsetY_;
 };
 
 
@@ -96,8 +105,8 @@ public:
 
 	void saveXML(QDomDocument &doc, QDomElement &layerElement);
 
-	StyleLayerType layerType();
-	OsmEntityType dataType();
+	StyleLayerType layerType() const;
+	OsmEntityType dataType() const;
 
 	std::vector<QString> subLayerNames() const;
 
@@ -121,9 +130,11 @@ public:
 	void showAll();
 	void hideAll();
 
-	std::vector<QString> requiredKeys();
+	std::vector<QString> requiredKeys() const;
 
 	QString virtualSQLTableName() const;
+	QString renderSQLSelect(bool sortBySize) const;
+
 
 private:
 	StyleLayerType type_;

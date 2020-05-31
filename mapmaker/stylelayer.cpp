@@ -94,10 +94,19 @@ void StyleSelector::deleteCondition(size_t i)
 
 //////////////////////////////////////////
 
-Line::Line()
+SubLayer::SubLayer()
 {
 	visible_ = true;
 	color_ = QColor(Qt::black);
+	minZoom_ = 0;
+}
+
+SubLayer::~SubLayer()
+{
+}
+
+Line::Line()
+{
 	casingColor_ = QColor(Qt::white);
 	casingWidth_ = 0.0;
 	width_ = 1.0;
@@ -107,28 +116,30 @@ Line::Line()
 
 Area::Area()
 {
-	visible_ = true;
 	color_ = QColor(Qt::blue);
-
 	opacity_ = 1.0;
-
 	casingWidth_ = 0;
 	casingColor_ = QColor(Qt::black);
-
 	fillImageOpacity_ = 1.0;
 }
 
 Label::Label()
 {
-	visible_ = true;
 	text_ = "[name]";
 	height_ = 10;
-	color_ = QColor(Qt::black);
 	haloSize_ = 0;
 	haloColor_ = QColor(Qt::black);
 	lineLaxSpacing_ = 0;
 	maxWrapWidth_ = 30;
+	offsetY_ = 0;
 }
+
+QString Label::mapnikText()
+{
+	return text_;
+}
+
+
 
 //////////////////////////////////////////
 
@@ -204,6 +215,7 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			if (lineNode.isNull() == false)
 			{
 				line.name_ = subLayers.at(i).attributes().namedItem("name").nodeValue();
+				line.minZoom_ = subLayers.at(i).attributes().namedItem("minZoom").nodeValue().toInt();
 				line.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
 
 				line.color_ = lineNode.firstChildElement("color").text();
@@ -212,6 +224,23 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 				line.casingWidth_ = lineNode.firstChildElement("casingWidth").text().toDouble();
 				line.opacity_ = lineNode.firstChildElement("opacity").text().toDouble();
 				line.smooth_ = lineNode.firstChildElement("smooth").text().toDouble();
+
+				QString dashArrayStr = lineNode.firstChildElement("dashArray").text();
+
+				if (dashArrayStr.isEmpty() == false)
+				{
+					QStringList dashArray = dashArrayStr.split(",");
+					for (QString &dash : dashArray)
+					{
+						dash = dash.trimmed();
+					}
+
+					line.dashArray_.clear();
+					for (size_t i = 0; i + 1 < dashArray.size(); i += 2)
+					{
+						line.dashArray_.push_back(std::pair<double, double>(dashArray[i].toDouble(), dashArray[i + 1].toDouble()));
+					}
+				}
 			}
 
 			lines_.push_back(line);
@@ -234,7 +263,9 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			if (areaNode.isNull() == false)
 			{
 				area.name_ = subLayers.at(i).attributes().namedItem("name").nodeValue();
+				area.minZoom_ = subLayers.at(i).attributes().namedItem("minZoom").nodeValue().toInt();
 				area.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
+
 
 				area.color_ = areaNode.firstChildElement("color").text();
 				area.casingColor_ = areaNode.firstChildElement("casingColor").text();
@@ -261,6 +292,8 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 		{
 			Label layerLabel = labels_[i];
 
+			layerLabel.minZoom_ = labelNode.attributes().namedItem("minZoom").nodeValue().toInt();
+
 			layerLabel.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
 			layerLabel.text_ = labelNode.firstChildElement("text").text();
 			layerLabel.height_ = labelNode.firstChildElement("height").text().toDouble();
@@ -269,6 +302,7 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			layerLabel.haloColor_ = labelNode.firstChildElement("haloColor").text();
 			layerLabel.lineLaxSpacing_ = labelNode.firstChildElement("lineLaxSpacing").text().toDouble();
 			layerLabel.maxWrapWidth_ = labelNode.firstChildElement("maxWrapWidth").text().toDouble();
+			layerLabel.offsetY_ = labelNode.firstChildElement("offsetY").text().toDouble(); 
 
 			labels_[i] = layerLabel;
 		}
@@ -352,6 +386,8 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 			subLayerNode.setAttribute("name", line.name_);
 			subLayerNode.setAttribute("visible", line.visible_ ? "true" : "false");
+			subLayerNode.setAttribute("minZoom", line.minZoom_);
+
 
 			QDomElement colorNode = doc.createElement("color");
 			colorNode.appendChild(doc.createTextNode(line.color_.name()));
@@ -377,6 +413,18 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			smoothNode.appendChild(doc.createTextNode(QString::number(line.smooth_)));
 			lineNode.appendChild(smoothNode);
 
+			QDomElement dashArrayNode = doc.createElement("dashArray");
+			QString dashArrayStr = "";
+			for (auto pair : line.dashArray_)
+			{
+				if (dashArrayStr.length() > 0)
+					dashArrayStr += ",";
+				dashArrayStr += QString::number(pair.first) + "," + QString::number(pair.second);
+			}
+
+			dashArrayNode.appendChild(doc.createTextNode(dashArrayStr));
+			lineNode.appendChild(dashArrayNode);
+			
 			subLayerNode.appendChild(lineNode);
 			break;
 		}
@@ -391,6 +439,7 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 			subLayerNode.setAttribute("name", area.name_);
 			subLayerNode.setAttribute("visible", area.visible_ ? "true" : "false");
+			subLayerNode.setAttribute("minZoom", area.minZoom_);
 
 			QDomElement colorNode = doc.createElement("color");
 			colorNode.appendChild(doc.createTextNode(area.color_.name()));
@@ -433,6 +482,8 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 
 			QDomElement labelNode = doc.createElement("label");
 
+			labelNode.setAttribute("minZoom", label.minZoom_);
+
 			QDomElement labelTagNode = doc.createElement("text");
 			labelTagNode.appendChild(doc.createTextNode(label.text_));
 			labelNode.appendChild(labelTagNode);
@@ -461,6 +512,10 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			maxWrapWidthNode.appendChild(doc.createTextNode(QString::number(label.maxWrapWidth_)));
 			labelNode.appendChild(maxWrapWidthNode);
 
+			QDomElement offsetYNode = doc.createElement("offsetY");
+			offsetYNode.appendChild(doc.createTextNode(QString::number(label.offsetY_)));
+			labelNode.appendChild(offsetYNode);
+
 			subLayerNode.appendChild(labelNode);
 		}
 
@@ -468,12 +523,12 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 	}
 }
 
-StyleLayerType StyleLayer::layerType()
+StyleLayerType StyleLayer::layerType() const
 {
 	return type_;
 }
 
-OsmEntityType StyleLayer::dataType()
+OsmEntityType StyleLayer::dataType() const
 {
 	switch (type_)
 	{
@@ -571,6 +626,7 @@ QString StyleLayer::virtualSQLTableName() const
 		assert(false);
 	}
 
+	return "";
 }
 
 
@@ -630,7 +686,7 @@ std::vector<QString> StyleLayer::subLayerNames() const
 	return ret;
 }
 
-std::vector<QString> StyleLayer::requiredKeys()
+std::vector<QString> StyleLayer::requiredKeys() const
 {
 	std::vector<QString> keys;
 
@@ -668,7 +724,7 @@ std::vector<QString> StyleLayer::requiredKeys()
 	keys.erase(std::unique(keys.begin(), keys.end()), keys.end());
 
 	// primary key should't be listed here, it is always in the table
-	keys.erase(std::remove(keys.begin(), keys.end(), key()), keys.end());
+	keys.erase(std::remove(keys.begin(), keys.end(), key_), keys.end());
 
 	return keys;
 }
@@ -731,5 +787,56 @@ void StyleLayer::setLabel(size_t i, const Label &lb)
 	labels_[i] = lb;
 }
 
+QString StyleLayer::renderSQLSelect(bool sortBySize) const
+{
+	std::vector<QString> attributes = requiredKeys();
 
+
+	/*
+	CREATE VIEW view_name as
+	select
+		entity.id,
+		highway.value as highway,
+		name.value as name,
+		access.value as access
+	from
+		entity
+	JOIN entityKV as highway on entity.id == highway.id and highway.key == 'highway'
+	left OUTER JOIN entityKV as access on entity.id == access.id and access.key = 'access'
+	left OUTER JOIN entityKV as name on entity.id == name.id and name.key = 'name'
+
+	*/
+
+	QString createViewSql;
+	createViewSql += QString("select\n");
+	createViewSql += QString("	entity.id,\n");
+	createViewSql += QString("	entity.geom,\n");
+	createViewSql += QString("	entity.linearLengthM as __length__,\n");
+	createViewSql += QString("	entity.areaM as __area__,\n");
+	createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(key_);
+
+	for (QString a : attributes)
+	{
+		createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(a);
+	}
+	createViewSql.chop(2); // don't want the last comma.
+
+	createViewSql += QString("\nfrom entity\n");
+
+	createViewSql += QString("JOIN entityKV as \"%1\" on entity.source == '%2' and entity.type == %3 and entity.id == \"%1\".id and \"%1\".key == '%1'").arg(key_).arg(dataSource_).arg(dataType());
+
+	for (QString a : attributes)
+	{
+		createViewSql += QString("	left outer join entityKV as \"%1\" on entity.id = \"%1\".id and \"%1\".key == '%1'\n").arg(a);
+	}
+
+	if (sortBySize)
+	{
+		createViewSql += "ORDER BY __area__, __length__ DESC\n";
+	}
+
+	//createViewSql += "WHERE __area__ > !pixel_width! * !pixel_height!\n";
+
+	return "( " + createViewSql + ")";
+}
 
