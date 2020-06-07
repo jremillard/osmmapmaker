@@ -9,7 +9,7 @@
 class Render
 {
 public:
-	Render(Project *project);
+	Render(Project *project, int scale = 1);
 
 	QImage RenderImage();
 

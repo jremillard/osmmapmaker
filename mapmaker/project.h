@@ -4,6 +4,7 @@
 #include <vector>
 #include "datasource.h"
 #include "stylelayer.h"
+#include "output.h"
 
 #include <filesystem>
 
@@ -25,6 +26,14 @@ public:
 
 	void removeDataSource(DataSource* src);
 	void addDataSource(DataSource* src);
+
+	std::vector< Output*> outputs()
+	{
+		return outputs_;
+	}
+
+	void removeOutput(Output* src);
+	void addOutput(Output* src);
 
 	std::vector< StyleLayer*> styleLayers()
 	{
@@ -61,6 +70,7 @@ private:
 	SQLite::Database *db_;
 	std::vector< DataSource*> dataSources_;
 	std::vector< StyleLayer *> styleLayers_;
+	std::vector< Output*> outputs_;
 	path projectPath_;
 
 };

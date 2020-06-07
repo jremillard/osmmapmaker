@@ -21,8 +21,6 @@ find_library(geoscc NAMES geos_cd)
 
 add_executable(osmmapmakerapp ${SRC_FILES} ${UI_FILES} resources.qrc)
 
-MESSAGE(${geoscc})
-
 target_link_libraries(osmmapmakerapp mapmaker Qt5::Widgets Qt5::WinMain BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 ${geoscc} ${mapnik} )
 
 #install(DIRECTORY "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/bin/plugins" DESTINATION  "${CMAKE_BINARY_DIR}/Debug")

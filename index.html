@@ -1,0 +1,78 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<title>Tile Test</title>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+	
+</head>
+<body>
+
+
+
+<div id="mapid" style="width: 1200px; height: 1200px;"></div>
+<script>
+
+    var testLayer1x256 = L.tileLayer('/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        minZoom: 13,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        tileSize: 256
+    })
+
+    var testLayer2x256 = L.tileLayer('/{z}/{x}/{y}@2x.png', {
+        maxZoom: 20,
+        minZoom: 13,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        tileSize: 256
+    })
+
+    var testLayer1x512 = L.tileLayer('/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        minZoom: 13,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        tileSize: 512
+    })
+
+    var testLayer2x512 = L.tileLayer('/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        minZoom: 13,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        tileSize: 512
+    })
+
+    var osmLayer = L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20,
+        minZoom: 13,
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+    })
+
+    
+    var map = L.map('mapid', {
+        center: [42.608089, -71.571152],
+        zoom: 13,
+        layers: [testLayer1x256]
+    });
+
+    var baseMaps = {
+        "Test 256 1x": testLayer1x256,
+        "Test 256 2x": testLayer2x256,
+        "Test 512 1x": testLayer1x512,
+        "Test 512 2x": testLayer2x512,
+        "OSM": osmLayer,
+    };
+
+    L.control.layers(baseMaps).addTo(map);
+
+</script>
+
+
+</body>
+</html>

@@ -21,7 +21,7 @@ using namespace mapnik;
 
 static bool mapnikInit = false;
 
-Render::Render(Project *project)
+Render::Render(Project *project, int dpiScale)
 {
 	project->createViews();
 
@@ -39,33 +39,33 @@ Render::Render(Project *project)
 	}
 
 	auto zoomToScale = std::map<int, double>();
-	zoomToScale[0] = 1000000000;
-	zoomToScale[1] = 500000000;
-	zoomToScale[2] = 200000000;
-	zoomToScale[3] = 100000000;
-	zoomToScale[4] = 50000000;
-	zoomToScale[5] = 25000000;
-	zoomToScale[6] = 12500000;
-	zoomToScale[7] = 6500000;
-	zoomToScale[8] = 3000000;
-	zoomToScale[9] = 1500000;
-	zoomToScale[10] = 750000;
-	zoomToScale[11] = 400000;
-	zoomToScale[12] = 200000;
-	zoomToScale[13] = 100000;
-	zoomToScale[14] = 50000;
-	zoomToScale[15] = 25000;
-	zoomToScale[16] = 12500;
-	zoomToScale[17] = 5000;
-	zoomToScale[18] = 2500;
-	zoomToScale[19] = 1500;
-	zoomToScale[20] = 750;
-	zoomToScale[21] = 500;
-	zoomToScale[22] = 250;
-	zoomToScale[23] = 100;
-	zoomToScale[24] = 50;
-	zoomToScale[25] = 25;
-	zoomToScale[26] = 12.5;
+	zoomToScale[0] = 1000000000 / dpiScale;
+	zoomToScale[1] = 500000000 / dpiScale;
+	zoomToScale[2] = 200000000 / dpiScale;
+	zoomToScale[3] = 100000000 / dpiScale;
+	zoomToScale[4] = 50000000 / dpiScale;
+	zoomToScale[5] = 25000000 / dpiScale;
+	zoomToScale[6] = 12500000 / dpiScale;
+	zoomToScale[7] = 6500000 / dpiScale;
+	zoomToScale[8] = 3000000 / dpiScale;
+	zoomToScale[9] = 1500000 / dpiScale;
+	zoomToScale[10] = 750000 / dpiScale;
+	zoomToScale[11] = 400000 / dpiScale;
+	zoomToScale[12] = 200000 / dpiScale;
+	zoomToScale[13] = 100000 / dpiScale;
+	zoomToScale[14] = 50000 / dpiScale;
+	zoomToScale[15] = 25000 / dpiScale;
+	zoomToScale[16] = 12500 / dpiScale;
+	zoomToScale[17] = 5000 / dpiScale;
+	zoomToScale[18] = 2500 / dpiScale;
+	zoomToScale[19] = 1500 / dpiScale;
+	zoomToScale[20] = 750 / dpiScale;
+	zoomToScale[21] = 500 / dpiScale;
+	zoomToScale[22] = 250 / dpiScale;
+	zoomToScale[23] = 100 / dpiScale;
+	zoomToScale[24] = 50 / dpiScale;
+	zoomToScale[25] = 25 / dpiScale;
+	zoomToScale[26] = 12.5 / dpiScale;
 
 	map_ = Map(100, 100);
 
@@ -101,6 +101,7 @@ Render::Render(Project *project)
 		layer lyr(layerName.toStdString());
 
 		lyr.set_datasource(datasource_cache::instance().create(p));
+		lyr.set_cache_features(true);
 
 		lyr.set_srs(project->dataSRS());
 
@@ -145,7 +146,7 @@ Render::Render(Project *project)
 
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
-					put(line_sym, keys::stroke_width, line.width_ + line.casingWidth_*2.0);
+					put(line_sym, keys::stroke_width, (line.width_ + line.casingWidth_)*2.0*dpiScale);
 					//put(line_sym, keys::stroke_linecap, ROUND_CAP);
 					//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
 					put(line_sym, keys::stroke_opacity, line.opacity_);
@@ -171,7 +172,7 @@ Render::Render(Project *project)
 
 				line_symbolizer line_sym;
 				put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
-				put(line_sym, keys::stroke_width, line.width_);
+				put(line_sym, keys::stroke_width, line.width_*dpiScale);
 				//put(line_sym, keys::stroke_linecap, ROUND_CAP);
 				//put(line_sym, keys::stroke_linejoin, ROUND_JOIN);
 				put(line_sym, keys::stroke_opacity, line.opacity_);
@@ -267,7 +268,7 @@ Render::Render(Project *project)
 
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
-					put(line_sym, keys::stroke_width, area.casingWidth_);
+					put(line_sym, keys::stroke_width, area.casingWidth_*dpiScale);
 					put(line_sym, keys::stroke_opacity, area.opacity_);
 					put(line_sym, keys::smooth, 0.0);
 
@@ -335,6 +336,8 @@ Render::Render(Project *project)
 		layer lyr(layerName.toStdString());
 
 		lyr.set_datasource(datasource_cache::instance().create(p));
+		lyr.set_buffer_size(256);
+		lyr.set_cache_features(true);
 
 		lyr.set_srs(project->dataSRS());
 
@@ -381,13 +384,13 @@ Render::Render(Project *project)
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
 					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-					placement_finder->defaults.format_defaults.text_size = label.height_;
+					placement_finder->defaults.format_defaults.text_size = label.height_*dpiScale;
 					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
 					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
-					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
-					placement_finder->defaults.layout_defaults.dy = label.offsetY_;
+					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_*dpiScale;
+					placement_finder->defaults.layout_defaults.dy = label.offsetY_*dpiScale;
 
-					placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_;
+					placement_finder->defaults.expressions.label_spacing = label.lineLaxSpacing_*dpiScale;
 					placement_finder->defaults.expressions.largest_bbox_only = false; // line multipolygon, get labels on every line.
 
 					placement_finder->defaults.set_format_tree(std::make_shared<mapnik::formatting::text_node>(parse_expression(label.mapnikText().toStdString())));
@@ -426,12 +429,12 @@ Render::Render(Project *project)
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
 					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
-					placement_finder->defaults.format_defaults.text_size = label.height_;
+					placement_finder->defaults.format_defaults.text_size = label.height_*dpiScale;
 					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
 					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
-					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_;
+					placement_finder->defaults.format_defaults.halo_radius = label.haloSize_ * dpiScale;
 
-					placement_finder->defaults.layout_defaults.wrap_width = label.maxWrapWidth_;
+					placement_finder->defaults.layout_defaults.wrap_width = label.maxWrapWidth_ * dpiScale;
 
 					placement_finder->defaults.expressions.label_placement = enumeration_wrapper(INTERIOR_PLACEMENT);
 

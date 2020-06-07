@@ -7,7 +7,7 @@
   <fileName>C:\Remillard\Documents\osmmapmaker\projects\groton2.osm</fileName>
  </openStreetMapFileSource>
  <map backgroundColor="#e0e7cc">
-  <layer k="power" type="line" dataSource="Primary">
+  <layer dataSource="Primary" type="line" k="power">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="power">
@@ -25,7 +25,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="building" type="area" dataSource="Primary">
+  <layer dataSource="Primary" type="area" k="building">
    <subLayer visible="true" name="" minZoom="14">
     <selector>
      <condition key="building">
@@ -42,7 +42,7 @@
     </area>
    </subLayer>
   </layer>
-  <layer k="admin_level" type="line" dataSource="Primary">
+  <layer dataSource="Primary" type="line" k="admin_level">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="admin_level">
@@ -60,7 +60,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="highway" type="line" dataSource="Primary">
+  <layer dataSource="Primary" type="line" k="highway">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="highway">
@@ -342,7 +342,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="amenity" type="area" dataSource="Primary">
+  <layer dataSource="Primary" type="area" k="amenity">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="amenity">
@@ -390,9 +390,19 @@
      <fillImage></fillImage>
      <fillImageOpacity>1</fillImageOpacity>
     </area>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <color>#000000</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>50</maxWrapWidth>
+     <offsetY>0</offsetY>
+    </label>
    </subLayer>
   </layer>
-  <layer k="landuse" type="line" dataSource="Primary">
+  <layer dataSource="Primary" type="line" k="landuse">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="landuse">
@@ -411,7 +421,7 @@
     </line>
    </subLayer>
   </layer>
-  <layer k="waterway" type="line" dataSource="Primary">
+  <layer dataSource="Primary" type="line" k="waterway">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="waterway">
@@ -443,7 +453,7 @@
     </label>
    </subLayer>
   </layer>
-  <layer k="natural" type="area" dataSource="Primary">
+  <layer dataSource="Primary" type="area" k="natural">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="natural">
@@ -520,7 +530,7 @@
     </label>
    </subLayer>
   </layer>
-  <layer k="waterway" type="area" dataSource="Primary">
+  <layer dataSource="Primary" type="area" k="waterway">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="waterway">
@@ -537,7 +547,7 @@
     </area>
    </subLayer>
   </layer>
-  <layer k="leisure" type="area" dataSource="Primary">
+  <layer dataSource="Primary" type="area" k="leisure">
    <subLayer visible="true" name="" minZoom="0">
     <selector>
      <condition key="leisure">

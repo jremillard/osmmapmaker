@@ -14,7 +14,6 @@
 
 static PJ_CONTEXT *proj_context = NULL;
 
-
 Project::Project(path fileName)
 {
 	if (proj_context == NULL)
@@ -63,6 +62,10 @@ Project::Project(path fileName)
 		{
 			dataSources_.push_back(new OsmDataFile(topNode));
 		}
+		else if (name == "tileOutput")
+		{
+			outputs_.push_back(new TileOutput(topNode));
+		}
 		else if (name == "map")
 		{
 			backgroundColor_ = topNode.attributes().namedItem("backgroundColor").nodeValue();
@@ -101,6 +104,10 @@ Project::~Project()
 	for (auto i : styleLayers_)
 		delete i;
 	styleLayers_.clear();
+
+	for (auto i : outputs_)
+		delete i;
+	outputs_.clear();
 
 	delete db_;
 }
@@ -206,6 +213,13 @@ void Project::save(path fileName)
 	{
 		QDomElement dataNode;
 		dataSrc->saveXML(doc, dataNode);
+		root.appendChild(dataNode);
+	}
+
+	for (auto dataOutput : outputs_)
+	{
+		QDomElement dataNode;
+		dataOutput->saveXML(doc, dataNode);
 		root.appendChild(dataNode);
 	}
 
@@ -349,6 +363,18 @@ void Project::addStyleLayer(size_t addAt, StyleLayer *l)
 {
 	styleLayers_.insert(styleLayers_.begin()+addAt, l);
 }
+
+void Project::removeOutput(Output* output)
+{
+	outputs_.erase(find(outputs_.begin(), outputs_.end(), output));
+}
+
+void Project::addOutput(Output* output)
+{
+	outputs_.push_back(output);
+}
+
+
 
 std::string Project::mapSRS()
 {
