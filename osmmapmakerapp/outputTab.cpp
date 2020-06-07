@@ -71,18 +71,15 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
 
 				if (tileOutput->outputDirectory().size() == 0)
 				{
-					QString outputDirectory = QString::fromStdString(project_->projectPath().string());
-					outputDirectory.replace(".xml", "", Qt::CaseInsensitive);
-					ui->tilePath->setText(outputDirectory);
 					ui->tilePath->setEnabled(false);
 					ui->tileOutputPathUseProjectDir->setChecked(true);
+					saveDefaultPathIntoTilePath();
 				}
 				else
 				{
-					ui->tilePath->setText(tileOutput->outputDirectory());
 					ui->tilePath->setEnabled(true);
 					ui->tileOutputPathUseProjectDir->setChecked(false);
-
+					ui->tilePath->setText(tileOutput->outputDirectory());
 				}
 
 				int i = ui->tileSize->findData(tileOutput->tileSizePixels());
@@ -170,16 +167,22 @@ void OutputTab::on_tileOutputPathUseProjectDir_clicked()
 {
 	if (ui->tileOutputPathUseProjectDir->isChecked())
 	{
+		saveDefaultPathIntoTilePath();
 		ui->tilePath->setEnabled(false);
 	}
 	else
 	{
-		QString outputDirectory = QString::fromStdString(project_->projectPath().string());
-		outputDirectory.replace(".xml", "", Qt::CaseInsensitive);
-		ui->tilePath->setText(outputDirectory);
 		ui->tilePath->setEnabled(true);
 	}
 	saveTile();
+}
+
+void OutputTab::saveDefaultPathIntoTilePath()
+{
+	QString outputDirectory = QString::fromStdString(project_->projectPath().string());
+	outputDirectory.replace(".xml", "", Qt::CaseInsensitive);
+	ui->tilePath->setText(outputDirectory);
+	ui->tilePath->setEnabled(false);
 }
 
 void OutputTab::on_tileSize_currentIndexChanged(int i)
@@ -261,90 +264,62 @@ void OutputTab::on_generate_clicked()
 		auto ll0 = std::pair<double, double>(lon - distDeg, latitude + distDeg);
 		auto ll1 = std::pair<double, double>(lon + distDeg, latitude - distDeg);
 
-		unsigned int maxThreads = std::thread::hardware_concurrency()*3;
+		unsigned int maxThreads = std::thread::hardware_concurrency();
 
-		std::vector<Render*> render1x(maxThreads);
-		std::vector<Render*> render2x(maxThreads);
+		Render render1x(project_, 1);
+		Render render2x(project_, 2);
 
-		for (size_t i = 0; i < maxThreads; ++i)
+		for (int z = tileOutput->minZoom(); z <= tileOutput->maxZoom(); ++z)
 		{
-			render1x[i] = new Render(project_, 1);
-			render2x[i] = new Render(project_, 2);
-		}
+			std::string zoomStr = QString::number(z).toStdString();
+			path zoomDir = tileDir / zoomStr;
 
-		try
-		{
-			for (int z = tileOutput->minZoom(); z <= tileOutput->maxZoom(); ++z)
+			create_directories(zoomDir);
+
+			std::pair<double, double> px0 = fromLLtoPixel(tileSize, ll0, z);
+			std::pair<double, double> px1 = fromLLtoPixel(tileSize, ll1, z);
+
+			for (int x = int(px0.first / tileSize); x < int(px1.first / tileSize) + 1; ++x)
 			{
-				std::string zoomStr = QString::number(z).toStdString();
-				path zoomDir = tileDir / zoomStr;
+				// Validate x co - ordinate
+				if ((x < 0) || (x >= pow(2, z)))
+					continue;
 
-				create_directories(zoomDir);
+				// check if we have directories in place
+				std::string str_x = QString::number(x).toStdString();
 
-				std::pair<double, double> px0 = fromLLtoPixel(tileSize, ll0, z);
-				std::pair<double, double> px1 = fromLLtoPixel(tileSize, ll1, z);
+				if (exists(tileDir / zoomStr / str_x) == false)
+					create_directories(tileDir / zoomStr / str_x);
 
-				for (int x = int(px0.first / tileSize); x < int(px1.first / tileSize) + 1; ++x)
+				int yEnd = int(px1.second / tileSize) + 1;
+
+				for (int y = int(px0.second / tileSize); y < yEnd; y += 1)
 				{
+
 					// Validate x co - ordinate
-					if ((x < 0) || (x >= pow(2, z)))
+					if ((y < 0) || (y >= pow(2, z)))
 						continue;
 
-					// check if we have directories in place
-					std::string str_x = QString::number(x).toStdString();
+					std::string str_y = QString::number(y).toStdString();
 
-					if (exists(tileDir / zoomStr / str_x) == false)
-						create_directories(tileDir / zoomStr / str_x);
-
-					int yEnd = int(px1.second / tileSize) + 1;
-
-					for (int y = int(px0.second / tileSize); y < yEnd; y += 1)
+					// Submit tile to be rendered into the queue
+					//t = (name, tile_uri, x, y, z)
+					if (tileOutput->resolution1x())
 					{
-						std::vector<std::thread> threads(maxThreads);
+						path tile_uri1x = tileDir / zoomStr / str_x / (str_y + ".png");
+						RenderTile(render1x, tile_uri1x, tileSize, 1, x, y, z);
+						//threads[threadI] = std::thread([this, tile_uri1x, tileSize, x, y, z](Render &render) { RenderTile(render, tile_uri1x, tileSize, 1, x, y, z); }, render1x);
+						//threads[threadI].join();
+					}
 
-						for (int threadI = 0; threadI < maxThreads && y < yEnd; ++y)
-						{
-							// Validate x co - ordinate
-							if ((y < 0) || (y >= pow(2, z)))
-								continue;
-
-							std::string str_y = QString::number(y).toStdString();
-
-							// Submit tile to be rendered into the queue
-							//t = (name, tile_uri, x, y, z)
-							if (tileOutput->resolution1x())
-							{
-								path tile_uri1x = tileDir / zoomStr / str_x / (str_y + ".png");
-
-								threads[threadI] = std::thread([this, tile_uri1x, tileSize, x, y, z](Render &render) { RenderTile(render, tile_uri1x, tileSize, 1, x, y, z); }, *render1x[threadI]);
-								threads[threadI].join();
-								++threadI;
-							}
-
-							if (tileOutput->resolution2x() && threadI < maxThreads)
-							{
-								path tile_uri2x = tileDir / zoomStr / str_x / (str_y + "@2x.png");
-								threads[threadI] = std::thread([this, tile_uri2x, tileSize, x, y, z](Render &render) { RenderTile(render, tile_uri2x, tileSize, 2, x, y, z); }, *render2x[threadI]);
-								threads[threadI].join();
-								++threadI;
-							}
-						}
-
-						for (auto &t : threads)
-						{
-							if (t.joinable())
-								t.join();
-						}
+					if (tileOutput->resolution2x())
+					{
+						path tile_uri2x = tileDir / zoomStr / str_x / (str_y + "@2x.png");
+						RenderTile(render2x, tile_uri2x, tileSize, 2, x, y, z);
+						//threads[threadI] = std::thread([this, tile_uri2x, tileSize, x, y, z](Render &render) { RenderTile(render, tile_uri2x, tileSize, 2, x, y, z); }, *render2x[threadI]);
+						//threads[threadI].join();
 					}
 				}
-			}
-		}
-		catch(...)
-		{
-			for (size_t i = 0; i < maxThreads; ++i)
-			{
-				delete render1x[i];
-				delete render2x[i];
 			}
 		}
 	}
@@ -386,7 +361,7 @@ std::pair<double, double> OutputTab::fromPixelToLL(int tileSize, std::pair<doubl
 
 	const double PI = std::atan(1.0) * 4;
 
-	int c = tileSize;
+	int c = 256;
 	for (int z = 0; z <= 20; ++z)
 	{
 		double e = c / 2;
@@ -416,7 +391,7 @@ std::pair<double, double> OutputTab::fromLLtoPixel(int tileSize, std::pair<doubl
 
 	const double PI = std::atan(1.0) * 4;
 
-	int c = tileSize;
+	int c = 256;
 	for (int z = 0; z <= 20; ++z)
 	{
 		double e = c / 2;

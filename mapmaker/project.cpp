@@ -29,6 +29,8 @@ Project::Project(path fileName)
 
 	db_ = NULL;
 
+	backgroundOpacity_ = 1;
+
 	if (!f.open(QIODevice::ReadOnly))
 	{
 		auto s = QString("Can't open file %1.").arg(pathStrQ);
@@ -69,6 +71,7 @@ Project::Project(path fileName)
 		else if (name == "map")
 		{
 			backgroundColor_ = topNode.attributes().namedItem("backgroundColor").nodeValue();
+			backgroundOpacity_ = topNode.attributes().namedItem("backgroundOpacity").nodeValue().toDouble();
 
 			QDomNodeList layers = topNode.childNodes();
 
@@ -184,6 +187,16 @@ path Project::projectPath()
 	return projectPath_;
 }
 
+double Project::backgroundOpacity()
+{
+	return backgroundOpacity_;
+}
+
+void Project::setBackgroundOpacity(double v)
+{
+	backgroundOpacity_ = v;
+}
+
 QColor Project::backgroundColor()
 {
 	return backgroundColor_;
@@ -225,6 +238,8 @@ void Project::save(path fileName)
 
 	QDomElement mapElement = doc.createElement("map");
 	mapElement.setAttribute("backgroundColor", backgroundColor_.name());
+	mapElement.setAttribute("backgroundOpacity", QString::number(backgroundOpacity_) );
+
 	root.appendChild(mapElement);
 
 	for (StyleLayer * layer : styleLayers_)

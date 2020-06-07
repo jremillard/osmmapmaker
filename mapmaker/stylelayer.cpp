@@ -132,6 +132,7 @@ Label::Label()
 	lineLaxSpacing_ = 0;
 	maxWrapWidth_ = 30;
 	offsetY_ = 0;
+	fontWeight = 400; // use ccs font-weight system.
 }
 
 QString Label::mapnikText()
@@ -297,6 +298,10 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			layerLabel.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
 			layerLabel.text_ = labelNode.firstChildElement("text").text();
 			layerLabel.height_ = labelNode.firstChildElement("height").text().toDouble();
+			bool ok = false;;
+			int weight = labelNode.firstChildElement("weight").text().toDouble(&ok);
+			if (ok)
+				layerLabel.fontWeight = weight;
 			layerLabel.color_ = labelNode.firstChildElement("color").text();
 			layerLabel.haloSize_ = labelNode.firstChildElement("haloSize").text().toDouble();
 			layerLabel.haloColor_ = labelNode.firstChildElement("haloColor").text();
@@ -491,6 +496,10 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			QDomElement heightNode = doc.createElement("height");
 			heightNode.appendChild(doc.createTextNode(QString::number(label.height_)));
 			labelNode.appendChild(heightNode);
+
+			QDomElement weightNode = doc.createElement("weight");
+			weightNode.appendChild(doc.createTextNode(QString::number(label.fontWeight)));
+			labelNode.appendChild(weightNode);
 
 			QDomElement colorNode = doc.createElement("color");
 			colorNode.appendChild(doc.createTextNode(label.color_.name()));

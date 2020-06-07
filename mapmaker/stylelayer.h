@@ -83,6 +83,7 @@ public:
 
 	QString mapnikText();
 
+	int fontWeight;
 	QString text_;
 	double height_;
 	double haloSize_;

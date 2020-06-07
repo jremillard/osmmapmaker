@@ -9,7 +9,7 @@ CMakeFiles/
 *.sln
 *.dir/
 *_autogen/
-projects/groton.osmmap/*
+projects/*.osmmap/*
 .vs/
 *.sqlite
 *.osm

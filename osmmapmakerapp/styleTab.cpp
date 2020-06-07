@@ -109,6 +109,9 @@ void StyleTab::paintEvent(QPaintEvent *event)
 
 	if (renderedImage_.isNull() == false)
 	{
+		QRect background(renderImageLeft(), 0, renderedImage_.width(), renderedImage_.height());
+		painter.setBrush(QBrush(QColor(project_->backgroundColor())));
+		painter.drawRect(background);
 		if ( mouseTracking_)
 			painter.drawImage(renderImageLeft()+mouseTrackingCurrent_.x()- mouseTrackingStart_.x(), mouseTrackingCurrent_.y() - mouseTrackingStart_.y(), renderedImage_);
 		else
@@ -592,6 +595,7 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 	{
 		ui->styleDetail->setCurrentWidget(ui->pageMap);
 		ui->mapBackgroundColor->setText(project_->backgroundColor().name());
+		ui->mapBackgroundOpacity->setValue(project_->backgroundOpacity());
 	}
 	else if (currentItem->parent() == NULL)
 	{
@@ -686,6 +690,12 @@ void StyleTab::on_mapBackgroundColor_editingFinished()
 {
 	project_->setBackgroundColor(QColor(ui->mapBackgroundColor->text()));
 }
+
+void StyleTab::on_mapBackgroundOpacity_valueChanged(double v)
+{
+	project_->setBackgroundOpacity(v);
+}
+
 
 void StyleTab::on_mapBackgroundColorPick_clicked()
 {

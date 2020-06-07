@@ -33,9 +33,10 @@ private slots:
 	void on_offset_editingFinished();
 	void on_colorPick_clicked();
 	void on_haloColorPick_clicked();
+	void on_fontWeight_currentIndexChanged(int i);
 
 private:
-
+	bool suppressUpdates_;
 	Ui::SubLayerTextPage *ui;
 
 };

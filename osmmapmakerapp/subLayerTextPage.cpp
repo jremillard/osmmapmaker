@@ -9,6 +9,13 @@ SubLayerTextPage::SubLayerTextPage(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	suppressUpdates_ = true;
+
+	ui->fontWeight->addItem("Extra Light", 200);
+	ui->fontWeight->addItem("Normal", 400);
+	ui->fontWeight->addItem("Bold", 700);
+
+	suppressUpdates_ = false;
 }
 
 SubLayerTextPage::~SubLayerTextPage()
@@ -60,6 +67,14 @@ void SubLayerTextPage::on_offset_editingFinished()
 	emit editingFinished();
 }
 
+void SubLayerTextPage::on_fontWeight_currentIndexChanged(int i)
+{
+	if (suppressUpdates_ == false)
+	{
+		emit editingFinished();
+	}
+}
+
 void SubLayerTextPage::on_colorPick_clicked()
 {
 	QColor newColor = QColorDialog::getColor(QColor(ui->color->text()), this);
@@ -95,6 +110,10 @@ void SubLayerTextPage::SaveTo(Label *label)
 	label->lineLaxSpacing_ = ui->lineMaxSpacing->value();
 	label->maxWrapWidth_ = ui->maxWrapWidth->value();
 	label->offsetY_ = ui->offset->value();
+
+	int weight = ui->fontWeight->itemData(ui->fontWeight->currentIndex()).toInt();
+
+	label->fontWeight = weight;
 }
 
 void SubLayerTextPage::Load(const Label &label)
@@ -108,4 +127,11 @@ void SubLayerTextPage::Load(const Label &label)
 	ui->lineMaxSpacing->setValue(label.lineLaxSpacing_);
 	ui->maxWrapWidth->setValue(label.maxWrapWidth_);
 	ui->offset->setValue(label.offsetY_);
+
+	suppressUpdates_ = true;
+
+	int i = ui->fontWeight->findData(label.fontWeight);
+	ui->fontWeight->setCurrentIndex(i);
+
+	suppressUpdates_ = false;
 }

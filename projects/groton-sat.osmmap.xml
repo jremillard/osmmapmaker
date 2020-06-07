@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <openStreetMapFileSource name="Groton">
+  <dataSource>Primary</dataSource>
+  <lastUpdateDate>2020-05-30T18:29:05</lastUpdateDate>
+  <importDurationS>67</importDurationS>
+  <fileName>C:\Remillard\Documents\osmmapmaker\projects\groton.osm</fileName>
+ </openStreetMapFileSource>
+ <tileOutput name="satellite">
+  <maxZoom>16</maxZoom>
+  <minZoom>13</minZoom>
+  <tileSize>256</tileSize>
+  <resolution1x>true</resolution1x>
+  <resolution2x>false</resolution2x>
+  <directory></directory>
+ </tileOutput>
+ <map backgroundColor="#2d4842" backgroundOpacity="0">
+  <layer dataSource="Primary" k="admin_level" type="line">
+   <subLayer name="" minZoom="0" visible="true">
+    <selector>
+     <condition key="admin_level">
+      <value>*</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+  </layer>
+  <layer dataSource="Primary" k="highway" type="line">
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>track</value>
+     </condition>
+     <condition key="operator">
+      <value>Groton Trails Committee</value>
+      <value>Massachusetts Audubon Society</value>
+      <value>Sargisson Beach Committee</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#09733e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2.5</width>
+     <casingWidth>0.25</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <weight>700</weight>
+     <color>#ffffff</color>
+     <haloSize>0</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+     <offsetY>-4</offsetY>
+    </label>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+     </condition>
+     <condition key="operator">
+      <value>Groton Trails Committee</value>
+      <value>Westford Conservation Trust</value>
+      <value>Massachusetts Audubon Society</value>
+      <value>Sargisson Beach Committee</value>
+      <value>Groton Conservation Trust</value>
+      <value>Littleton Conservation Trust</value>
+      <value>Groton School</value>
+      <value>Littleton Conservation Trust (LCT)</value>
+      <value>Groton Conservation Commission</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#09733e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1.5</width>
+     <casingWidth>0.25</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray>4,3</dashArray>
+    </line>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <weight>700</weight>
+     <color>#ffffff</color>
+     <haloSize>0</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>30</maxWrapWidth>
+     <offsetY>-4</offsetY>
+    </label>
+   </subLayer>
+   <subLayer name="" minZoom="15" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+      <value>footway</value>
+     </condition>
+     <condition key="access">
+      <value>private</value>
+      <value>restricted</value>
+      <value>no</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ff0000</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.75</width>
+     <casingWidth>0.1</casingWidth>
+     <opacity>0.8</opacity>
+     <smooth>0</smooth>
+     <dashArray>5,5</dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>track</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1.75</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>path</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#09733e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1</width>
+     <casingWidth>0.1</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray>3,3</dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>cycleway</value>
+     </condition>
+     <condition key="surface">
+      <value>asphalt</value>
+      <value>paved</value>
+      <value>concrete</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0000ff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>3</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>cycleway</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0000ff</color>
+     <casingColor>#b8b8b8</casingColor>
+     <width>1.5</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray>5,4</dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>residential</value>
+      <value>unclassified</value>
+      <value>bridleway</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#000000</casingColor>
+     <width>1.5</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>1</smooth>
+     <dashArray></dashArray>
+    </line>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <weight>700</weight>
+     <color>#ffffff</color>
+     <haloSize>0</haloSize>
+     <haloColor>#000000</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>300</maxWrapWidth>
+     <offsetY>-4</offsetY>
+    </label>
+   </subLayer>
+   <subLayer name="" minZoom="0" visible="true">
+    <selector>
+     <condition key="highway">
+      <value>secondary</value>
+      <value>primary</value>
+      <value>tertiary</value>
+      <value>trunk</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#d8b8b0</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <weight>700</weight>
+     <color>#ffffff</color>
+     <haloSize>0</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <lineLaxSpacing>0</lineLaxSpacing>
+     <maxWrapWidth>300</maxWrapWidth>
+     <offsetY>-4</offsetY>
+    </label>
+   </subLayer>
+   <subLayer name="" minZoom="0" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>steps</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0a0a0a</color>
+     <casingColor>#ffffff</casingColor>
+     <width>3</width>
+     <casingWidth>1</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray>1,1</dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="15" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>service</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.75</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.7</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="15" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>footway</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="" minZoom="0" visible="false">
+    <selector>
+     <condition key="highway">
+      <value>*</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#ffffff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.5</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+  </layer>
+  <layer dataSource="Primary" k="amenity" type="area">
+   <subLayer name="" minZoom="14" visible="true">
+    <selector>
+     <condition key="amenity">
+      <value>parking</value>
+     </condition>
+     <condition key="gtc:parking">
+      <value>yes</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#000000</color>
+     <opacity>0.5</opacity>
+     <casingWidth>2</casingWidth>
+     <casingColor>#ffffff</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
+   </subLayer>
+  </layer>
+  <layer dataSource="Primary" k="landuse" type="line">
+   <subLayer name="" minZoom="0" visible="true">
+    <selector>
+     <condition key="landuse">
+      <value>conservation</value>
+      <value>forest</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#5e5e5e</color>
+     <casingColor>#ffffff</casingColor>
+     <width>0.2</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>

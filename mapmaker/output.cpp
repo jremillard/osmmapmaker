@@ -43,8 +43,8 @@ TileOutput::TileOutput(QDomElement outputElement) : Output(outputElement)
 	maxZoom_ = outputElement.firstChildElement("maxZoom").text().toInt();
 	minZoom_ = outputElement.firstChildElement("minZoom").text().toInt();
 	tileSizePixels_ = outputElement.firstChildElement("tileSize").text().toInt();
-	resolution1x_ = outputElement.firstChildElement("1x").text() == "true";
-	resolution2x_ = outputElement.firstChildElement("2x").text() == "true";
+	resolution1x_ = outputElement.firstChildElement("resolution1x").text() == "true";
+	resolution2x_ = outputElement.firstChildElement("resolution2x").text() == "true";
 	outputDirectory_ = outputElement.firstChildElement("directory").text();
 	//BoundingBox boundingBox_;
 }
@@ -55,6 +55,8 @@ TileOutput::~TileOutput()
 
 void TileOutput::saveXML(QDomDocument &doc, QDomElement &outputElement)
 {
+	outputElement = doc.createElement("tileOutput");
+
 	Output::saveXML(doc, outputElement);
 
 	QDomElement maxZoomNode = doc.createElement("maxZoom");
@@ -69,11 +71,11 @@ void TileOutput::saveXML(QDomDocument &doc, QDomElement &outputElement)
 	tileSizeNode.appendChild(doc.createTextNode(QString::number(tileSizePixels_)));
 	outputElement.appendChild(tileSizeNode);
 
-	QDomElement res1xNode = doc.createElement("1x");
+	QDomElement res1xNode = doc.createElement("resolution1x");
 	res1xNode.appendChild(doc.createTextNode(resolution1x_ ? "true" : "false"));
 	outputElement.appendChild(res1xNode);
 
-	QDomElement res2xNode = doc.createElement("2x");
+	QDomElement res2xNode = doc.createElement("resolution2x");
 	res2xNode.appendChild(doc.createTextNode(resolution2x_ ? "true" : "false"));
 	outputElement.appendChild(res2xNode);
 

@@ -32,9 +32,21 @@ Render::Render(Project *project, int dpiScale)
 
 		datasource_cache::instance().register_datasources("C:\\Remillard\\Documents\\osmmapmaker\\vcpkg\\installed\\x64-windows\\debug\\bin", true);
 
-		path font = project->assetDirectory() / "DejaVuSans.ttf";
+		{
+			path font = project->assetDirectory() / "DejaVuSans.ttf";
+			freetype_engine::register_font(font.string());
+		}
 
-		freetype_engine::register_font(font.string());
+		{
+			path font = project->assetDirectory() / "DejaVuSans-Bold.ttf";
+			freetype_engine::register_font(font.string());
+		}
+
+		{
+			path font = project->assetDirectory() / "DejaVuSans-ExtraLight.ttf";
+			freetype_engine::register_font(font.string());
+		}
+
 		mapnikInit = true;
 	}
 
@@ -69,7 +81,10 @@ Render::Render(Project *project, int dpiScale)
 
 	map_ = Map(100, 100);
 
-	map_.set_background(color( project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue()));
+	color mapBackgroundColor(project->backgroundColor().red(), project->backgroundColor().green(), project->backgroundColor().blue());
+	mapBackgroundColor.set_alpha(project->backgroundOpacity() * 0xFF);
+
+	map_.set_background(mapBackgroundColor);
 	map_.set_srs(project->mapSRS());
 
 	path renderDbPath = project->renderDatabasePath();
@@ -379,11 +394,18 @@ Render::Render(Project *project, int dpiScale)
 					rule r;
 					r.set_filter(expression);
 					r.set_max_scale(std::max( zoomToScale[line.minZoom_], zoomToScale[label.minZoom_]));
+					r.set_max_scale(zoomToScale[line.minZoom_]);
 
 					text_symbolizer text_sym;
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+					if ( label.fontWeight == 200)
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans ExtraLight";
+					else if (label.fontWeight == 700)
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Bold";
+					else
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+
 					placement_finder->defaults.format_defaults.text_size = label.height_*dpiScale;
 					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
 					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
@@ -424,11 +446,18 @@ Render::Render(Project *project, int dpiScale)
 					rule r;
 					r.set_filter(expression);
 					r.set_max_scale(std::max(zoomToScale[area.minZoom_], zoomToScale[label.minZoom_]));
+					r.set_max_scale(zoomToScale[area.minZoom_]);
 
 					text_symbolizer text_sym;
 					text_placements_ptr placement_finder = std::make_shared<text_placements_dummy>();
 
-					placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+					if (label.fontWeight == 200)
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans ExtraLight";
+					else if (label.fontWeight == 700)
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Bold";
+					else
+						placement_finder->defaults.format_defaults.face_name = "DejaVu Sans Book";
+
 					placement_finder->defaults.format_defaults.text_size = label.height_*dpiScale;
 					placement_finder->defaults.format_defaults.fill = color(label.color_.red(), label.color_.green(), label.color_.blue());
 					placement_finder->defaults.format_defaults.halo_fill = color(label.haloColor_.red(), label.haloColor_.green(), label.haloColor_.blue());
@@ -498,7 +527,7 @@ QImage Render::RenderImage()
 	{
 		image_rgba8::pixel_type * rowPtr = buf.get_row(row);
 
-		// probably not needed on OS-X... mapnik didn't use the native byte ordering, the used disk format of 
+		// probably not needed on OS-X... mapnik didn't use the native byte ordering, they used disk format of 
 		// libpng, need to sort that out here.
 		for (std::size_t col = 0; col < buf.width(); ++col)
 		{

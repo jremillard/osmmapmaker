@@ -40,6 +40,7 @@ private slots:
 	// map
 	void on_mapBackgroundColor_editingFinished();
 	void on_mapBackgroundColorPick_clicked();
+	void on_mapBackgroundOpacity_valueChanged(double v);
 
 	// layer
 	void on_layerShowAll_clicked();

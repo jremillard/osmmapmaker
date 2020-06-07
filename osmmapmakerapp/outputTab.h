@@ -39,6 +39,7 @@ private slots:
 
 private:
 	void saveTile();
+	void saveDefaultPathIntoTilePath();
 
 	std::pair<double, double> fromPixelToLL(int tileSize, std::pair<double, double> px, int zoom);
 	std::pair<double, double> fromLLtoPixel(int tileSize, std::pair<double, double> ll, int zoom);

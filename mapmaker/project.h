@@ -43,6 +43,9 @@ public:
 	void removeStyleLayer(StyleLayer* l);
 	void addStyleLayer(size_t atIndex, StyleLayer *l);
 
+	double backgroundOpacity();
+	void setBackgroundOpacity(double p);
+
 	QColor backgroundColor();
 	void setBackgroundColor(QColor c);
 
@@ -66,6 +69,7 @@ private:
 	void createRenderDatabaseIfNotExist();
 	void upgradeRenderDatabase();
 
+	double backgroundOpacity_;
 	QColor backgroundColor_;
 	SQLite::Database *db_;
 	std::vector< DataSource*> dataSources_;
