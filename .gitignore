@@ -16,3 +16,5 @@ projects/*.osmmap/*
 */x64/
 */Debug/
 *.ttf
+azcopy.exe
+pushgtctoazure.py

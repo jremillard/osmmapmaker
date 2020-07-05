@@ -7,6 +7,7 @@
 #include "sublayerselectpage.h"
 
 class Render;
+class RenderQT;
 
 namespace Ui {
 	class StyleTab;
@@ -111,7 +112,8 @@ private:
 	double centerY_;
 	double pixelResolution_;
 
-	Render *render_;
+	//Render *render_;
+	RenderQT *render_;
 
 	Ui::StyleTab *ui;
 };

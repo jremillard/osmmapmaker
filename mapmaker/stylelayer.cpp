@@ -37,7 +37,7 @@ QString StyleSelector::mapniKExpression()
 			}
 			else if (values_[i].size() == 1 && values_[i][0] == "*")
 			{
-				exp += "1 > 0";
+				exp += "true";
 			}
 			else
 			{
@@ -816,12 +816,17 @@ QString StyleLayer::renderSQLSelect(bool sortBySize) const
 
 	*/
 
+	QString pixelWidthInMeters = "(!pixel_width!*6356.0 * 1000.0 * 2.0 * 3.1415926535897932384626433832795 / 360)";
+	QString pixelHeightInMeters = "(!pixel_height!*6356.0 * 1000.0 * 2.0 * 3.1415926535897932384626433832795 / 360)";
+
 	QString createViewSql;
 	createViewSql += QString("select\n");
 	createViewSql += QString("	entity.id,\n");
 	createViewSql += QString("	entity.geom,\n");
-	createViewSql += QString("	entity.linearLengthM as __length__,\n");
-	createViewSql += QString("	entity.areaM as __area__,\n");
+	//createViewSql += QString("  %1 as __pixelWidth__,\n").arg(pixelWidthInMeters);
+	//createViewSql += QString("  %1 as __pixelHeight__,\n").arg(pixelWidthInMeters);
+	//createViewSql += QString("	round(entity.linearLengthM/%1) as __lengthPixels__,\n").arg(pixelWidthInMeters);
+	//createViewSql += QString("	2*entity.areaM/(%1*%2*3.1415926535897932384626433832795) as __areaDiameterPixels__,\n").arg(pixelWidthInMeters, pixelHeightInMeters);
 	createViewSql += QString("	\"%1\".value as \"%1\",\n").arg(key_);
 
 	for (QString a : attributes)
@@ -841,11 +846,12 @@ QString StyleLayer::renderSQLSelect(bool sortBySize) const
 
 	if (sortBySize)
 	{
-		createViewSql += "ORDER BY __area__, __length__ DESC\n";
+		//createViewSql += "ORDER BY __areaDiameterPixels__, __lengthPixels__ DESC\n";
 	}
 
 	//createViewSql += "WHERE __area__ > !pixel_width! * !pixel_height!\n";
 
-	return "( " + createViewSql + ")";
+	//return "( " + createViewSql + ")";
+	return createViewSql;
 }
 

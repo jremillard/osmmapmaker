@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(mapmaker)
+project(mapmaker LANGUAGES CXX)
 
-set(SRC_FILES project.cpp osmdataextractdownload.cpp osmdatadirectdownload.cpp datasource.cpp osmdata.cpp osmdatafile.cpp tilecache.cpp render.cpp stylelayer.cpp output.cpp)
+set(SRC_FILES project.cpp osmdataextractdownload.cpp osmdatadirectdownload.cpp datasource.cpp osmdata.cpp osmdatafile.cpp tilecache.cpp render.cpp stylelayer.cpp output.cpp renderqt.cpp)
 
 set(CMAKE_AUTOMOC ON)
 

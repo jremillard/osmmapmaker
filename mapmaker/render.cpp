@@ -124,11 +124,15 @@ Render::Render(Project *project, int dpiScale)
 
 		QString exclusiveExpression;
 
+		feature_type_style style;
+		//style.set_filter_mode(FILTER_FIRST);
+
 		for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 		{
 			StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
 
 			QString layerExp = selector.mapniKExpression();
+
 			if (exclusiveExpression.isEmpty() == false)
 			{
 				layerExp += " and not " + exclusiveExpression;
@@ -151,14 +155,12 @@ Render::Render(Project *project, int dpiScale)
 				if (line.visible_ == false)
 					continue;
 
+				rule r;
+				r.set_filter(expression);
+				r.set_max_scale(zoomToScale[line.minZoom_]);
+
 				if (line.casingWidth_ > 0)
 				{
-					feature_type_style style;
-
-					rule r;
-					r.set_filter(expression);
-					r.set_max_scale(zoomToScale[line.minZoom_]);
-
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(line.casingColor_.red(), line.casingColor_.green(), line.casingColor_.blue()));
 					put(line_sym, keys::stroke_width, (line.width_ + line.casingWidth_)*2.0*dpiScale);
@@ -168,22 +170,7 @@ Render::Render(Project *project, int dpiScale)
 					put(line_sym, keys::smooth, line.smooth_);
 
 					r.append(std::move(line_sym));
-
-					style.add_rule(std::move(r));
-
-					QString styleLayer = QString("%1-%2-%3-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-					lyr.add_style(styleLayer.toStdString());
-
 				}
-
-				feature_type_style style;
-
-				rule r;
-				r.set_filter(expression);
-				r.set_max_scale(zoomToScale[line.minZoom_]);
 
 				line_symbolizer line_sym;
 				put(line_sym, keys::stroke, color(line.color_.red(), line.color_.green(), line.color_.blue()));
@@ -200,13 +187,6 @@ Render::Render(Project *project, int dpiScale)
 
 				style.add_rule(std::move(r));
 
-				QString styleLayer = QString("%0-%1-%2").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-				map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-				lyr.add_style(styleLayer.toStdString());
-
-
 				break;
 			}
 
@@ -216,14 +196,12 @@ Render::Render(Project *project, int dpiScale)
 				if (area.visible_ == false)
 					continue;
 
+				rule r;
+				r.set_filter(expression);
+				r.set_max_scale(zoomToScale[area.minZoom_]);
+
 				if (area.opacity_ > 0)
 				{
-					feature_type_style style;
-
-					rule r;
-					r.set_filter(expression);
-					r.set_max_scale(zoomToScale[area.minZoom_]);
-
 					polygon_symbolizer area_sym;
 
 					put(area_sym, keys::fill, color(area.color_.red(), area.color_.green(), area.color_.blue()));
@@ -235,24 +213,10 @@ Render::Render(Project *project, int dpiScale)
 						put(area_sym, keys::gamma, 1);
 
 					r.append(std::move(area_sym));
-
-					style.add_rule(std::move(r));
-
-					QString styleLayer = QString("%0-%1-%2-fill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-					lyr.add_style(styleLayer.toStdString());
 				}
 
 				if (area.fillImage_.isEmpty() == false)
 				{
-					feature_type_style style;
-
-					rule r;
-					r.set_filter(expression);
-					r.set_max_scale(zoomToScale[area.minZoom_]);
-
 					polygon_pattern_symbolizer area_pattern;
 
 					// base path on map property doesn't work for C++, seems to be just an xml thing, put in full path for everything.
@@ -262,25 +226,10 @@ Render::Render(Project *project, int dpiScale)
 					put(area_pattern, keys::opacity, area.fillImageOpacity_);
 
 					r.append(std::move(area_pattern));
-
-					style.add_rule(std::move(r));
-
-					QString styleLayer = QString("%0-%1-%2-imageFill").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-					lyr.add_style(styleLayer.toStdString());
-
 				}
 
 				if (area.casingWidth_ > 0)
 				{
-					feature_type_style style;
-
-					rule r;
-					r.set_filter(expression);
-					r.set_max_scale(zoomToScale[area.minZoom_]);
-
 					line_symbolizer line_sym;
 					put(line_sym, keys::stroke, color(area.casingColor_.red(), area.casingColor_.green(), area.casingColor_.blue()));
 					put(line_sym, keys::stroke_width, area.casingWidth_*dpiScale);
@@ -288,21 +237,19 @@ Render::Render(Project *project, int dpiScale)
 					put(line_sym, keys::smooth, 0.0);
 
 					r.append(std::move(line_sym));
-
-					style.add_rule(std::move(r));
-
-					QString styleLayer = QString("%0-%1-%2-Cas").arg(projectLayer->key()).arg(styleIndex).arg(subLayerIndex);
-
-					map_.insert_style(styleLayer.toStdString(), std::move(style));
-
-					lyr.add_style(styleLayer.toStdString());
-
 				}
+
+				style.add_rule(std::move(r));
 
 				break;
 			}
 			}
 		}
+
+		QString styleLayer = QString("%0-fill").arg(projectLayer->key());
+
+		map_.insert_style(styleLayer.toStdString(), std::move(style));
+		lyr.add_style(styleLayer.toStdString());
 
 		map_.add_layer(lyr);
 		++styleIndex;
@@ -338,6 +285,7 @@ Render::Render(Project *project, int dpiScale)
 		p["file"] = "render.sqlite";
 		p["base"] = project->assetDirectory().string();
 		//p["table"] = projectLayer->virtualSQLTableName().toStdString();
+
 		p["table"] = projectLayer->renderSQLSelect(true).toStdString();
 		p["geometry_field"] = "geom";
 		p["wkb_format"] = "generic";
@@ -356,22 +304,58 @@ Render::Render(Project *project, int dpiScale)
 
 		lyr.set_srs(project->dataSRS());
 
-		QString exclusiveExpression;
+		QString exclusiveExpression = "false";
 		for (int subLayerIndex = 0; subLayerIndex < names.size(); ++subLayerIndex)
 		{
-			StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
-
-			QString layerExp = selector.mapniKExpression();
-			if (exclusiveExpression.isEmpty() == false)
+			switch (projectLayer->layerType())
 			{
-				layerExp += " and not " + exclusiveExpression;
+				case ST_POINT:
+				{
+					break;
+				}
+				break;
+
+				case ST_LINE:
+				{
+					Line line = projectLayer->subLayerLine(subLayerIndex);
+					if (line.visible_ == false)
+						continue;
+				}
+				break;
+
+				case ST_AREA:
+				{
+					Area area = projectLayer->subLayerArea(subLayerIndex);
+					if (area.visible_ == false)
+						continue;
+				}
+				break;
 			}
 
-			exclusiveExpression = layerExp;
-
-			auto expression = parse_expression(layerExp.toStdString());
+			StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
 
 			Label label = projectLayer->label(subLayerIndex);
+
+			QString subLayerExp = selector.mapniKExpression();
+
+			QString layerExp = exclusiveExpression;
+			if (projectLayer->layerType() == ST_AREA)
+			{
+
+				int wrap = label.maxWrapWidth_;
+				if (wrap == 0)
+					wrap = 1024;
+
+				layerExp = "(" + subLayerExp + " and [__areaDiameterPixels__] > min( pow(" + QString::number( wrap) + ",2),pow(length(" + label.mapnikText() + "),2))) and not " + exclusiveExpression;
+			}
+			else
+			{
+				layerExp = subLayerExp + " and not " + exclusiveExpression;
+			}
+
+			exclusiveExpression = subLayerExp + " and not " + exclusiveExpression;
+
+			auto expression = parse_expression(layerExp.toStdString());
 
 			switch (projectLayer->layerType())
 			{
@@ -384,16 +368,12 @@ Render::Render(Project *project, int dpiScale)
 			case ST_LINE:
 			{
 				Line line = projectLayer->subLayerLine(subLayerIndex);
-				if (line.visible_ == false)
-					continue;
-
 				feature_type_style style;
 
 				if (label.visible_ && label.mapnikText().isEmpty() == false)
 				{
 					rule r;
 					r.set_filter(expression);
-					r.set_max_scale(std::max( zoomToScale[line.minZoom_], zoomToScale[label.minZoom_]));
 					r.set_max_scale(zoomToScale[line.minZoom_]);
 
 					text_symbolizer text_sym;
@@ -436,8 +416,6 @@ Render::Render(Project *project, int dpiScale)
 			case ST_AREA:
 			{
 				Area area = projectLayer->subLayerArea(subLayerIndex);
-				if (area.visible_ == false)
-					continue;
 
 				if (label.visible_ && label.mapnikText().isEmpty() == false)
 				{
@@ -445,7 +423,6 @@ Render::Render(Project *project, int dpiScale)
 
 					rule r;
 					r.set_filter(expression);
-					r.set_max_scale(std::max(zoomToScale[area.minZoom_], zoomToScale[label.minZoom_]));
 					r.set_max_scale(zoomToScale[area.minZoom_]);
 
 					text_symbolizer text_sym;
@@ -490,8 +467,8 @@ Render::Render(Project *project, int dpiScale)
 		map_.add_layer(lyr);
 	}
 
-	//path mapnikXML = project->assetDirectory() / "mapnik.xml";
-	//save_map(map_, mapnikXML.string());
+	path mapnikXML = project->assetDirectory() / "mapnik.xml";
+	save_map(map_, mapnikXML.string());
 }
 
 void Render::SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)

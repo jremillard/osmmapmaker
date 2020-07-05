@@ -7,6 +7,7 @@
 #include <QColorDialog>
 
 #include <render.h>
+#include <renderqt.h>
 
 #include "newtoplevelstyle.h"
 
@@ -90,12 +91,12 @@ void StyleTab::setProject(Project *project)
 
 	project_->convertDataToMap(lon, latitude, &centerX_, &centerY_);
 
-	ui->zoom->setValue(15);
+	ui->zoom->setValue(13);
 	updatePixelResultionFromZoom();
 
 	delete render_;
 	render_ = NULL;
-	render_ = new Render(project_);
+	render_ = new RenderQT(project_);
 }
 
 void StyleTab::showEvent(QShowEvent *event)
@@ -978,7 +979,7 @@ void StyleTab::freshRender()
 {
 	delete render_;
 	render_ = NULL;
-	render_ = new Render(project_);
+	render_ = new RenderQT(project_);
 
 	render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
 	renderedImage_ = render_->RenderImage();

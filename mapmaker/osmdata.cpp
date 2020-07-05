@@ -28,6 +28,7 @@
 // This will work for all input files keeping the index in memory.
 #include <osmium/index/map/flex_mem.hpp>
 
+#include <geos/geos.h>
 
 // The type of index used. This must match the include file above
 using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
@@ -118,8 +119,6 @@ OsmDataImportHandler::OsmDataImportHandler(SQLite::Database &db, QString dataSou
 			areaKeyValBlackList_.insert(areaIter.key() + ":::" + blackListIter.key(),0);
 		}
 	}
-
-	GEOSContextHandle_ = GEOS_init_r();
 
 	queryAdd_ = new SQLite::Statement(db_, "INSERT INTO entity (type, source, geom, linearLengthM, areaM) VALUES (?,?,?,?,?)");
 	queryAddKV_ = new SQLite::Statement(db_, "INSERT INTO entityKV(id, key, value) VALUES (?,?,?)");
@@ -244,14 +243,16 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 			std::string wkbBuffer = factory_.create_linestring(way);
 			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
-			GEOSGeometry *geom = GEOSGeomFromWKB_buf_r(GEOSContextHandle_, (const uchar*)wkbBuffer.c_str(), wkbBuffer.size());
+			geos::io::WKBReader geomFactory;
 
-			double length;
-			if (GEOSLength_r(GEOSContextHandle_, geom, &length) == 0)
-			{
-				length = 0;
-			}
+			std::istringstream strStr(wkbBuffer);
+
+			geos::geom::Geometry *geom = geomFactory.read(strStr);
+
+			double length = geom->getLength();
 			queryAdd_->bind(4, length*detToM);
+
+			delete geom;
 
 			double area = 0;
 			queryAdd_->bind(5, area);
@@ -320,20 +321,20 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 			std::string wkbBuffer = factory_.create_multipolygon(area);
 			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
-			GEOSGeometry *geom = GEOSGeomFromWKB_buf_r(GEOSContextHandle_, (const uchar*)wkbBuffer.c_str(), wkbBuffer.size());
+			geos::io::WKBReader geomFactory;
+
+			std::istringstream strStr(wkbBuffer);
+
+			geos::geom::Geometry *geom = geomFactory.read(strStr);
 			
-			double lengthDeg;
-			if (GEOSLength_r(GEOSContextHandle_, geom, &lengthDeg) == 0)
-				lengthDeg = 0;
+			double lengthDeg = geom->getLength();
 			queryAdd_->bind(4, lengthDeg * detToM);
 
-			double areaDegSq;
-			if (GEOSArea_r(GEOSContextHandle_, geom, &areaDegSq) == 0)
-				areaDegSq = 0;
+			double areaDegSq = geom->getArea();
 			queryAdd_->bind(5, areaDegSq * detToM * detToM);
 
-			GEOSGeom_destroy_r(GEOSContextHandle_, geom);
-
+			delete geom;
+			
 			queryAdd_->exec();
 
 			long long entityId = db_.getLastInsertRowid();

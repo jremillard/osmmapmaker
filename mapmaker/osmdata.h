@@ -40,8 +40,6 @@ private:
 
 	osmium::geom::WKBFactory<osmium::geom::IdentityProjection> factory_; 
 
-	GEOSContextHandle_t GEOSContextHandle_;
-
 	std::vector<std::string> discardedKeys_;
 
 	QHash<QString, int> areaKeys_;
