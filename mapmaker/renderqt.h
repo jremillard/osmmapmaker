@@ -14,6 +14,9 @@ public:
 	void SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top);
 
 private:
+	void RenderGeom(QPainter &painter, std::map<int, double> &zoomScale);
+	void RenderLabels(QPainter &painter, std::map<int, double> &zoomScale);
+
 	int imageWithPixels_;
 	int imageHeightPixels_;
 	double left_;

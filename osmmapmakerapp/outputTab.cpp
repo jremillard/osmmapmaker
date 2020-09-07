@@ -266,8 +266,8 @@ void OutputTab::on_generate_clicked()
 
 		unsigned int maxThreads = std::thread::hardware_concurrency();
 
-		Render render1x(project_, 1);
-		Render render2x(project_, 2);
+		RenderQT render1x(project_, 1);
+		RenderQT render2x(project_, 2);
 
 		for (int z = tileOutput->minZoom(); z <= tileOutput->maxZoom(); ++z)
 		{
@@ -326,7 +326,7 @@ void OutputTab::on_generate_clicked()
 }
 
 
-void OutputTab::RenderTile(Render &render, const path &imagePath, int tileSize, int resolutionScale, int x, int y, int z)
+void OutputTab::RenderTile(RenderQT &render, const path &imagePath, int tileSize, int resolutionScale, int x, int y, int z)
 {
 	// Calculate pixel positions of bottom - left & top - right
 	std::pair<int,int> p0(x * tileSize, (y + 1) * tileSize);

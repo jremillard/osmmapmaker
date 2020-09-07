@@ -27,6 +27,7 @@ public:
 	size_t conditionCount() const;
 	void setCondition(size_t i, const QString &key, const std::vector<QString> &values);
 	void condition(size_t i, QString *key, std::vector<QString> *values) const;
+	void condition(size_t i, std::string *key, std::vector<std::string> *values) const;
 
 	void insertCondition(size_t i, const QString &key, const std::vector<QString> &values);
 	void deleteCondition(size_t i);
@@ -35,6 +36,10 @@ public:
 private:
 	std::vector<QString> keys_;
 	std::vector< std::vector<QString>> values_;
+
+	std::vector<std::string> keysStd_;
+	std::vector< std::vector<std::string>> valuesStd_;
+
 };
 
 class SubLayer
@@ -116,7 +121,7 @@ public:
 	void removeSubLayer(size_t i);
 	void subLayerMove(size_t i, int offset);
 
-	StyleSelector subLayerSelectors(size_t i);
+	const StyleSelector& subLayerSelectors(size_t i);
 	void setSubLayerSelectors(size_t i, const StyleSelector &selections);
 
 	Line subLayerLine(size_t i);

@@ -24,3 +24,4 @@ include_directories("${PROJECT_SOURCE_DIR}/mapmaker")
 
 add_subdirectory(mapmaker)
 add_subdirectory(osmmapmakerapp)
+add_subdirectory(tests)

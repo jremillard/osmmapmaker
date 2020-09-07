@@ -17,4 +17,5 @@ projects/*.osmmap/*
 */Debug/
 *.ttf
 azcopy.exe
+CTestTestfile.cmake
 pushgtctoazure.py

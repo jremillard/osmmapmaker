@@ -7,6 +7,7 @@
 #include "output.h"
 
 #include <filesystem>
+#include <proj.h>
 
 using namespace std::filesystem;
 
@@ -63,6 +64,9 @@ public:
 	void convertMapToData(double x, double y, double *lon, double *lat);
 	void convertDataToMap(double lat, double lon, double *x, double *y);
 
+	PJ *mapToData_;
+	PJ *dataToMap_;
+
 private:
 	void createView(SQLite::Database &db, const QString &viewName, const QString &dataSource, OsmEntityType type, const QString &primaryKey, std::vector<QString> &attributes);
 
@@ -77,4 +81,5 @@ private:
 	std::vector< Output*> outputs_;
 	path projectPath_;
 
+	PJ_CONTEXT *proj_context_;
 };

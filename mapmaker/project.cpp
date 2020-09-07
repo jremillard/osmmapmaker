@@ -5,19 +5,19 @@
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
-#include <proj.h>
 
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
 
 #include <set>
 
-static PJ_CONTEXT *proj_context = NULL;
 
 Project::Project(path fileName)
 {
-	if (proj_context == NULL)
-		proj_context = proj_context_create();
+	proj_context_ = proj_context_create();
+
+	mapToData_ = proj_create_crs_to_crs(proj_context_, mapSRS().c_str(), dataSRS().c_str(), NULL);
+	dataToMap_ = proj_create_crs_to_crs(proj_context_, dataSRS().c_str(), mapSRS().c_str(), NULL);
 
 	projectPath_ = fileName;
 	QDomDocument xmlBOM;
@@ -113,6 +113,12 @@ Project::~Project()
 	outputs_.clear();
 
 	delete db_;
+
+	proj_destroy(dataToMap_);
+	proj_destroy(mapToData_);
+
+	proj_context_destroy(proj_context_);
+	proj_context_ = NULL;
 }
 
 
@@ -408,16 +414,12 @@ std::string Project::dataSRS()
 
 void Project::convertMapToData(double x, double y, double *lon, double *lat)
 {
-	PJ *mapToData = proj_create_crs_to_crs(proj_context, mapSRS().c_str(), dataSRS().c_str(),NULL);
-
 	PJ_COORD in;
 	memset(&in, 0, sizeof(in));
 	in.xyzt.x = x;
 	in.xyzt.y = y;
 
-	PJ_COORD out = proj_trans(mapToData, PJ_FWD, in);
-
-	proj_destroy(mapToData);
+	PJ_COORD out = proj_trans(mapToData_, PJ_FWD, in);
 
 	*lon = out.lp.lam;
 	*lat = out.lp.phi;
@@ -425,16 +427,12 @@ void Project::convertMapToData(double x, double y, double *lon, double *lat)
 
 void Project::convertDataToMap(double lon, double lat, double *x, double *y)
 {
-	PJ *mapToData = proj_create_crs_to_crs(proj_context, dataSRS().c_str(), mapSRS().c_str(), NULL);
-
 	PJ_COORD in;
 	memset(&in, 0, sizeof(in));
 	in.lp.lam = lon;
 	in.lp.phi = lat;
 
-	PJ_COORD out = proj_trans(mapToData, PJ_FWD, in);
-
-	proj_destroy(mapToData);
+	PJ_COORD out = proj_trans(dataToMap_, PJ_FWD, in);
 
 	*x = out.xyzt.x;
 	*y = out.xyzt.y;

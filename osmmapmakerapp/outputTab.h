@@ -3,7 +3,7 @@
 #include <QWidget>
 #include <QListWidgetItem>
 
-#include "render.h"
+#include "renderqt.h"
 
 namespace Ui {
 	class OutputTab;
@@ -44,7 +44,7 @@ private:
 	std::pair<double, double> fromPixelToLL(int tileSize, std::pair<double, double> px, int zoom);
 	std::pair<double, double> fromLLtoPixel(int tileSize, std::pair<double, double> ll, int zoom);
 
-	void RenderTile(Render &render, const path &imagePath, int tileSize,int resolutionScale, int x, int y, int z);
+	void RenderTile(RenderQT &render, const path &imagePath, int tileSize,int resolutionScale, int x, int y, int z);
 
 	bool surpressSelectionChange_;
 

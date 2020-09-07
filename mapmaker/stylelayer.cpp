@@ -9,6 +9,15 @@ StyleSelector::StyleSelector(const QString &key)
 {
 	keys_.push_back(key);
 	values_.push_back(std::vector<QString>() = { QString("*") });
+
+	keysStd_.push_back(key.toStdString());
+	std::vector<std::string> valuesStd;
+	for (QString v : values_.back())
+	{
+		valuesStd.push_back(v.toStdString());
+	}
+
+	valuesStd_.push_back(valuesStd);
 }
 
 StyleSelector::~StyleSelector()
@@ -19,6 +28,9 @@ void StyleSelector::clear()
 {
 	keys_.clear();
 	values_.clear();
+
+	keysStd_.clear();
+	valuesStd_.clear();
 }
 
 QString StyleSelector::mapniKExpression()
@@ -72,6 +84,16 @@ void StyleSelector::setCondition(size_t i, const QString &key, const std::vector
 {
 	keys_[i] = key;
 	values_[i] = values;
+
+	keysStd_[i] = key.toStdString();
+	std::vector<std::string> valuesStd;
+	for (QString v : values)
+	{
+		valuesStd.push_back(v.toStdString());
+	}
+
+	valuesStd_[i] = valuesStd;
+
 }
 
 void StyleSelector::condition(size_t i, QString *key, std::vector<QString> *values) const
@@ -80,16 +102,35 @@ void StyleSelector::condition(size_t i, QString *key, std::vector<QString> *valu
 	*values = values_[i];
 }
 
+void StyleSelector::condition(size_t i, std::string *key, std::vector<std::string> *values) const
+{
+	*key = keysStd_[i];
+	*values = valuesStd_[i];
+}
+
 void StyleSelector::insertCondition(size_t i, const QString &key, const std::vector<QString> &values)
 {
 	keys_.insert(keys_.begin() + i, key);
 	values_.insert(values_.begin() + i, values);
+
+	keysStd_.insert(keysStd_.begin() + i, key.toStdString());
+
+	std::vector<std::string> valuesStd;
+	for (QString v : values)
+	{
+		valuesStd.push_back(v.toStdString());
+	}
+
+	valuesStd_.insert(valuesStd_.begin() + i, valuesStd);
 }
 
 void StyleSelector::deleteCondition(size_t i)
 {
 	keys_.erase(keys_.begin() + i);
 	values_.erase(values_.begin() + i);
+
+	keysStd_.erase(keysStd_.begin() + i);
+	valuesStd_.erase(valuesStd_.begin() + i);
 }
 
 //////////////////////////////////////////
@@ -738,7 +779,7 @@ std::vector<QString> StyleLayer::requiredKeys() const
 	return keys;
 }
 
-StyleSelector StyleLayer::subLayerSelectors(size_t i)
+const StyleSelector& StyleLayer::subLayerSelectors(size_t i)
 {
 	return selectors_[i];
 }
