@@ -595,45 +595,69 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 							Point *center = geom->getCentroid();
 
-							const Envelope *geomBB = geom->getEnvelopeInternal();
-							double geomWidthPixels = geomBB->getWidth() * xScale;
-							double maxWidthPixels = std::min(label.maxWrapWidth_ * scale_, geomWidthPixels);
-							if (label.maxWrapWidth_ <= 0)
-								maxWidthPixels = geomWidthPixels;
-
 							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
+							const double goldenRatio = 1.618;
 
-							int lines = ceil(textWidthPixels.width() / maxWidthPixels);
+							double maxWrapWidthPixels = textWidthPixels.width();
+							double bestRatio = 1e100;
+							for (double ii = 1; ii < 10; ++ii)
+							{
+								double ratio = (textWidthPixels.width() / ii) / (textWidthPixels.height()*ii);
+								double ratioError = (ratio / goldenRatio) - 1.0;
+
+								// too small is not good, punish too small.
+								if (ratioError < 0)
+									ratioError = ratioError * -5.0;
+
+								if (ratioError < bestRatio)
+								{
+									maxWrapWidthPixels = textWidthPixels.width() / ii; 
+									bestRatio = ratioError;
+								}
+							}
+
+							bool tooLarge = false;
+							if (labelText.indexOf("Groton Memorial") == 0)
+								tooLarge = tooLarge;
+							if (labelText.indexOf("Baddacook") == 0)
+								tooLarge = tooLarge;
+							if (labelText.indexOf("Blood Land") == 0)
+								tooLarge = tooLarge;
+
+							const Envelope *geomBB = geom->getEnvelopeInternal();
+
+							double geomWidthPixels = geomBB->getWidth() * xScale;
 
 							QTextBoundaryFinder wordFinder(QTextBoundaryFinder::Word, labelText);
 
 							std::vector< QString> words;
 							std::vector< int> wordLengths;
+							int longestWord = 0;
 							int lastPos = 0;
-							bool tooLarge = false;
 							while (wordFinder.toNextBoundary() > 0)
 							{
 								int pos = wordFinder.position();
 
 								if (labelText[pos].isSpace() == false)
 								{
-									words.push_back(labelText.mid(lastPos, pos - lastPos));
-									wordLengths.push_back(metrics.size(Qt::TextSingleLine, words.back()).width());
+									QString word = labelText.mid(lastPos, pos - lastPos);
+									words.push_back(word);
+									int wordSize = metrics.size(Qt::TextSingleLine, word).width();
+									if (wordSize > longestWord)
+										longestWord = wordSize;
+									wordLengths.push_back(wordSize);
 									lastPos = pos;
-									if (wordLengths.back() > maxWidthPixels)
+									if (wordLengths.back() > geomWidthPixels)
 										tooLarge = true;
 								}
 							}
 
-							if (labelText.indexOf("Groton Memorial") == 0)
-								tooLarge = tooLarge;
-							if (labelText.indexOf("Baddacook") == 0)
-								tooLarge = tooLarge;
-
-							if (tooLarge == false)
+							if (longestWord < geomWidthPixels)
 							{
+								double maxWidthPixels = std::min(maxWrapWidthPixels+ longestWord / 2, geomWidthPixels);
+								
 								std::vector<size_t> breaks;
-								breakLines(wordLengths, maxWidthPixels, &breaks);
+								breakLines(wordLengths, maxWidthPixels , &breaks);
 
 								float x = (center->getX() - left_)* xScale;
 								float y = (top_ - center->getY())* yScale;

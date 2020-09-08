@@ -15,8 +15,8 @@
   <directory></directory>
  </tileOutput>
  <map backgroundOpacity="1" backgroundColor="#e0e7cc">
-  <layer type="line" k="power" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="power" type="line">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="power">
       <value>line</value>
@@ -33,8 +33,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="area" k="building" dataSource="Primary">
-   <subLayer minZoom="14" name="" visible="true">
+  <layer dataSource="Primary" k="building" type="area">
+   <subLayer name="" minZoom="14" visible="true">
     <selector>
      <condition key="building">
       <value>*</value>
@@ -50,8 +50,8 @@
     </area>
    </subLayer>
   </layer>
-  <layer type="line" k="admin_level" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="false">
+  <layer dataSource="Primary" k="admin_level" type="line">
+   <subLayer name="" minZoom="0" visible="false">
     <selector>
      <condition key="admin_level">
       <value>*</value>
@@ -68,8 +68,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="line" k="highway" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="highway" type="line">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>track</value>
@@ -101,7 +101,7 @@
      <offsetY>-5</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -139,7 +139,7 @@
      <offsetY>-5</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="15" name="" visible="true">
+   <subLayer name="" minZoom="15" visible="true">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -161,7 +161,7 @@
      <dashArray>5,5</dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="14" name="" visible="true">
+   <subLayer name="" minZoom="14" visible="true">
     <selector>
      <condition key="highway">
       <value>track</value>
@@ -177,7 +177,7 @@
      <dashArray></dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="14" name="" visible="true">
+   <subLayer name="" minZoom="14" visible="true">
     <selector>
      <condition key="highway">
       <value>path</value>
@@ -193,7 +193,7 @@
      <dashArray>3,3</dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>cycleway</value>
@@ -214,7 +214,7 @@
      <dashArray></dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="14" name="" visible="true">
+   <subLayer name="" minZoom="14" visible="true">
     <selector>
      <condition key="highway">
       <value>cycleway</value>
@@ -230,7 +230,7 @@
      <dashArray>5,4</dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="14" name="" visible="true">
+   <subLayer name="" minZoom="14" visible="true">
     <selector>
      <condition key="highway">
       <value>residential</value>
@@ -259,7 +259,7 @@
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>secondary</value>
@@ -289,7 +289,7 @@
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>steps</value>
@@ -305,7 +305,7 @@
      <dashArray>1,1</dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="15" name="" visible="true">
+   <subLayer name="" minZoom="15" visible="true">
     <selector>
      <condition key="highway">
       <value>service</value>
@@ -321,7 +321,7 @@
      <dashArray></dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="15" name="" visible="true">
+   <subLayer name="" minZoom="15" visible="true">
     <selector>
      <condition key="highway">
       <value>footway</value>
@@ -337,7 +337,7 @@
      <dashArray></dashArray>
     </line>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="highway">
       <value>*</value>
@@ -354,8 +354,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="area" k="amenity" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="amenity" type="area">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="amenity">
       <value>parking</value>
@@ -373,7 +373,7 @@
      <fillImageOpacity>1</fillImageOpacity>
     </area>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="amenity">
       <value>parking</value>
@@ -388,7 +388,7 @@
      <fillImageOpacity>0</fillImageOpacity>
     </area>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="amenity">
       <value>school</value>
@@ -415,8 +415,8 @@
     </label>
    </subLayer>
   </layer>
-  <layer type="line" k="landuse" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="landuse" type="line">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="landuse">
       <value>conservation</value>
@@ -434,8 +434,8 @@
     </line>
    </subLayer>
   </layer>
-  <layer type="line" k="waterway" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="waterway" type="line">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="waterway">
       <value>stream</value>
@@ -467,8 +467,8 @@
     </label>
    </subLayer>
   </layer>
-  <layer type="area" k="natural" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="natural" type="area">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="natural">
       <value>beach</value>
@@ -494,7 +494,7 @@
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="natural">
       <value>water</value>
@@ -520,7 +520,7 @@
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="natural">
       <value>wetland</value>
@@ -540,15 +540,15 @@
      <weight>400</weight>
      <color>#000000</color>
      <haloSize>0</haloSize>
-     <haloColor>#000000</haloColor>
+     <haloColor>#f4efe1</haloColor>
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
     </label>
    </subLayer>
   </layer>
-  <layer type="area" k="waterway" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="waterway" type="area">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="waterway">
       <value>riverbank</value>
@@ -564,8 +564,8 @@
     </area>
    </subLayer>
   </layer>
-  <layer type="area" k="leisure" dataSource="Primary">
-   <subLayer minZoom="0" name="" visible="true">
+  <layer dataSource="Primary" k="leisure" type="area">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="leisure">
       <value>nature_reserve</value>
@@ -585,13 +585,13 @@
      <weight>400</weight>
      <color>#050505</color>
      <haloSize>1.2</haloSize>
-     <haloColor>#ffffff</haloColor>
+     <haloColor>#f4efe1</haloColor>
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>70</maxWrapWidth>
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="leisure">
       <value>recreation_ground</value>
@@ -619,7 +619,7 @@
      <offsetY>0</offsetY>
     </label>
    </subLayer>
-   <subLayer minZoom="0" name="" visible="true">
+   <subLayer name="" minZoom="0" visible="true">
     <selector>
      <condition key="leisure">
       <value>pitch</value>
