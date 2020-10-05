@@ -4,6 +4,7 @@
 #include <sstream>
 #include <geos/geos.h>
 #include "linebreaking.h"
+#include <geos/simplify/DouglasPeuckerLineSimplifier.h>
 
 RenderQT::RenderQT(Project *project, int dpiScale)
 {
@@ -193,7 +194,7 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 
 						std::istringstream strStr(col.getString());
 
-						geos::geom::Geometry *geom = geomFactory.read(strStr);
+						std::auto_ptr<geos::geom::Geometry> geom(geomFactory.read(strStr));
 
 						struct toMap : public CoordinateFilter
 						{
@@ -236,7 +237,7 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 							if (currentScale > minZoomScale)
 								continue;
 
-							geos::geom::LineString *ls = dynamic_cast<geos::geom::LineString*>(geom);
+							geos::geom::LineString *ls = dynamic_cast<geos::geom::LineString*>(geom.get());
 
 							QPolygonF poly;
 							poly.reserve(ls->getNumPoints());
@@ -301,7 +302,7 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 							if (currentScale > minZoomScale)
 								continue;
 
-							geos::geom::MultiPolygon *poly = dynamic_cast<geos::geom::MultiPolygon *>(geom);
+							geos::geom::MultiPolygon *poly = dynamic_cast<geos::geom::MultiPolygon *>(geom.get());
 
 
 							for (geos::geom::Geometry *polyG : *poly)
@@ -501,7 +502,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						std::istringstream strStr(col.getString());
 
-						geos::geom::Geometry *geom = geomFactoryWKB.read(strStr);
+						std::auto_ptr<geos::geom::Geometry> geom(geomFactoryWKB.read(strStr));
 
 						struct toMap : public CoordinateFilter
 						{
@@ -564,6 +565,9 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						QFontMetricsF metrics(*font);
 
+						double xScale = imageWithPixels_ / (right_ - left_);
+						double yScale = imageHeightPixels_ / (top_ - bottom_);
+
 						switch (projectLayer->layerType())
 						{
 						case ST_POINT:
@@ -573,7 +577,138 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						case ST_LINE:
 						{
+							Line line = projectLayer->subLayerLine(subLayerIndex);
+							if (line.visible_ == false)
+								continue;
 
+							double minZoomScale = zoomToScale[line.minZoom_];
+							double currentScale = penScaleMPerPixel / 0.00028;
+							if (currentScale > minZoomScale)
+								continue;
+
+							std::auto_ptr< CoordinateSequence> cs(geom->getCoordinates());
+							
+							geos::simplify::DouglasPeuckerLineSimplifier s(*(cs->toVector()));
+
+							s.setDistanceTolerance(5.0 / xScale);
+
+							std::auto_ptr<geos::simplify::DouglasPeuckerLineSimplifier::CoordsVect> newCoords = s.simplify();
+
+							CoordinateArraySequenceFactory csF;
+					
+							// do not need to delete
+							LineString *lineString = geomFactory->createLineString(cs.get());
+
+							std::size_t nPoints = lineString->getNumPoints();
+
+							double length = geom->getLength();
+
+							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
+
+							// length in pixels
+							double lengthPixels = 0;
+							for (int i = 1; i < nPoints; ++i)
+							{
+								std::auto_ptr<Point> pt1(lineString->getPointN(i - 1));
+								std::auto_ptr<Point> pt2(lineString->getPointN(i));
+
+								double pt1X = pt1->getX();
+								double pt1Y = pt1->getY();
+
+								double pt2X = pt2->getX();
+								double pt2Y = pt2->getY();
+
+								double dX = pt2X - pt1X;
+								double dY = pt2Y - pt1Y;
+
+								double deltaRatio = 0;
+
+								bool emitText = false;
+
+								double distPixels = sqrt(dX*dX*xScale*xScale + dY * dY*yScale*yScale);
+								lengthPixels += distPixels;
+							}
+
+							double labelMaxGap = label.maxWrapWidth_;
+							if (labelMaxGap <= 0)
+								labelMaxGap = 400;
+
+							// spacing specified
+							double maxPitch = textWidthPixels.width() + labelMaxGap;
+							double numberOfLabelGaps = ceil(lengthPixels / maxPitch);
+							if (numberOfLabelGaps <= 1)
+								numberOfLabelGaps = 2.0;
+
+							double pitch = lengthPixels / numberOfLabelGaps;
+
+							if (pitch < textWidthPixels.width() / 2.2)
+								break; // too small don't render it.
+
+							double t = 0;
+							double lengthTotal = 0;
+							double nextLabel = pitch;
+							for (int i = 1; i < nPoints; ++i)
+							{
+								std::auto_ptr<Point> pt1(lineString->getPointN(i - 1));
+								std::auto_ptr<Point> pt2(lineString->getPointN(i));
+
+								double pt1X = pt1->getX();
+								double pt1Y = pt1->getY();
+
+								double pt2X = pt2->getX();
+								double pt2Y = pt2->getY();
+
+								double dX = pt2X - pt1X;
+								double dY = pt2Y - pt1Y;
+
+								double segmentLengthPixels = sqrt(dX*dX*xScale*xScale + dY*dY*yScale*yScale);
+
+								while (lengthTotal + segmentLengthPixels > nextLabel)
+								{
+									double usedPixels = nextLabel - lengthTotal;
+
+									double deltaRatio = usedPixels / segmentLengthPixels;
+
+									segmentLengthPixels -= usedPixels;
+									lengthTotal += usedPixels;
+									nextLabel += pitch;
+
+									QPainterPath path;
+
+									double centerX = pt1X + (deltaRatio * dX);
+									double centerY = pt1Y + (deltaRatio * dY);
+
+									float x = (centerX - left_)* xScale;
+									float y = (top_ - centerY)* yScale;
+
+									painter.resetTransform();
+									painter.translate(x, y);
+									double rotAngleDeg = atan2(dY, dX) * -180.0 / 3.141596;
+									if (rotAngleDeg > 90)
+										rotAngleDeg -= 180;
+									else if ( rotAngleDeg < -90)
+										rotAngleDeg += 180;
+									
+									painter.rotate(rotAngleDeg);
+
+									path.addText(-textWidthPixels.width() / 2, label.offsetY_, *font, labelText);
+
+									painter.setPen(QPen(Qt::NoPen));
+
+									if (label.haloSize_ > 0)
+									{
+										QPainterPathStroker halo;
+										halo.setWidth(label.haloSize_ * 2 * scale_);
+										painter.setBrush(label.haloColor_);
+										painter.drawPath(halo.createStroke(path));
+									}
+
+									painter.setBrush(label.color_);
+									painter.drawPath(path);
+								}
+
+								lengthTotal += segmentLengthPixels;
+							}
 						}
 						break;
 
@@ -588,12 +723,11 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							if (currentScale > minZoomScale)
 								continue;
 
-							double xScale = imageWithPixels_ / (right_ - left_);
-							double yScale = imageHeightPixels_ / (top_ - bottom_);
+							painter.resetTransform();
 
 							QPainterPath path;
 
-							Point *center = geom->getCentroid();
+							std::auto_ptr<Point> center(geom->getCentroid());
 
 							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
 							const double goldenRatio = 1.618;
