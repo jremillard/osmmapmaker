@@ -78,6 +78,13 @@ private slots:
 	void on_editingFinishedAreaLabel();
 	void on_areaMinZoom_editingFinished();
 
+	// point
+	void on_pointVisible_clicked();
+	void on_pointColor_editingFinished();
+	void on_pointWidth_editingFinished();
+	void on_pointOpacity_editingFinished();
+	void on_pointFillImageOpacity_editingFinished();
+
 private:
 	void showEvent(QShowEvent *event);
 	void paintEvent(QPaintEvent *event);
@@ -89,6 +96,7 @@ private:
 	void freshRender();
 	void saveLine();
 	void saveArea();
+	void savePoint();
 	void moveTreeItem(int direction);
 	void updatePixelResultionFromZoom();
 

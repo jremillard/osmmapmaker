@@ -28,30 +28,33 @@ StyleTab::StyleTab(QWidget *parent) :
 
 	lineLabelPage_ = new SubLayerTextPage(this);
 	areaLabelPage_ = new SubLayerTextPage(this);
+	pointLabelPage_ = new SubLayerTextPage(this);
 
 	bool r = connect(lineLabelPage_, &SubLayerTextPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
 	assert(r);
-
 	connect(areaLabelPage_, &SubLayerTextPage::editingFinished, this, &StyleTab::on_editingFinishedAreaLabel);
 	assert(r);
-	//connect(pointLabelPage_, SubLayerTextPage::editingFinished, this, StyleTab::on_editingFinishedPointLabel);
+	connect(pointLabelPage_, &SubLayerTextPage::editingFinished, this, &StyleTab::on_editingFinishedPointLabel);
 	assert(r);
 
 	ui->lineTabWidget->addTab(lineLabelPage_,"Labels");
 	ui->areaTabWidget->addTab(areaLabelPage_, "Labels");
-
+	ui->pointTabWidget->addTab(pointLabelPage_, "Labels");
+	    
 	lineSelectPage_ = new SubLayerSelectPage(this);
 	areaSelectPage_ = new SubLayerSelectPage(this);
+	pointSelectPage_ = new SubLayerSelectPage(this);
 
 	r = connect(lineSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
 	assert(r);
 	r = connect(areaSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedAreaLabel);
 	assert(r);
-	//bool r = connect(lineSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedLineLabel);
+	r = connect(pointSelectPage_, &SubLayerSelectPage::editingFinished, this, &StyleTab::on_editingFinishedPointLabel);
 	assert(r);
 
 	ui->lineTabWidget->addTab(lineSelectPage_, "Select");
 	ui->areaTabWidget->addTab(areaSelectPage_, "Select");
+	ui->pointTabWidget->addTab(pointSelectPage_, "Select");
 
 	project_ = NULL;
 
@@ -162,6 +165,8 @@ void StyleTab::on_treeNew_clicked()
 			{
 			case ST_POINT:
 			{
+				Point point;
+				l->setSubLayerPoint(0, point);
 			}
 			break;
 
@@ -198,6 +203,15 @@ void StyleTab::on_treeNew_clicked()
 		switch (layer->dataType())
 		{
 			case OET_POINT:
+			{
+				Point point;
+				point.color_ = QColor(Qt::red);
+				point.width_ = 2;
+				point.opacity_ = 1.0;
+
+				layer->setSubLayerPoint(insertIndex, point);
+
+			}
 				break;
 
 			case OET_LINE:
@@ -616,6 +630,18 @@ void StyleTab::on_styleTree_itemSelectionChanged()
 			{
 				ui->styleDetail->setCurrentWidget(ui->pagePoint);
 
+				Point point = layer->subLayerPoint(subLayerIndex);
+
+				ui->pointVisible->setChecked(point.visible_);
+				ui->pointMinZoom->setValue(point.minZoom_);
+				ui->pointColor->setText(point.color_.name());
+				ui->pointOpacity->setValue(point.opacity_);
+				ui->pointImage->setText(point.image_);
+				ui->pointWidth->setValue(point.width_);
+
+				pointLabelPage_->Load(layer->label(subLayerIndex));
+				pointSelectPage_->Load(project_->renderDatabase(), layer->dataSource(), layer->subLayerSelectors(subLayerIndex));
+
 				break;
 			}
 
@@ -851,7 +877,64 @@ void StyleTab::on_pointUpdateMap_clicked()
 
 void StyleTab::on_editingFinishedPointLabel()
 {
-	// savePoint();
+	savePoint();
+}
+
+void StyleTab::on_pointVisible_clicked()
+{
+	savePoint();
+}
+
+void StyleTab::on_pointColor_editingFinished()
+{
+	savePoint();
+}
+
+void StyleTab::on_pointWidth_editingFinished()
+{
+	savePoint();
+}
+
+void StyleTab::on_pointOpacity_editingFinished()
+{
+	savePoint();
+}
+
+void StyleTab::on_pointFillImageOpacity_editingFinished()
+{
+	savePoint();
+}
+
+void StyleTab::savePoint()
+{
+	QTreeWidgetItem *currentItem = ui->styleTree->currentItem();
+
+	std::vector< StyleLayer*> layers = project_->styleLayers();
+	size_t index = currentItem->parent()->data(0, Qt::UserRole).toUInt();
+	size_t subLayerIndex = currentItem->data(0, Qt::UserRole).toUInt();
+
+	StyleLayer* layer = layers[index];
+
+	//ui->styleDetail->setCurrentWidget(ui->pageLine);
+
+	Point point = layer->subLayerPoint(subLayerIndex);
+
+	point.visible_ = ui->pointVisible->isChecked();
+	point.color_ = ui->pointColor->text();
+	point.minZoom_ = ui->pointMinZoom->value();
+	point.width_ = ui->pointWidth->value();
+	point.opacity_ = ui->pointOpacity->value();
+	point.image_ = ui->pointImage->text();
+
+	layer->setSubLayerPoint(subLayerIndex, point);
+
+	Label lb = layer->label(subLayerIndex);
+	pointLabelPage_->SaveTo(&lb);
+	layer->setLabel(subLayerIndex, lb);
+
+	StyleSelector select = layer->subLayerSelectors(subLayerIndex);
+	pointSelectPage_->SaveTo(&select);
+	layer->setSubLayerSelectors(subLayerIndex, select);
 }
 
 

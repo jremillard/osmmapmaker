@@ -117,6 +117,17 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 			{
 				case ST_POINT:
 				{
+					auto point = projectLayer->subLayerPoint(subLayerIndex);
+					if (point.visible_ == false)
+						continue;
+
+					double minZoomScale = zoomToScale[point.minZoom_];
+					double currentScale = penScaleMPerPixel / 0.00028;
+					if (currentScale > minZoomScale)
+						continue;
+
+					layerActive = true;
+
 					break;
 				}
 
@@ -180,7 +191,7 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 
 						for (auto v : selectionValues)
 						{
-							if (colVal == v)
+							if (colVal == v || v == "*")
 							{
 								subLayerRendered = true;
 								break;
@@ -223,6 +234,20 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 						{
 						case ST_POINT:
 						{
+							auto point = projectLayer->subLayerPoint(subLayerIndex);
+
+							if (point.width_ > 0)
+							{
+								QColor c = point.color_;
+								c.setAlphaF(point.opacity_);
+								QBrush brush(c);
+								painter.setBrush(brush);
+
+								auto *location = geom->getCentroid();
+								painter.drawEllipse(QPointF(location->getX(), location->getY()), point.width_ * penScaleMPerPixel / 2, penScaleMPerPixel * point.width_ / 2);
+								delete location;
+							}
+
 							break;
 						}
 
@@ -423,6 +448,17 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 			{
 			case ST_POINT:
 			{
+				auto point = projectLayer->subLayerPoint(subLayerIndex);
+				if (point.visible_ == false)
+					continue;
+
+				double minZoomScale = zoomToScale[point.minZoom_];
+				double currentScale = penScaleMPerPixel / 0.00028;
+				if (currentScale > minZoomScale)
+					continue;
+
+				layerActive = true;
+
 				break;
 			}
 
@@ -488,7 +524,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						for (auto v : selectionValues)
 						{
-							if (colVal == v)
+							if (colVal == v || v == "*")
 							{
 								subLayerRendered = true;
 								break;
@@ -572,6 +608,33 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 						{
 						case ST_POINT:
 						{
+							std::auto_ptr<geos::geom::Point> center(geom->getCentroid());
+
+							float x = (center->getX() - left_)* xScale;
+							float y = (top_ - center->getY())* yScale;
+
+							painter.resetTransform();
+							painter.translate(x, y);
+
+							QPainterPath path;
+
+							painter.setPen(QPen(Qt::NoPen));
+
+							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
+
+							path.addText(-textWidthPixels.width() / 2, label.offsetY_, *font, labelText);
+
+							if (label.haloSize_ > 0)
+							{
+								QPainterPathStroker halo;
+								halo.setWidth(label.haloSize_ * 2 * scale_);
+								painter.setBrush(label.haloColor_);
+								painter.drawPath(halo.createStroke(path));
+							}
+
+							painter.setBrush(label.color_);
+							painter.drawPath(path);
+
 						}
 						break;
 
@@ -609,8 +672,8 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							double lengthPixels = 0;
 							for (int i = 1; i < nPoints; ++i)
 							{
-								std::auto_ptr<Point> pt1(lineString->getPointN(i - 1));
-								std::auto_ptr<Point> pt2(lineString->getPointN(i));
+								std::auto_ptr<geos::geom::Point> pt1(lineString->getPointN(i - 1));
+								std::auto_ptr<geos::geom::Point> pt2(lineString->getPointN(i));
 
 								double pt1X = pt1->getX();
 								double pt1Y = pt1->getY();
@@ -649,8 +712,8 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							double nextLabel = pitch;
 							for (int i = 1; i < nPoints; ++i)
 							{
-								std::auto_ptr<Point> pt1(lineString->getPointN(i - 1));
-								std::auto_ptr<Point> pt2(lineString->getPointN(i));
+								std::auto_ptr<geos::geom::Point> pt1(lineString->getPointN(i - 1));
+								std::auto_ptr<geos::geom::Point> pt2(lineString->getPointN(i));
 
 								double pt1X = pt1->getX();
 								double pt1Y = pt1->getY();
@@ -727,7 +790,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 							QPainterPath path;
 
-							std::auto_ptr<Point> center(geom->getCentroid());
+							std::auto_ptr<geos::geom::Point> center(geom->getCentroid());
 
 							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
 							const double goldenRatio = 1.618;

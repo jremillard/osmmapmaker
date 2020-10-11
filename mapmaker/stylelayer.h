@@ -48,9 +48,22 @@ public:
 	SubLayer();
 	virtual ~SubLayer();
 
+	QString name_;
+
 	bool visible_;
 	QColor color_;
 	int minZoom_;
+	double opacity_;
+
+};
+
+class Point: public SubLayer
+{
+public:
+	Point();
+
+	QString image_;
+	double width_;
 };
 
 class Line : public SubLayer
@@ -58,11 +71,9 @@ class Line : public SubLayer
 public:
 	Line();
 
-	QString name_;
 	QColor casingColor_;
 	double width_;
 	double casingWidth_;
-	double opacity_;
 	double smooth_;
 	std::vector< std::pair<double, double> > dashArray_;
 };
@@ -71,9 +82,6 @@ class Area : public SubLayer
 {
 public:
 	Area();
-
-	QString name_;
-	double opacity_;
 
 	double casingWidth_;
 	QColor casingColor_;
@@ -130,6 +138,9 @@ public:
 	Area subLayerArea(size_t i);
 	void setSubLayerArea(size_t i, const Area &area);
 
+	Point subLayerPoint(size_t i);
+	void setSubLayerPoint(size_t i, const Point &area);
+
 	Label label(size_t i);
 	void setLabel(size_t i, const Label &lb);
 
@@ -147,6 +158,7 @@ private:
 	QString key_;
 	QString dataSource_;
 
+	std::vector<Point> points_;
 	std::vector<Line > lines_;
 	std::vector<Area> areas_;
 	std::vector<Label> labels_;

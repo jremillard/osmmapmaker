@@ -146,6 +146,13 @@ SubLayer::~SubLayer()
 {
 }
 
+Point::Point()
+{
+	width_ = 5;
+	image_ = "dot";
+	opacity_ = 1;
+}
+
 Line::Line()
 {
 	casingColor_ = QColor(Qt::white);
@@ -291,6 +298,27 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 	else if (typeStr == "point")
 	{
 		type_ = ST_POINT;
+
+		for (int i = 0; i < subLayers.length(); ++i)
+		{
+			Point point;
+
+			QDomElement pointNode = subLayers.at(i).firstChildElement("point");
+
+			if (pointNode.isNull() == false)
+			{
+				point.name_ = subLayers.at(i).attributes().namedItem("name").nodeValue();
+				point.minZoom_ = subLayers.at(i).attributes().namedItem("minZoom").nodeValue().toInt();
+				point.visible_ = !(subLayers.at(i).attributes().namedItem("visible").nodeValue() == "false");
+
+				point.color_ = pointNode.firstChildElement("color").text();
+				point.width_ = pointNode.firstChildElement("width").text().toDouble();
+				point.opacity_ = pointNode.firstChildElement("opacity").text().toDouble();
+				point.image_ = pointNode.firstChildElement("image").text();
+			}
+
+			points_.push_back(point);
+		}
 	}
 	else if (typeStr == "area")
 	{
@@ -320,10 +348,6 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			areas_.push_back(area);
 		}
 
-	}
-	else
-	{
-		// TODO
 	}
 
 	for (int i = 0; i < subLayers.length(); ++i)
@@ -419,6 +443,33 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 		case ST_POINT:
 		{
 			layerElement.setAttribute("type", "point");
+
+			Point point = subLayerPoint(subLayerIndex);
+
+			subLayerNode.setAttribute("name", point.name_);
+			subLayerNode.setAttribute("visible", point.visible_ ? "true" : "false");
+			subLayerNode.setAttribute("minZoom", point.minZoom_);
+
+			QDomElement pointNode = doc.createElement("point");
+
+			QDomElement fillImageNode = doc.createElement("image");
+			fillImageNode.appendChild(doc.createTextNode(point.image_));
+			pointNode.appendChild(fillImageNode);
+
+			QDomElement opacityNode = doc.createElement("opacity");
+			opacityNode.appendChild(doc.createTextNode(QString::number(point.opacity_)));
+			pointNode.appendChild(opacityNode);
+
+			QDomElement colorNode = doc.createElement("color");
+			colorNode.appendChild(doc.createTextNode(point.color_.name()));
+			pointNode.appendChild(colorNode);
+
+			QDomElement widthNode = doc.createElement("width");
+			widthNode.appendChild(doc.createTextNode(QString::number(point.width_)));
+			pointNode.appendChild(widthNode);
+
+			subLayerNode.appendChild(pointNode);
+
 			break;
 		}
 
@@ -594,6 +645,11 @@ OsmEntityType StyleLayer::dataType() const
 
 void StyleLayer::showAll()
 {
+	for (auto &point : points_)
+	{
+		point.visible_ = true;
+	}
+
 	for (auto &line : lines_)
 	{
 		line.visible_ = true;
@@ -608,6 +664,11 @@ void StyleLayer::showAll()
 
 void StyleLayer::hideAll()
 {
+	for (auto &point: points_)
+	{
+		point.visible_ = false;
+	}
+
 	for (auto &line : lines_)
 	{
 		line.visible_ = false;
@@ -630,6 +691,7 @@ void StyleLayer::subLayerMove(size_t currentIndex, int direction)
 	switch (type_)
 	{
 		case ST_POINT:
+			std::iter_swap(points_.begin() + currentIndex, points_.begin() + currentIndex + direction);
 			break;
 		case ST_LINE:
 			std::iter_swap(lines_.begin() + currentIndex, lines_.begin() + currentIndex + direction);
@@ -648,6 +710,7 @@ void StyleLayer::removeSubLayer(size_t currentIndex)
 	switch (type_)
 	{
 	case ST_POINT:
+		points_.erase(points_.begin() + currentIndex);
 		break;
 	case ST_LINE:
 		lines_.erase(lines_.begin() + currentIndex);
@@ -822,6 +885,25 @@ void StyleLayer::setSubLayerLine(size_t i, const Line &line)
 	else if (i == lines_.size())
 	{
 		lines_.push_back(line);
+		selectors_.push_back(StyleSelector(key_));
+		labels_.push_back(Label());
+	}
+}
+
+Point StyleLayer::subLayerPoint(size_t i)
+{
+	return points_[i];
+}
+
+void StyleLayer::setSubLayerPoint(size_t i, const Point &point)
+{
+	if (i < points_.size())
+	{
+		points_[i] = point;
+	}
+	else if (i == points_.size())
+	{
+		points_.push_back(point);
 		selectors_.push_back(StyleSelector(key_));
 		labels_.push_back(Label());
 	}
