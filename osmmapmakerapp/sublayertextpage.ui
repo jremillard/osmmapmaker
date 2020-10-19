@@ -14,44 +14,48 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="7" column="0">
-    <widget class="QLabel" name="lineMaxSpacingLabel">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Max Spacing</string>
+      <string>Color</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="0" column="2">
+    <widget class="QCheckBox" name="hasLabel">
+     <property name="text">
+      <string>Has Label</string>
      </property>
-     <property name="sizeHint" stdset="0">
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QPushButton" name="labelTagPick">
+     <property name="maximumSize">
       <size>
-       <width>20</width>
-       <height>40</height>
+       <width>23</width>
+       <height>16777215</height>
       </size>
      </property>
-    </spacer>
-   </item>
-   <item row="8" column="2">
-    <widget class="QDoubleSpinBox" name="maxWrapWidth">
-     <property name="decimals">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <double>50000.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>5.000000000000000</double>
+     <property name="text">
+      <string>...</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QDoubleSpinBox" name="height"/>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Halo Size</string>
+     </property>
+    </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QPushButton" name="colorPick">
+   <item row="4" column="2">
+    <widget class="QLineEdit" name="color"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QComboBox" name="fontWeight"/>
+   </item>
+   <item row="6" column="3">
+    <widget class="QPushButton" name="haloColorPick">
      <property name="maximumSize">
       <size>
        <width>23</width>
@@ -70,69 +74,36 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="2">
+    <widget class="QLineEdit" name="haloColor"/>
+   </item>
    <item row="7" column="2">
-    <widget class="QDoubleSpinBox" name="lineMaxSpacing">
+    <widget class="QDoubleSpinBox" name="maxWrapWidth">
      <property name="decimals">
       <number>1</number>
      </property>
      <property name="maximum">
-      <double>500000.000000000000000</double>
+      <double>50000.000000000000000</double>
      </property>
      <property name="singleStep">
       <double>5.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="1" column="3">
-    <widget class="QPushButton" name="labelTagPick">
-     <property name="maximumSize">
-      <size>
-       <width>23</width>
-       <height>16777215</height>
-      </size>
-     </property>
+   <item row="3" column="2">
+    <widget class="QDoubleSpinBox" name="height"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>...</string>
+      <string>Weight</string>
      </property>
     </widget>
-   </item>
-   <item row="6" column="2">
-    <widget class="QLineEdit" name="haloColor"/>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="text"/>
    </item>
    <item row="8" column="0">
-    <widget class="QLabel" name="maxWrapWidthLabel">
-     <property name="text">
-      <string>Wrap Width</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QDoubleSpinBox" name="haloSize"/>
-   </item>
-   <item row="4" column="2">
-    <widget class="QLineEdit" name="color"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Height</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0">
     <widget class="QLabel" name="offsetLabel">
      <property name="text">
       <string>Offset</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Halo Size</string>
      </property>
     </widget>
    </item>
@@ -143,14 +114,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QCheckBox" name="hasLabel">
-     <property name="text">
-      <string>Has Label</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="2">
+   <item row="8" column="2">
     <widget class="QDoubleSpinBox" name="offset">
      <property name="decimals">
       <number>1</number>
@@ -163,15 +127,11 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Color</string>
-     </property>
-    </widget>
+   <item row="5" column="2">
+    <widget class="QDoubleSpinBox" name="haloSize"/>
    </item>
-   <item row="6" column="3">
-    <widget class="QPushButton" name="haloColorPick">
+   <item row="4" column="3">
+    <widget class="QPushButton" name="colorPick">
      <property name="maximumSize">
       <size>
        <width>23</width>
@@ -183,15 +143,52 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_5">
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Weight</string>
+      <string>Height</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QComboBox" name="fontWeight"/>
+   <item row="7" column="0">
+    <widget class="QLabel" name="maxWrapWidthLabel">
+     <property name="text">
+      <string>Wrap Width</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="text"/>
+   </item>
+   <item row="10" column="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Min Zoom</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
+    <widget class="QSpinBox" name="minZoom">
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>50</number>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

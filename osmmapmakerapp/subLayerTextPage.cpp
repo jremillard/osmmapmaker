@@ -52,17 +52,17 @@ void SubLayerTextPage::on_haloColor_editingFinished()
 	emit editingFinished();
 }
 
-void SubLayerTextPage::on_lineMaxSpacing_editingFinished()
-{
-	emit editingFinished();
-}
-
 void SubLayerTextPage::on_maxWrapWidth_editingFinished()
 {
 	emit editingFinished();
 }
 
 void SubLayerTextPage::on_offset_editingFinished()
+{
+	emit editingFinished();
+}
+
+void SubLayerTextPage::on_minZoom_editingFinished()
 {
 	emit editingFinished();
 }
@@ -107,7 +107,7 @@ void SubLayerTextPage::SaveTo(Label *label)
 	label->color_ = QColor(ui->color->text());
 	label->haloSize_ = ui->haloSize->value();
 	label->haloColor_ = QColor(ui->haloColor->text());
-	label->lineLaxSpacing_ = ui->lineMaxSpacing->value();
+	label->minZoom_ = ui->minZoom->value();
 	label->maxWrapWidth_ = ui->maxWrapWidth->value();
 	label->offsetY_ = ui->offset->value();
 
@@ -124,7 +124,7 @@ void SubLayerTextPage::Load(const Label &label)
 	ui->color->setText(label.color_.name());
 	ui->haloSize->setValue(label.haloSize_);
 	ui->haloColor->setText(label.haloColor_.name());
-	ui->lineMaxSpacing->setValue(label.lineLaxSpacing_);
+	ui->minZoom->setValue(label.minZoom_);
 	ui->maxWrapWidth->setValue(label.maxWrapWidth_);
 	ui->offset->setValue(label.offsetY_);
 

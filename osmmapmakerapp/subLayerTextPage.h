@@ -28,11 +28,11 @@ private slots:
 	void on_color_editingFinished();
 	void on_haloSize_editingFinished();
 	void on_haloColor_editingFinished();
-	void on_lineMaxSpacing_editingFinished();
 	void on_maxWrapWidth_editingFinished();
 	void on_offset_editingFinished();
 	void on_colorPick_clicked();
 	void on_haloColorPick_clicked();
+	void on_minZoom_editingFinished();
 	void on_fontWeight_currentIndexChanged(int i);
 
 private:

@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include <QColorDialog>
 
-#include <render.h>
 #include <renderqt.h>
 
 #include "newtoplevelstyle.h"
@@ -431,6 +430,7 @@ void StyleTab::moveTreeItem(int direction)
 
 void StyleTab::on_zoom_editingFinished()
 {
+	/*
 	renderedImage_ = QImage();
 
 	updatePixelResultionFromZoom();
@@ -439,6 +439,7 @@ void StyleTab::on_zoom_editingFinished()
 	renderedImage_ = render_->RenderImage();
 
 	repaint();
+	*/
 }
 
 void StyleTab::on_zoomIn_clicked()

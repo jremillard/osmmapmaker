@@ -5,6 +5,7 @@
 #include <geos/geos.h>
 #include "linebreaking.h"
 #include <geos/simplify/DouglasPeuckerLineSimplifier.h>
+#include "textfield.h"
 
 RenderQT::RenderQT(Project *project, int dpiScale)
 {
@@ -421,8 +422,6 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 	GeometryFactory::unique_ptr geomFactory = GeometryFactory::create();
 
-	QRegularExpression fieldFinder("\\[[^\\]]*\\]");
-
 	QFont normalFont("Arial", -1, QFont::Normal, false);
 	QFont lightFont("Arial", -1, QFont::Light, false);
 	QFont heavyFont("Arial", -1, QFont::Bold, false);
@@ -457,6 +456,11 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 				if (currentScale > minZoomScale)
 					continue;
 
+				minZoomScale = zoomToScale[label.minZoom_];
+				if (currentScale > minZoomScale)
+					continue;
+
+
 				layerActive = true;
 
 				break;
@@ -473,6 +477,11 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 				if (currentScale > minZoomScale)
 					continue;
 
+				minZoomScale = zoomToScale[label.minZoom_];
+				if (currentScale > minZoomScale)
+					continue;
+
+
 				layerActive = true;
 
 				break;
@@ -488,6 +497,11 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 				double currentScale = penScaleMPerPixel / 0.00028;
 				if (currentScale > minZoomScale)
 					continue;
+
+				minZoomScale = zoomToScale[label.minZoom_];
+				if (currentScale > minZoomScale)
+					continue;
+
 
 				layerActive = true;
 			}
@@ -563,24 +577,28 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 						tm.mapToData = project_->dataToMap_;
 						geom->apply_rw(&tm);
 
+						QString labelTextUser = label.mapnikText();
 						QString labelText;
-						if (label.visible_ && label.mapnikText().isEmpty() == false)
+						if (label.visible_ && labelTextUser.isEmpty() == false)
 						{
-							QRegularExpressionMatch match = fieldFinder.match(label.mapnikText());
-							int matchIndex = 0;
-							QString field;
-							while ((field = match.captured(matchIndex)).isNull() == false)
+							if (labelTextUser == "[name] [ref]")
+								labelTextUser = labelTextUser;
+
+							std::map<QString, QString> keys;
+							for (int cc = 0; cc < query.getColumnCount(); ++cc)
 							{
-								field = field.mid(1, field.length() - 2);
-
-								SQLite::Column col = query.getColumn(field.toStdString().c_str());
-								std::string colVal = col.getString();
-
-								labelText += QString::fromStdString(colVal);
-
-								++matchIndex;
+								QString col = query.getColumnName(cc);
+								QString val = query.getColumn(cc);
+								keys.insert(std::pair<QString,QString>(col, val));
 							}
+
+							labelText = TextFieldProcessor::Expand(labelTextUser,keys );
 						}
+
+						double minZoomScale = zoomToScale[label.minZoom_];
+						double currentScale = penScaleMPerPixel / 0.00028;
+						if (currentScale > minZoomScale)
+							continue;
 
 						if (label.visible_ == false || labelText.isEmpty())
 							continue;
@@ -608,6 +626,21 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 						{
 						case ST_POINT:
 						{
+							auto point = projectLayer->subLayerPoint(subLayerIndex);
+
+							if (point.visible_ == false)
+								continue;
+
+							double minZoomScale = zoomToScale[point.minZoom_];
+							double currentScale = penScaleMPerPixel / 0.00028;
+							if (currentScale > minZoomScale)
+								continue;
+
+							minZoomScale = zoomToScale[label.minZoom_];
+							if (currentScale > minZoomScale)
+								continue;
+
+
 							std::auto_ptr<geos::geom::Point> center(geom->getCentroid());
 
 							float x = (center->getX() - left_)* xScale;
@@ -641,6 +674,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 						case ST_LINE:
 						{
 							Line line = projectLayer->subLayerLine(subLayerIndex);
+
 							if (line.visible_ == false)
 								continue;
 
@@ -648,6 +682,11 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							double currentScale = penScaleMPerPixel / 0.00028;
 							if (currentScale > minZoomScale)
 								continue;
+
+							minZoomScale = zoomToScale[label.minZoom_];
+							if (currentScale > minZoomScale)
+								continue;
+
 
 							std::auto_ptr< CoordinateSequence> cs(geom->getCoordinates());
 							
@@ -786,6 +825,10 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							if (currentScale > minZoomScale)
 								continue;
 
+							minZoomScale = zoomToScale[label.minZoom_];
+							if (currentScale > minZoomScale)
+								continue;
+
 							painter.resetTransform();
 
 							QPainterPath path;
@@ -814,12 +857,6 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							}
 
 							bool tooLarge = false;
-							if (labelText.indexOf("Groton Memorial") == 0)
-								tooLarge = tooLarge;
-							if (labelText.indexOf("Baddacook") == 0)
-								tooLarge = tooLarge;
-							if (labelText.indexOf("Blood Land") == 0)
-								tooLarge = tooLarge;
 
 							const Envelope *geomBB = geom->getEnvelopeInternal();
 

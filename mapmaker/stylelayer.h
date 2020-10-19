@@ -101,7 +101,6 @@ public:
 	double height_;
 	double haloSize_;
 	QColor haloColor_;
-	double lineLaxSpacing_;
 	double maxWrapWidth_;
 	double offsetY_;
 };

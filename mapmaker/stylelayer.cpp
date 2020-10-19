@@ -1,5 +1,5 @@
 #include "stylelayer.h"
-
+#include "textfield.h"
 
 StyleSelector::StyleSelector()
 {
@@ -177,7 +177,6 @@ Label::Label()
 	height_ = 10;
 	haloSize_ = 0;
 	haloColor_ = QColor(Qt::black);
-	lineLaxSpacing_ = 0;
 	maxWrapWidth_ = 30;
 	offsetY_ = 0;
 	fontWeight = 400; // use ccs font-weight system.
@@ -370,7 +369,6 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			layerLabel.color_ = labelNode.firstChildElement("color").text();
 			layerLabel.haloSize_ = labelNode.firstChildElement("haloSize").text().toDouble();
 			layerLabel.haloColor_ = labelNode.firstChildElement("haloColor").text();
-			layerLabel.lineLaxSpacing_ = labelNode.firstChildElement("lineLaxSpacing").text().toDouble();
 			layerLabel.maxWrapWidth_ = labelNode.firstChildElement("maxWrapWidth").text().toDouble();
 			layerLabel.offsetY_ = labelNode.firstChildElement("offsetY").text().toDouble(); 
 
@@ -605,10 +603,6 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			haloColorNode.appendChild(doc.createTextNode(label.haloColor_.name()));
 			labelNode.appendChild(haloColorNode);
 
-			QDomElement lineLaxSpacingNode = doc.createElement("lineLaxSpacing");
-			lineLaxSpacingNode.appendChild(doc.createTextNode(QString::number(label.lineLaxSpacing_)));
-			labelNode.appendChild(lineLaxSpacingNode);
-
 			QDomElement maxWrapWidthNode = doc.createElement("maxWrapWidth");
 			maxWrapWidthNode.appendChild(doc.createTextNode(QString::number(label.maxWrapWidth_)));
 			labelNode.appendChild(maxWrapWidthNode);
@@ -803,19 +797,16 @@ std::vector<QString> StyleLayer::requiredKeys() const
 {
 	std::vector<QString> keys;
 
-	QRegularExpression re("\\[(\\w+)\\]");
-
 	// labels name tags
 	for (int subLayerIndex = 0; subLayerIndex < labels_.size(); ++subLayerIndex)
 	{
 		if (labels_[subLayerIndex].visible_)
 		{
-			QRegularExpressionMatchIterator i = re.globalMatch(labels_[subLayerIndex].text_);
-
-			while (i.hasNext()) 
+			std::set<QString> keysOut;
+			TextFieldProcessor::RequiredKeys(labels_[subLayerIndex].text_, &keysOut);
+			for (auto i = keysOut.begin(); i != keysOut.end(); ++i)
 			{
-				QRegularExpressionMatch match = i.next();
-				keys.push_back(match.captured(1));
+				keys.push_back(*i);
 			}
 		}
 	}
