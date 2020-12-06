@@ -4,10 +4,10 @@ project(osmmapmaker VERSION 1.0 LANGUAGES CXX)
 
 find_package(Qt5 REQUIRED COMPONENTS Widgets Core Xml)
 find_package(BZip2)
-find_package(ZLib)
+find_package(ZLIB)
 find_package(EXPAT)
+find_package(SQLite3)
 find_package(SQLiteCpp)
-find_package(sqlite3)
 find_package(PROJ4)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
