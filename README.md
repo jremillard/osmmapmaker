@@ -23,22 +23,3 @@ The project relies on the following libraries:
 
 On Debian-based systems you can install them with `install_dependencies.sh`.
 
-## TODO
-
-- output GUI, read zooms
-- Wrap lines by word on lines
-- Add text rendering priority
-- Add support for other marker types for point features; currently only dots are supported
-- Graphics fill on area type
-- Rework the tag filter dialog box; it is confusing
-- Tag filtering should use existing filters when filtering values
-- Administrative boundary rendering via relations
-- Import elevation data
-- Directly import OSM data via Overpass query
-- Golf style sheet
-- Finalize XML style format
-- Handle invalid field names [] in text boxes
-- Fix stuck focus in zoom box
-- Transform Road to Rd, Lane to Ln, Street to St, etc.
-- Route transforms: make MA 119 display as Rt 119 in labels
-- Alternate labels: [ref] and [name]; use semicolons
