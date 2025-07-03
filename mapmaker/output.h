@@ -11,6 +11,7 @@ struct BoundingBox
 	double bottom_;
 };
 
+/// Abstract description of an export target for rendered data.
 class Output
 {
 public:
@@ -25,9 +26,10 @@ public:
 	virtual void saveXML(QDomDocument &doc, QDomElement &layerElement);
 
 protected:
-	QString name_;
+        QString name_;
 };
 
+/// Output that renders map tiles into a directory structure.
 class TileOutput : public Output
 {
 public:

@@ -11,6 +11,8 @@
 
 using namespace std::filesystem;
 
+/// Encapsulates an osmmapmaker project file and its associated
+/// render database, style layers and outputs.
 class Project
 {
 public:

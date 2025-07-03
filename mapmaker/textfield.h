@@ -4,7 +4,7 @@
 #include <set>
 #include <map>
 
-/// handles the text field.
+/// Utility functions for expanding label text fields.
 class TextFieldProcessor
 {
 public:

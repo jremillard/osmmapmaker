@@ -13,6 +13,10 @@
 #include <unordered_set>
 #include <geos_c.h>
 
+/// Base class for all OSM based data sources.
+///
+/// Provides functionality to parse an OSM file and
+/// store the entities into the project database.
 class OsmData : public DataSource
 {
 public:
@@ -23,6 +27,7 @@ public:
 	void importFile(SQLite::Database &db, QString fileName);
 };
 
+/// osmium handler that imports nodes, ways and areas into SQLite.
 class OsmDataImportHandler : public osmium::handler::Handler
 {
 public:

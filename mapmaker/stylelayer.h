@@ -9,11 +9,12 @@
 
 enum StyleLayerType
 {
-	ST_POINT,
-	ST_LINE,
-	ST_AREA
+        ST_POINT,
+        ST_LINE,
+        ST_AREA
 };
 
+/// Holds key/value selection rules for a sub layer.
 class StyleSelector
 {
 public:
@@ -42,6 +43,7 @@ private:
 
 };
 
+/// Base class for drawable sub layers sharing common properties.
 class SubLayer
 {
 public:
@@ -57,6 +59,7 @@ public:
 
 };
 
+/// Styling parameters for point features.
 class Point: public SubLayer
 {
 public:
@@ -66,6 +69,7 @@ public:
 	double width_;
 };
 
+/// Styling parameters for line features.
 class Line : public SubLayer
 {
 public:
@@ -78,6 +82,7 @@ public:
 	std::vector< std::pair<double, double> > dashArray_;
 };
 
+/// Styling parameters for polygon features.
 class Area : public SubLayer
 {
 public:
@@ -89,6 +94,7 @@ public:
 	double fillImageOpacity_;
 };
 
+/// Text label styling associated with a sub layer.
 class Label : public SubLayer
 {
 public:
@@ -101,11 +107,13 @@ public:
 	double height_;
 	double haloSize_;
 	QColor haloColor_;
-	double maxWrapWidth_;
-	double offsetY_;
+       double maxWrapWidth_;
+       double offsetY_;
 };
 
-
+/// Represents a map layer referencing a data source and one key.
+/// Each StyleLayer is composed of sub layers with their own
+/// selectors and drawing properties.
 class StyleLayer
 {
 public:

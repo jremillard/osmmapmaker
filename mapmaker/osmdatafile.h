@@ -4,6 +4,8 @@
 
 #include <QDomNode>
 
+/// Loads OSM data from a local file and imports it using
+/// the common OsmData parsing logic.
 class OsmDataFile : public OsmData
 {
 public:

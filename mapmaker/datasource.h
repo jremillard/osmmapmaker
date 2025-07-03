@@ -9,11 +9,15 @@
 
 enum OsmEntityType
 {
-	OET_POINT = 0,
-	OET_LINE = 1,
-	OET_AREA = 2,
+        OET_POINT = 0,
+        OET_LINE = 1,
+        OET_AREA = 2,
 };
 
+/// Base class describing a source of OSM entities.
+///
+/// Derived classes implement the data import logic and store
+/// metadata about the last import.
 class DataSource
 {
 public:
