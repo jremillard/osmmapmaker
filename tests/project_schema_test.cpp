@@ -3,11 +3,23 @@
 #include <QXmlSchemaValidator>
 #include <QFile>
 #include <QUrl>
+#include <QCoreApplication>
+#include <QStringList>
+#include <QNetworkAccessManager>
+#include <QEvent>
 
 TEST_CASE("Project files validate against schema", "[ProjectSchema]")
 {
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
     QXmlSchema schema;
-    schema.load(QUrl(QStringLiteral("qrc:/resources/project.xsd")));
+    QFile xsdFile(":/resources/project.xsd");
+    REQUIRE(xsdFile.open(QIODevice::ReadOnly));
+    schema.load(&xsdFile);
     REQUIRE(schema.isValid());
 
     QStringList files = {
@@ -21,4 +33,7 @@ TEST_CASE("Project files validate against schema", "[ProjectSchema]")
         QXmlSchemaValidator validator(schema);
         REQUIRE(validator.validate(&f));
     }
+    schema = QXmlSchema();
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
