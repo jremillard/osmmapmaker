@@ -39,6 +39,10 @@ used to shorten labels when rendering maps.
 - This replaces the old TODO items about road name transformation and route
   renaming that were previously listed in `README.md`.
 
+## Automated Testing
+- Add unit tests that load a project with multiple abbreviation sets.
+- Verify labels using `abbrevSet` render the expected text.
+
 ## Word-based Line Wrapping
 ### Goal
 Allow label text to break at word boundaries instead of arbitrary character
@@ -54,6 +58,10 @@ positions so that multi line labels remain legible on narrow features.
 4. Update `RenderQT` and `TextFieldProcessor` to respect the new attribute.
 5. Create unit tests verifying wrapped output for long road names and points of
    interest.
+
+### Automated Testing
+- Render labels at small widths with and without `wordWrap` enabled.
+- Confirm breaks occur at word boundaries and long words hyphenate.
 
 ## Additional Marker Types for Points
 ### Goal
@@ -71,6 +79,10 @@ variety of POI types without custom images.
 5. Add schema validation and regression tests to confirm markers render
    correctly at multiple DPI levels.
 
+### Automated Testing
+- Render each marker shape at multiple sizes and compare against reference images.
+- Check that custom image markers load correctly from project paths.
+
 ## Tag Filter Dialog Revamp
 ### Goal
 Redesign the tag filter dialog to make it easier to build complex filters and to
@@ -87,6 +99,11 @@ save commonly used presets.
 5. Persist filters in the project XML using a simple expression syntax and add
    tests for correct serialization.
 
+
+### Automated Testing
+- Programmatically modify rows in the filter dialog and ensure serialized filters match expectations.
+- Verify preset saving and loading works across sessions.
+
 ## Administrative Boundary Rendering
 ### Goal
 Support specialized styling and labeling of municipal, county and state
@@ -101,6 +118,10 @@ boundaries.
    labels follow the boundary line with repeat intervals.
 4. Provide default style snippets for common levels and include examples in the
    sample projects.
+
+### Automated Testing
+- Load sample administrative relations and apply styles per level.
+- Verify boundaries render in correct order with labels following the lines.
 
 ## Elevation Data Import
 ### Goal
@@ -118,6 +139,10 @@ and contour lines can be generated.
 5. Allow configuration of light angle and shading color per project and add
    tests that sample heights correctly.
 
+### Automated Testing
+- Import a small DEM file and verify hillshading and contour generation.
+- Ensure cached raster tiles and height ranges are stored correctly.
+
 ## Overpass Import Integration
 ### Goal
 Fetch OSM features directly from the Overpass API without requiring external
@@ -133,6 +158,10 @@ downloads.
 4. Gracefully handle Overpass errors and document example queries in the user
    manual.
 
+### Automated Testing
+- Mock Overpass responses to test successful imports and error handling.
+- Verify results are cached within a session and imported into the pipeline.
+
 ## Golf Theme Stylesheet
 ### Goal
 Offer a prebuilt stylesheet optimized for rendering golf course maps.
@@ -145,6 +174,10 @@ Offer a prebuilt stylesheet optimized for rendering golf course maps.
 3. Ship a sample project that uses the theme with a real course dataset.
 4. Validate the theme by rendering at multiple zoom levels and adjusting colors
    for print and screen output.
+
+### Automated Testing
+- Render example maps with the golf theme at several zoom levels and compare against reference images.
+- Check that icons and colors match the specification.
 
 ## Finalize XML Style Format
 ### Goal
@@ -161,6 +194,10 @@ format.
 4. Update tests and sample projects to use the finalized schema and validate
    them during CI builds.
 
+### Automated Testing
+- Validate example style files against the new schema in unit tests.
+- Ensure deprecated attributes are flagged with meaningful errors.
+
 ## Handling Invalid Field Names
 ### Goal
 Prevent crashes when project files reference invalid or unknown field names.
@@ -175,6 +212,10 @@ Prevent crashes when project files reference invalid or unknown field names.
 4. Sanitize field names used in generated SQL to avoid quoting errors and add
    tests that open projects containing bad fields.
 
+### Automated Testing
+- Load projects with invalid fields and ensure warnings are logged while loading continues.
+- Confirm GUI highlights bad fields without crashing.
+
 ## Fix Stuck Focus in Zoom Box
 ### Goal
 Resolve an issue where keyboard focus does not return to the map view after
@@ -187,6 +228,10 @@ dragging a zoom selection box.
    fallback that cancels the mode if the release event is missed.
 3. Create an automated test that simulates drag‑zoom to verify focus is
    restored.
+
+### Automated Testing
+- Simulate drag-zoom interactions and confirm the map view regains focus.
+- Verify fallback timeout cancels zoom mode when mouse release is missed.
 
 ## Alternate Labels with Semicolons
 ### Goal
@@ -201,6 +246,10 @@ levels.
 3. Apply abbreviation sets and case preservation to the chosen variant.
 4. Provide unit tests covering names with multiple semicolons and ensuring the
    fallback behaves as expected.
+
+### Automated Testing
+- Render names with multiple semicolons at varying widths to ensure the correct variant is chosen.
+- Confirm abbreviation sets apply before variant fallback.
 
 ## RenderQT Unit Testing
 ### Goal
@@ -227,4 +276,8 @@ consistent across code changes.
    - zoom-based visibility using `minZoom` values
    - background color fill and bounding box transforms at multiple DPI scales
 5. Run tests at 1x and 2x DPI to ensure scaling logic works.
+### Automated Testing
+- Integrate the RenderQT image comparison tests into the CTest suite for CI.
+- Provide scripts to generate benchmarks and fail when pixels differ beyond tolerance.
+
 
