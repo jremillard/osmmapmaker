@@ -39,21 +39,7 @@ used to shorten labels when rendering maps.
 - This replaces the old TODO items about road name transformation and route
   renaming that were previously listed in `README.md`.
 
-## Output GUI Zoom Controls
-### Goal
-TBD
-
-### Specification
-TBD
-
 ## Word-based Line Wrapping
-### Goal
-TBD
-
-### Specification
-TBD
-
-## Text Rendering Priority System
 ### Goal
 TBD
 
@@ -67,21 +53,7 @@ TBD
 ### Specification
 TBD
 
-## Area Graphics Fill
-### Goal
-TBD
-
-### Specification
-TBD
-
 ## Tag Filter Dialog Revamp
-### Goal
-TBD
-
-### Specification
-TBD
-
-## Tag Filtering Reuse Existing Filters
 ### Goal
 TBD
 
@@ -131,20 +103,6 @@ TBD
 TBD
 
 ## Fix Stuck Focus in Zoom Box
-### Goal
-TBD
-
-### Specification
-TBD
-
-## Road Name Abbreviations
-### Goal
-TBD
-
-### Specification
-TBD
-
-## Route Name Shortening
 ### Goal
 TBD
 
