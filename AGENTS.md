@@ -10,7 +10,7 @@
 - **Run unit tests** after both builds:
   1. `ctest --test-dir bin/release`.
   2. `ctest --test-dir bin/debug`.
-  3. Execute `ctest --output-on-failure` and make sure every test succeeds before creating a pull request.
+  3. Execute `ctest --output-on-failure --test-dir bin/release` (or `--test-dir bin/debug`) and make sure every test succeeds before creating a pull request.
 
 - Clean builds by removing the `bin` directory.
 - The documentation packages for all third-party dependencies are already installed.
