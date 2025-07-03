@@ -243,19 +243,19 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 			std::string wkbBuffer = factory_.create_linestring(way);
 			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
-			geos::io::WKBReader geomFactory;
+                        geos::io::WKBReader geomFactory;
 
-			std::istringstream strStr(wkbBuffer);
+                        std::istringstream strStr(wkbBuffer);
 
-			geos::geom::Geometry *geom = geomFactory.read(strStr);
+                       geos::geom::Geometry *geom = geomFactory.read(strStr);
 
-			double length = geom->getLength();
-			queryAdd_->bind(4, length*detToM);
+                       double length = geom->getLength();
+                       queryAdd_->bind(4, length*detToM);
 
-			delete geom;
+                       delete geom;
 
-			double area = 0;
-			queryAdd_->bind(5, area);
+                       double area = 0;
+                       queryAdd_->bind(5, area);
 
 			queryAdd_->exec();
 
@@ -321,21 +321,21 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 			std::string wkbBuffer = factory_.create_multipolygon(area);
 			queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
-			geos::io::WKBReader geomFactory;
+                        geos::io::WKBReader geomFactory;
 
-			std::istringstream strStr(wkbBuffer);
+                        std::istringstream strStr(wkbBuffer);
 
-			geos::geom::Geometry *geom = geomFactory.read(strStr);
-			
-			double lengthDeg = geom->getLength();
-			queryAdd_->bind(4, lengthDeg * detToM);
+                       geos::geom::Geometry *geom = geomFactory.read(strStr);
 
-			double areaDegSq = geom->getArea();
-			queryAdd_->bind(5, areaDegSq * detToM * detToM);
+                       double lengthDeg = geom->getLength();
+                       queryAdd_->bind(4, lengthDeg * detToM);
 
-			delete geom;
-			
-			queryAdd_->exec();
+                       double areaDegSq = geom->getArea();
+                       queryAdd_->bind(5, areaDegSq * detToM * detToM);
+
+                       delete geom;
+
+                       queryAdd_->exec();
 
 			long long entityId = db_.getLastInsertRowid();
 
@@ -361,7 +361,7 @@ void OsmDataImportHandler::addSpatialIndexToDb(long long entityId, const osmium:
 {
 	// We don't do "contained within" kind of query's, don't need to expend it.
 
-	queryAddSpatialIndex_->bind(1, entityId);
+        queryAddSpatialIndex_->bind(1, static_cast<int64_t>(entityId));
 
 	queryAddSpatialIndex_->bind(2, bbBox.bottom_left().lon_without_check());
 	queryAddSpatialIndex_->bind(3, bbBox.top_right().lon_without_check());
@@ -391,7 +391,7 @@ void OsmDataImportHandler::addTagsToDb(long long entityId, const osmium::TagList
 
 		if (discard == false)
 		{
-			queryAddKV_->bind(1, entityId);
+                        queryAddKV_->bind(1, static_cast<int64_t>(entityId));
 			queryAddKV_->bind(2, tag.key());
 			queryAddKV_->bind(3, tag.value());
 

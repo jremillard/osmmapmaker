@@ -33,8 +33,8 @@ Project::Project(path fileName)
 
 	if (!f.open(QIODevice::ReadOnly))
 	{
-		auto s = QString("Can't open file %1.").arg(pathStrQ);
-		throw std::exception(s.toUtf8());
+                auto s = QString("Can't open file %1.").arg(pathStrQ);
+                throw std::runtime_error(s.toStdString());
 	}
 
 	backgroundColor_ = QColor(0xE0,0xE0,0xE0);
@@ -89,9 +89,9 @@ Project::Project(path fileName)
 
 	createRenderDatabaseIfNotExist();
 
-	path renderDbPath = renderDatabasePath();
-	QString nativePath = QString::fromStdWString(renderDbPath.native());
-	db_ = new SQLite::Database(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
+       path renderDbPath = renderDatabasePath();
+       QString nativePath = QString::fromStdString(renderDbPath.string());
+       db_ = new SQLite::Database(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
 	db_->exec("PRAGMA cache_size = -256000");
 	db_->exec("PRAGMA default_cache_size = 256000");
 
@@ -127,7 +127,7 @@ void Project::createRenderDatabaseIfNotExist()
 	path renderDbPath = renderDatabasePath();
 	if (exists(renderDbPath) == false)
 	{
-		QString nativePath = QString::fromStdWString(renderDbPath.native());
+               QString nativePath = QString::fromStdString(renderDbPath.string());
 
 		SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
@@ -266,8 +266,8 @@ void Project::save(path fileName)
 	}
 	else
 	{
-		auto s = QString("Can't open file %1.").arg(pathStrQ);
-		throw std::exception(s.toUtf8());
+                auto s = QString("Can't open file %1.").arg(pathStrQ);
+                throw std::runtime_error(s.toStdString());
 	}
 }
 

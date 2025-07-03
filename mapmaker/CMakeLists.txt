@@ -8,4 +8,5 @@ set(CMAKE_AUTOMOC ON)
 
 add_library(mapmaker STATIC ${SRC_FILES} )
 
-target_link_libraries(mapmaker Qt5::Widgets Qt5::Xml)
+target_link_libraries(mapmaker PUBLIC Qt5::Widgets Qt5::Xml)
+
