@@ -19,6 +19,7 @@ The project relies on the following libraries:
 - SQLite3
 - GEOS
 - Libosmium
+- Catch2
 
 On Debian-based systems you can install them with `install_dependencies.sh`.
 
