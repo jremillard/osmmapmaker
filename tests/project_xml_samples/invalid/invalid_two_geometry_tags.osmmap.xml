@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <map>
+  <layer dataSource="Primary" k="amenity" type="point">
+   <subLayer name="s" visible="true">
+    <point>
+     <image>i.png</image>
+     <opacity>1</opacity>
+     <color>#fff</color>
+     <width>1</width>
+    </point>
+    <line>
+     <color>#000</color>
+     <casingColor>#fff</casingColor>
+     <width>1</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>
