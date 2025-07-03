@@ -1,0 +1,80 @@
+{
+   Qt5KnownLeak
+   Memcheck:Leak
+   ...
+   fun:QCoreApplicationPrivate::init
+}
+{
+   QtBearerConnmanLeak
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.34
+   fun:QThread::start*
+   fun:QDBusConnection::systemBus*
+   obj:*libqconnmanbearer.so*
+   fun:QNetworkConfigurationManagerPrivate::updateConfigurations*
+   fun:qNetworkConfigurationManagerPrivate*
+   fun:QNetworkConfigurationManager::QNetworkConfigurationManager*
+   fun:QNetworkAccessManager::QNetworkAccessManager*
+}
+{
+   QtXmlSchemaLoadLeak
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:*libQt5XmlPatterns.so*
+   fun:QXmlSchema::load*
+}
+{
+   QtXmlSchemaLoadLeak2
+   Memcheck:Leak
+   ...
+   obj:*libQt5XmlPatterns.so*
+   fun:QXmlSchema::load*
+}
+{
+   QtXmlSchemaLoadLeak3
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   fun:_ZN10QXmlSchema4loadERK4QUrl
+   fun:_ZL22CATCH2_INTERNAL_TEST_0v
+   fun:_ZN5Catch10RunContext20invokeActiveTestCaseEv
+}
+{
+   QtXmlSchemaLoadFromDevice
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   obj:/usr/lib/x86_64-linux-gnu/libQt5XmlPatterns.so.5.15.13
+   fun:_ZN10QXmlSchema4loadEP9QIODeviceRK4QUrl
+   fun:_ZL22CATCH2_INTERNAL_TEST_0v
+   fun:_ZN5Catch10RunContext20invokeActiveTestCaseEv
+   fun:_ZN5Catch10RunContext14runCurrentTestERNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_
+   fun:_ZN5Catch10RunContext7runTestERKNS_14TestCaseHandleE
+   fun:_ZN5Catch7Session11runInternalEv
+   fun:_ZN5Catch7Session3runEv
+}
+{
+   QtHelgrindAllRace
+   Helgrind
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt5*
+}
+{
+   QtHelgrindAllMutex
+   Helgrind
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt5*
+}

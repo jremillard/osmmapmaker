@@ -9,10 +9,12 @@
 
 - **Build each directory** with `cmake --build bin/<type> -j$(nproc)`.
 
-- **Run unit tests** after the release and debug builds:
+- **Run unit tests** after the release and valgrind builds:
   1. `ctest --test-dir bin/release`.
-  2. `ctest --test-dir bin/debug`.
-  3. Execute `ctest --output-on-failure --test-dir bin/release` (or `--test-dir bin/debug`) and make sure every test succeeds before creating a pull request.
+  2. `ctest --test-dir bin/valgrind`.
+  3. Execute `ctest --output-on-failure --test-dir bin/release` (or `--test-dir bin/valgrind`) and make sure every test succeeds.
+  4. Run each test binary in `bin/valgrind` under both `valgrind --tool=memcheck` and `valgrind --tool=helgrind` using the `valgrind.supp` suppression file. No tests should detect `RUNNING_ON_VALGRIND` or be skipped when running under valgrind, and all errors must be investigated.
+  5. Update `valgrind.supp` if recurring leaks from third-party libraries are discovered so that future runs flag only new problems.
 
 - Clean builds by removing the `bin` directory.
 - Run `clang-format -i` on all modified C/C++ files before committing.
