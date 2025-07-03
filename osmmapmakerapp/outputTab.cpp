@@ -8,17 +8,18 @@
 #include <algorithm>
 
 OutputTab::OutputTab(QWidget *parent) :
-	QWidget(parent),
-	ui(new Ui::OutputTab)
+        QWidget(parent),
+        ui(new Ui::OutputTab)
 {
-	ui->setupUi(this);
+        surpressSelectionChange_ = true;
+        ui->setupUi(this);
 
-	ui->tileSize->addItem("256", 256);
-	ui->tileSize->addItem("512", 512);
-	ui->tileSize->addItem("1024", 1024);
+        ui->tileSize->addItem("256", 256);
+        ui->tileSize->addItem("512", 512);
+        ui->tileSize->addItem("1024", 1024);
 
-	surpressSelectionChange_ = false;
-	project_ = NULL;
+        surpressSelectionChange_ = false;
+        project_ = NULL;
 }
 
 OutputTab::~OutputTab()
@@ -193,9 +194,16 @@ void OutputTab::on_tileSize_currentIndexChanged(int i)
 
 void OutputTab::saveTile()
 {
-	int currentRow = ui->outputList->currentRow();
 
-	Output *output = project_->outputs()[currentRow];
+        if (project_ == NULL)
+                return;
+
+        int currentRow = ui->outputList->currentRow();
+
+        if (currentRow < 0 || currentRow >= int(project_->outputs().size()))
+                return;
+
+        Output *output = project_->outputs()[currentRow];
 
 	TileOutput *tileOutput = dynamic_cast<TileOutput*>(output);
 
