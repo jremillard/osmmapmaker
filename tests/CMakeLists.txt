@@ -2,20 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(tests LANGUAGES CXX)
 
-find_package(Qt5Test REQUIRED)
+enable_testing()
 
-#set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(Catch2 3 REQUIRED)
 
-set(CMAKE_AUTOMOC ON)
+add_executable(hello_test hello_test.cpp)
+target_link_libraries(hello_test PRIVATE Catch2::Catch2WithMain mapmaker)
 
-#enable_testing(true)
-#add_test(NAME textsplittest COMMAND textsplittest)
-
-add_executable(textsplittest textsplittest.cpp)
-target_link_libraries(textsplittest PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 GEOS::geos GEOS::geos_c)
-
-add_executable(projecttest projecttest.cpp)
-target_link_libraries(projecttest  PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 GEOS::geos GEOS::geos_c)
-
-
-
+add_test(NAME hello_test COMMAND hello_test)
