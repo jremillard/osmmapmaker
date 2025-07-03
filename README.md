@@ -22,3 +22,4 @@ The project relies on the following libraries:
 - Catch2
 
 On Debian-based systems you can install them with `install_dependencies.sh`.
+

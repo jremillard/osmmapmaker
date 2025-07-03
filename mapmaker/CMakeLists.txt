@@ -17,14 +17,14 @@ set(SRC_FILES
     renderqt.cpp
     linebreaking.cpp
 )
-add_library(mapmaker STATIC ${SRC_FILES})
+add_library(mapmaker STATIC ${SRC_FILES} resources.qrc)
 
 target_include_directories(mapmaker
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_target_properties(mapmaker PROPERTIES AUTOMOC ON)
+set_target_properties(mapmaker PROPERTIES AUTOMOC ON AUTORCC ON)
 
 target_compile_features(mapmaker PUBLIC cxx_std_17)
 
