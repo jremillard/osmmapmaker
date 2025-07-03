@@ -837,7 +837,7 @@ std::vector<QString> StyleLayer::requiredKeys() const
 	sort(keys.begin(), keys.end());
 	keys.erase(std::unique(keys.begin(), keys.end()), keys.end());
 
-	// primary key should't be listed here, it is always in the table
+        // primary key shouldn't be listed here; it is always in the table
 	keys.erase(std::remove(keys.begin(), keys.end(), key_), keys.end());
 
 	return keys;
