@@ -3,6 +3,7 @@
 #include "project.h"
 #include <QImage>
 
+/// Renders a project to a QImage using Qt's painting API.
 class RenderQT
 {
 public:

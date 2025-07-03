@@ -2,6 +2,7 @@
 
 #include <QPixmap>
 
+/// Simple cache for rendered map tiles.
 class TileCache : QObject
 {
 	Q_OBJECT
