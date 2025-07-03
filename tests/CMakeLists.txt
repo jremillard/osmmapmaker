@@ -35,3 +35,26 @@ add_executable(labelpriority_test labelpriority_test.cpp)
 target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)
 add_test(NAME labelpriority_test COMMAND labelpriority_test)
+
+add_executable(project_load_save_test
+    project_load_save_test.cpp
+    ../mapmaker/resources.qrc
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(project_load_save_test PROPERTIES AUTORCC ON)
+target_link_libraries(project_load_save_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::XmlPatterns
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(project_load_save_test PRIVATE cxx_std_17)
+target_compile_definitions(project_load_save_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME project_load_save_test COMMAND project_load_save_test)
