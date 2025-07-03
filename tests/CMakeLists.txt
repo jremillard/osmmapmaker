@@ -35,3 +35,8 @@ add_executable(labelpriority_test labelpriority_test.cpp)
 target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)
 add_test(NAME labelpriority_test COMMAND labelpriority_test)
+
+add_executable(sublayer_test sublayer_test.cpp)
+target_link_libraries(sublayer_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(sublayer_test PRIVATE cxx_std_17)
+add_test(NAME sublayer_test COMMAND sublayer_test)
