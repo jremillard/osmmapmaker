@@ -78,7 +78,6 @@
    ...
    obj:/usr/lib/x86_64-linux-gnu/libQt5*
 }
-
 {
    QtHelgrindPthreadDestroyNetwork
    Helgrind:Race

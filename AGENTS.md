@@ -15,6 +15,12 @@
   3. Execute `ctest --output-on-failure --test-dir bin/release` (or `--test-dir bin/valgrind`) and make sure every test succeeds.
   4. Run each test binary in `bin/valgrind` under both `valgrind --tool=memcheck` and `valgrind --tool=helgrind` using the `valgrind.supp` suppression file. No tests should detect `RUNNING_ON_VALGRIND` or be skipped when running under valgrind, and all errors must be investigated.
   5. Update `valgrind.supp` if recurring leaks from third-party libraries are discovered so that future runs flag only new problems.
+  - Current unit test executables include:
+    `hello_test`, `textfieldprocessor_test`, `tileoutput_test`,
+    `project_schema_test`, `labelpriority_test`, `stylelayer_test`,
+    `style_selector_test`, `sublayer_test`, `point_test`, `line_test`,
+    `area_test`, `label_test`, `osmdata_test`, `linebreaking_test`,
+    `project_load_save_test`.
 
 - Clean builds by removing the `bin` directory.
 - Run `clang-format -i` on all modified C/C++ files before committing.
