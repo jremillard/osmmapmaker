@@ -35,3 +35,8 @@ add_executable(labelpriority_test labelpriority_test.cpp)
 target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)
 add_test(NAME labelpriority_test COMMAND labelpriority_test)
+
+add_executable(area_test area_test.cpp)
+target_link_libraries(area_test PRIVATE Catch2::Catch2WithMain mapmaker Qt5::Xml)
+target_compile_features(area_test PRIVATE cxx_std_17)
+add_test(NAME area_test COMMAND area_test)
