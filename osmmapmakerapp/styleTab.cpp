@@ -138,19 +138,19 @@ void StyleTab::on_treeNew_clicked()
 
 	if (project_->styleLayers().size() == 0 || currentItem == NULL || currentItem->data(0, Qt::UserRole).toInt() < 0)
 	{
-		// always do top level style if project is empty, nothing is elected, or they have the map node selected.
+                // Always do top level style if project is empty, nothing is selected, or the map node is selected.
 		// otherwise, don't know what style to stick the sub style on.
 		toplevelStyle = true;
 	}
 	else
 	{
-		// othewise we need to ask why kind of new styl 
+                // Otherwise we need to ask what kind of new style
 
 	}
 
 	if ( toplevelStyle)
 	{
-		// top level style, don't eed
+                // Top level style, don't need
 		NewStopLeveStyle dlg(project_, this);
 		if (dlg.exec() == QDialog::Accepted)
 		{
@@ -339,7 +339,7 @@ void StyleTab::on_treeDelete_clicked()
 			}
 			else
 			{
-				// lame hack don't delet the last layer, user can select top level node if this is what they want.
+                                // Lame hack: don't delete the last layer; users can select the top level node if this is what they want.
 			}
 		}
 	}
