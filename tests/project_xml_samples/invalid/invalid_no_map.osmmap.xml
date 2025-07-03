@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <tileOutput name="invalid">
+  <maxZoom>1</maxZoom>
+  <minZoom>0</minZoom>
+  <tileSize>256</tileSize>
+  <resolution1x>true</resolution1x>
+  <resolution2x>true</resolution2x>
+  <directory></directory>
+ </tileOutput>
+</osmmapmakerproject>
