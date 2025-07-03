@@ -1,12 +1,36 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
+
 
 project(mapmaker LANGUAGES CXX)
 
-set(SRC_FILES project.cpp osmdataextractdownload.cpp osmdatadirectdownload.cpp datasource.cpp osmdata.cpp osmdatafile.cpp tilecache.cpp stylelayer.cpp textfield.cpp output.cpp renderqt.cpp linebreaking.cpp)
+set(SRC_FILES
+    project.cpp
+    osmdataextractdownload.cpp
+    osmdatadirectdownload.cpp
+    datasource.cpp
+    osmdata.cpp
+    osmdatafile.cpp
+    tilecache.cpp
+    stylelayer.cpp
+    textfield.cpp
+    output.cpp
+    renderqt.cpp
+    linebreaking.cpp
+)
+add_library(mapmaker STATIC ${SRC_FILES})
 
-set(CMAKE_AUTOMOC ON)
+target_include_directories(mapmaker
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
-add_library(mapmaker STATIC ${SRC_FILES} )
+set_target_properties(mapmaker PROPERTIES AUTOMOC ON)
 
-target_link_libraries(mapmaker PUBLIC Qt5::Widgets Qt5::Xml)
+target_compile_features(mapmaker PUBLIC cxx_std_17)
+
+target_link_libraries(mapmaker
+    PUBLIC
+        Qt5::Widgets
+        Qt5::Xml
+)
 

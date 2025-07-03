@@ -1,17 +1,10 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 
 project(osmmapmakerapp LANGUAGES CXX)
 
-cmake_policy(SET CMP0020 NEW)
-
-# Make this a GUI application on Windows
 if(WIN32)
-  set(CMAKE_WIN32_EXECUTABLE ON)
+  set(APP_TYPE WIN32)
 endif()
-
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
 
 set(SRC_FILES
     main.cpp
@@ -33,7 +26,15 @@ set(UI_FILES
     sublayerselectpage.ui
     selectvalueeditdialog.ui)
 
-add_executable(osmmapmakerapp ${SRC_FILES} ${UI_FILES} resources.qrc)
+add_executable(osmmapmakerapp ${APP_TYPE} ${SRC_FILES} ${UI_FILES} resources.qrc)
+
+set_target_properties(osmmapmakerapp PROPERTIES
+    AUTOMOC ON
+    AUTOUIC ON
+    AUTORCC ON
+)
+
+target_compile_features(osmmapmakerapp PRIVATE cxx_std_17)
 
 target_link_libraries(osmmapmakerapp
     PRIVATE
@@ -42,7 +43,7 @@ target_link_libraries(osmmapmakerapp
       BZip2::BZip2
       ZLIB::ZLIB
       EXPAT::EXPAT
-      PROJ4::proj
+      PROJ::proj
   SQLiteCpp
   SQLite::SQLite3
   GEOS::geos
