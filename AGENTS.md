@@ -4,8 +4,8 @@
   1. Delete the `bin` directory if it exists.
   2. Configure a release build using `cmake -S . -B bin/release -DCMAKE_BUILD_TYPE=Release` – optimized binaries.
   3. Configure a debug build using `cmake -S . -B bin/debug -DCMAKE_BUILD_TYPE=Debug` – includes debug symbols.
-  4. Configure a coverage build using `cmake -S . -B bin/coverage -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-O0 -g --coverage" -DCMAKE_CXX_FLAGS="-O0 -g --coverage" -DCMAKE_EXE_LINKER_FLAGS="--coverage"` – enables GCC coverage profiling without optimization.
-  5. Configure a valgrind build using `cmake -S . -B bin/valgrind -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-O0 -g" -DCMAKE_CXX_FLAGS="-O0 -g"` – debug flags help valgrind report accurate stack traces; optimization isn't required but is usually disabled.
+  4. Configure a coverage build using `cmake -S . -B bin/coverage -DOSMMAPMAKER_ENABLE_COVERAGE=ON` – automatically sets a Debug build and enables GCC coverage profiling.
+  5. Configure a valgrind build using `cmake -S . -B bin/valgrind -DOSMMAPMAKER_ENABLE_VALGRIND=ON` – automatically sets a Debug build with flags suitable for valgrind analysis.
 
 - **Build each directory** with `cmake --build bin/<type> -j$(nproc)`.
 
