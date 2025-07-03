@@ -1,5 +1,7 @@
 #include <renderqt.h>
 #include <QPainter>
+#include <QPainterPath>
+#include <QPainterPathStroker>
 #include <iostream>     
 #include <sstream>
 #include <geos/geos.h>
@@ -204,9 +206,9 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 					{
 						SQLite::Column col = query.getColumn("geom");
 
-						std::istringstream strStr(col.getString());
+                                                std::istringstream strStr(col.getString());
 
-						std::auto_ptr<geos::geom::Geometry> geom(geomFactory.read(strStr));
+                                                std::auto_ptr<geos::geom::Geometry> geom(geomFactory.read(strStr));
 
 						struct toMap : public CoordinateFilter
 						{
@@ -552,7 +554,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						std::istringstream strStr(col.getString());
 
-						std::auto_ptr<geos::geom::Geometry> geom(geomFactoryWKB.read(strStr));
+                                                std::auto_ptr<geos::geom::Geometry> geom(geomFactoryWKB.read(strStr));
 
 						struct toMap : public CoordinateFilter
 						{
