@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+  <openStreetMapFileSource>
+    <dataSource>Primary</dataSource>
+    <fileName>local.osm</fileName>
+  </openStreetMapFileSource>
+  <tileOutput name="tiles">
+    <maxZoom>18</maxZoom>
+    <minZoom>13</minZoom>
+    <tileSize>256</tileSize>
+    <resolution1x>true</resolution1x>
+    <resolution2x>true</resolution2x>
+    <directory>tiles</directory>
+  </tileOutput>
+  <map backgroundColor="#ffffff" backgroundOpacity="1">
+    <layer dataSource="Primary" k="amenity" type="point">
+      <subLayer>
+        <point>
+          <image>dot</image>
+          <opacity>1</opacity>
+          <color>#000000</color>
+          <width>1</width>
+        </point>
+      </subLayer>
+    </layer>
+  </map>
+</osmmapmakerproject>

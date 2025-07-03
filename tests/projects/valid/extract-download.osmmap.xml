@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+  <openStreetMapExtractDownload name="EX">
+    <dataSource>Primary</dataSource>
+  </openStreetMapExtractDownload>
+  <tileOutput name="tiles">
+    <maxZoom>16</maxZoom>
+    <minZoom>12</minZoom>
+    <tileSize>512</tileSize>
+    <resolution1x>false</resolution1x>
+    <resolution2x>true</resolution2x>
+    <directory>tiles</directory>
+  </tileOutput>
+  <map backgroundColor="#0000ff" backgroundOpacity="0.8">
+    <layer dataSource="Primary" k="building" type="area">
+      <subLayer>
+        <selector/>
+        <area>
+          <color>#aaaaaa</color>
+          <opacity>1</opacity>
+          <casingWidth>0</casingWidth>
+          <casingColor>#000000</casingColor>
+          <fillImage></fillImage>
+          <fillImageOpacity>1</fillImageOpacity>
+        </area>
+      </subLayer>
+    </layer>
+  </map>
+</osmmapmakerproject>

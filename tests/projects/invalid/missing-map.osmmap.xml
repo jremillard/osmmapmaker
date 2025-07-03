@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+  <openStreetMapFileSource name="Local">
+    <dataSource>Primary</dataSource>
+    <fileName>local.osm</fileName>
+  </openStreetMapFileSource>
+  <tileOutput name="tiles">
+    <maxZoom>18</maxZoom>
+    <minZoom>13</minZoom>
+    <tileSize>256</tileSize>
+    <resolution1x>true</resolution1x>
+    <resolution2x>true</resolution2x>
+    <directory>tiles</directory>
+  </tileOutput>
+</osmmapmakerproject>

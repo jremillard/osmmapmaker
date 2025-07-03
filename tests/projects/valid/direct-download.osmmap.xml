@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+  <openStreetMapDirectDownload name="DD">
+    <dataSource>Primary</dataSource>
+  </openStreetMapDirectDownload>
+  <tileOutput name="tiles">
+    <maxZoom>17</maxZoom>
+    <minZoom>10</minZoom>
+    <tileSize>256</tileSize>
+    <resolution1x>true</resolution1x>
+    <resolution2x>false</resolution2x>
+    <directory>tiles</directory>
+  </tileOutput>
+  <map backgroundColor="#ff0000" backgroundOpacity="0.5">
+    <layer dataSource="Primary" k="highway" type="line">
+      <subLayer>
+        <selector/>
+        <line>
+          <color>#123456</color>
+          <casingColor>#654321</casingColor>
+          <width>1</width>
+          <casingWidth>0</casingWidth>
+          <opacity>1</opacity>
+          <smooth>0</smooth>
+          <dashArray></dashArray>
+        </line>
+      </subLayer>
+    </layer>
+  </map>
+</osmmapmakerproject>
