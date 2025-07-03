@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QApplication>
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -20,11 +21,31 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
 	ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
 
-	project_ = NULL;
+       project_ = NULL;
 
-	openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton-trail.osmmap.xml");
+       try
+       {
+               openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton-trail.osmmap.xml");
+       }
+       catch (std::exception &)
+       {
+               auto locs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+               QString loc;
+               if (locs.size() > 0)
+                       loc = locs[0];
 
-	setCursor(Qt::ArrowCursor);
+               QString file = QFileDialog::getOpenFileName(this, tr("Open Project"), loc, tr("Map Project Files (*.xml)"));
+
+               if (file.isEmpty())
+               {
+                       qApp->exit();
+                       return;
+               }
+
+               openProject(file.toStdString());
+       }
+
+       setCursor(Qt::ArrowCursor);
 }
 
 
