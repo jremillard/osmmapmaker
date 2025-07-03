@@ -23,7 +23,7 @@ add_test(NAME tileoutput_test COMMAND tileoutput_test)
 
 add_executable(project_schema_test
     project_schema_test.cpp
-    ../osmmapmakerapp/resources.qrc
+    ../mapmaker/resources.qrc
 )
 set_target_properties(project_schema_test PROPERTIES AUTORCC ON)
 target_link_libraries(project_schema_test PRIVATE Catch2::Catch2WithMain mapmaker Qt5::XmlPatterns)
