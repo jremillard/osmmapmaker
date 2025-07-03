@@ -46,7 +46,7 @@ TEST_CASE("Area defaults", "[SubLayer]")
     REQUIRE(a.fillImageOpacity_ == 1.0);
 }
 
-TEST_CASE("Label defaults and mapnikText", "[SubLayer]")
+TEST_CASE("Label defaults", "[SubLayer]")
 {
     Label lbl;
     REQUIRE(lbl.visible_ == true);
@@ -60,7 +60,6 @@ TEST_CASE("Label defaults and mapnikText", "[SubLayer]")
     REQUIRE(lbl.offsetY_ == 0.0);
     REQUIRE(lbl.fontWeight == 400);
     REQUIRE(lbl.priority_ == 0);
-    REQUIRE(lbl.mapnikText() == "[name]");
 }
 
 TEST_CASE("StyleLayer setSubLayer methods add and replace", "[SubLayer]")

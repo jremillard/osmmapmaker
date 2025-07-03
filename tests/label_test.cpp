@@ -19,10 +19,3 @@ TEST_CASE("Label default values", "[Label]")
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
-
-TEST_CASE("Label mapnikText returns text", "[Label]")
-{
-    Label lb;
-    lb.text_ = "Custom";
-    REQUIRE(lb.mapnikText() == "Custom");
-}

@@ -32,40 +32,6 @@ void StyleSelector::clear()
     valuesStd_.clear();
 }
 
-QString StyleSelector::mapniKExpression()
-{
-    QString exp;
-
-    if (keys_.size() > 0) {
-        exp += "(";
-
-        for (size_t i = 0; i < keys_.size(); ++i) {
-            if (values_[i].size() == 0) {
-                exp += QString("([%0] = null)").arg(keys_[i]);
-            } else if (values_[i].size() == 1 && values_[i][0] == "*") {
-                exp += "true";
-            } else {
-                exp += "(";
-                for (size_t v = 0; v < values_[i].size(); ++v) {
-                    // TODO escape '
-                    exp += QString("([%0]='%1')").arg(keys_[i]).arg(values_[i][v]);
-
-                    if (v + 1 < values_[i].size())
-                        exp += " or ";
-                }
-                exp += ")";
-            }
-
-            if (i + 1 < keys_.size())
-                exp += " and ";
-        }
-
-        exp += ")";
-    }
-
-    return exp;
-}
-
 size_t StyleSelector::conditionCount() const
 {
     return keys_.size();
@@ -169,11 +135,6 @@ Label::Label()
     offsetY_ = 0;
     fontWeight = 400; // use ccs font-weight system.
     priority_ = 0;
-}
-
-QString Label::mapnikText()
-{
-    return text_;
 }
 
 //////////////////////////////////////////

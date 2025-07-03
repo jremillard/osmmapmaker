@@ -20,8 +20,6 @@ public:
     StyleSelector();
     ~StyleSelector();
 
-    QString mapniKExpression();
-
     void clear();
     size_t conditionCount() const;
     void setCondition(size_t i, const QString& key, const std::vector<QString>& values);
@@ -89,8 +87,6 @@ public:
 class Label : public SubLayer {
 public:
     Label();
-
-    QString mapnikText();
 
     int fontWeight;
     QString text_;
