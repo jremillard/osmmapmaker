@@ -4,7 +4,8 @@
 #include <QFile>
 #include <QUrl>
 
-TEST_CASE("Project files validate against schema", "[ProjectSchema]") {
+TEST_CASE("Project files validate against schema", "[ProjectSchema]")
+{
     QXmlSchema schema;
     schema.load(QUrl(QStringLiteral("qrc:/resources/project.xsd")));
     REQUIRE(schema.isValid());
@@ -14,7 +15,7 @@ TEST_CASE("Project files validate against schema", "[ProjectSchema]") {
         QStringLiteral(SOURCE_DIR "/projects/groton-trail.osmmap.xml")
     };
 
-    for (const QString &fileName : files) {
+    for (const QString& fileName : files) {
         QFile f(fileName);
         REQUIRE(f.open(QIODevice::ReadOnly));
         QXmlSchemaValidator validator(schema);

@@ -13,4 +13,5 @@
   3. Execute `ctest --output-on-failure --test-dir bin/release` (or `--test-dir bin/debug`) and make sure every test succeeds before creating a pull request.
 
 - Clean builds by removing the `bin` directory.
+- Run `clang-format -i` on all modified C/C++ files before committing.
 - The documentation packages for all third-party dependencies are already installed.

@@ -5,15 +5,8 @@
 #include <map>
 
 /// Utility functions for expanding label text fields.
-class TextFieldProcessor
-{
+class TextFieldProcessor {
 public:
-	static void RequiredKeys(const QString &field, std::set<QString> *keys);
-	static QString Expand(const QString field, std::map<QString, QString> keys);
-
+    static void RequiredKeys(const QString& field, std::set<QString>* keys);
+    static QString Expand(const QString field, std::map<QString, QString> keys);
 };
-
-
-
-
-

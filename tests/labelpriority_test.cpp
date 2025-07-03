@@ -2,12 +2,14 @@
 #include "stylelayer.h"
 #include <QtXml>
 
-TEST_CASE("Label default priority", "[StyleLayer]") {
+TEST_CASE("Label default priority", "[StyleLayer]")
+{
     Label lb;
     REQUIRE(lb.priority_ == 0);
 }
 
-TEST_CASE("StyleLayer preserves label priority in XML", "[StyleLayer]") {
+TEST_CASE("StyleLayer preserves label priority in XML", "[StyleLayer]")
+{
     StyleLayer layer("ds", "k", ST_POINT);
     Point pt;
     layer.setSubLayerPoint(0, pt);
