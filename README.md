@@ -29,7 +29,6 @@ On Debian-based systems you can install them with `install_dependencies.sh`.
 - Wrap lines by word on lines
 - Add text rendering priority
 - Add support for other marker types for point features; currently only dots are supported
-- Graphics fill on area type
 - Rework the tag filter dialog box; it is confusing
 - Tag filtering should use existing filters when filtering values
 - Administrative boundary rendering via relations
