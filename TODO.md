@@ -35,10 +35,6 @@ used to shorten labels when rendering maps.
    - When rendering a label with `abbrevSet`, look up each word in the chosen set
      and replace it if a mapping exists. Preserve case for capitalized words.
 
-## Notes
-- This replaces the old TODO items about road name transformation and route
-  renaming that were previously listed in `README.md`.
-
 ## Automated Testing
 - Add unit tests that load a project with multiple abbreviation sets.
 - Verify labels using `abbrevSet` render the expected text.
