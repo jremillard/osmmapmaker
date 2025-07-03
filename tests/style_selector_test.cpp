@@ -5,14 +5,12 @@ TEST_CASE("StyleSelector default constructor", "[StyleSelector]")
 {
     StyleSelector sel;
     REQUIRE(sel.conditionCount() == 0);
-    REQUIRE(sel.mapniKExpression() == "");
 }
 
 TEST_CASE("StyleSelector star expression and getters", "[StyleSelector]")
 {
     StyleSelector sel("amenity");
     REQUIRE(sel.conditionCount() == 1);
-    REQUIRE(sel.mapniKExpression() == "(true)");
 
     QString key;
     std::vector<QString> values;
@@ -34,16 +32,24 @@ TEST_CASE("StyleSelector modify conditions", "[StyleSelector]")
     StyleSelector sel("initial");
     sel.insertCondition(1, "name", {});
     REQUIRE(sel.conditionCount() == 2);
-    REQUIRE(sel.mapniKExpression() == "(true and ([name] = null))");
+    QString key;
+    std::vector<QString> values;
+    sel.condition(1, &key, &values);
+    REQUIRE(key == "name");
+    REQUIRE(values.empty());
 
     std::vector<QString> vals = { "v1", "v2" };
     sel.setCondition(0, "key", vals);
-    REQUIRE(sel.mapniKExpression() == "((([key]='v1') or ([key]='v2')) and ([name] = null))");
+    sel.condition(0, &key, &values);
+    REQUIRE(key == "key");
+    REQUIRE(values == vals);
 
     sel.deleteCondition(1);
-    REQUIRE(sel.mapniKExpression() == "((([key]='v1') or ([key]='v2')))");
+    REQUIRE(sel.conditionCount() == 1);
+    sel.condition(0, &key, &values);
+    REQUIRE(key == "key");
+    REQUIRE(values == vals);
 
     sel.clear();
     REQUIRE(sel.conditionCount() == 0);
-    REQUIRE(sel.mapniKExpression() == "");
 }

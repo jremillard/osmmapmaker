@@ -405,7 +405,7 @@ void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScal
             int subLayerIndex = order[orderIndex];
             Label label = projectLayer->label(subLayerIndex);
 
-            if (label.mapnikText().isEmpty())
+            if (label.text_.isEmpty())
                 continue;
 
             StyleSelector selector = projectLayer->subLayerSelectors(subLayerIndex);
@@ -529,7 +529,7 @@ void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScal
                         tm.mapToData = project_->dataToMap_;
                         geom->apply_rw(&tm);
 
-                        QString labelTextUser = label.mapnikText();
+                        QString labelTextUser = label.text_;
                         QString labelText;
                         if (label.visible_ && labelTextUser.isEmpty() == false) {
                             if (labelTextUser == "[name] [ref]")
