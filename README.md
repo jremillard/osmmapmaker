@@ -26,7 +26,6 @@ On Debian-based systems you can install them with `install_dependencies.sh`.
 ## TODO
 
 - output GUI, read zooms
-- Create release build
 - Wrap lines by word on lines
 - Add text rendering priority
 - Add support for other marker types for point features; currently only dots are supported
