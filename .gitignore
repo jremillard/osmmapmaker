@@ -1,5 +1,6 @@
 
 *.user
+bin/
 vcpkg/
 CMakeCache.txt
 cmake_install.cmake
