@@ -18,4 +18,18 @@
 
 - Clean builds by removing the `bin` directory.
 - Run `clang-format -i` on all modified C/C++ files before committing.
+- **Update coverage report** whenever source or test files are modified:
+  1. Build the coverage configuration with `cmake --build bin/coverage -j$(nproc)`.
+  2. Execute `ctest --output-on-failure --test-dir bin/coverage` and ensure all tests pass.
+  3. Collect coverage data using:
+     ```
+     lcov --capture --directory bin/coverage --output-file bin/coverage/coverage.info
+     lcov --remove bin/coverage/coverage.info '/usr/*' '*/tests/*' --output-file bin/coverage/coverage.info
+     ```
+  4. Generate a sorted line coverage summary with
+     ```
+     lcov --list bin/coverage/coverage.info | sort -k2 > tests/coverage_report.txt
+     ```
+     The report must list each source file, covered lines and the percentage covered.
+  5. Commit the updated `tests/coverage_report.txt` along with code changes.
 - The documentation packages for all third-party dependencies are already installed.

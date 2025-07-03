@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <map>
+  <layer dataSource="Primary" type="line">
+   <subLayer name="a" visible="true">
+    <line>
+     <color>#000</color>
+     <casingColor>#fff</casingColor>
+     <width>1</width>
+     <casingWidth>0</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>
