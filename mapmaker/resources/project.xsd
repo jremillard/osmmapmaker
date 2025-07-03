@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+  <xs:element name="osmmapmakerproject">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="openStreetMapFileSource" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="openStreetMapDirectDownload" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="openStreetMapExtractDownload" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="tileOutput" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="map" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="openStreetMapFileSource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="dataSource" type="xs:string"/>
+        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+        <xs:element name="fileName" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="openStreetMapDirectDownload">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="dataSource" type="xs:string"/>
+        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="openStreetMapExtractDownload">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="dataSource" type="xs:string"/>
+        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="tileOutput">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="maxZoom" type="xs:int"/>
+        <xs:element name="minZoom" type="xs:int"/>
+        <xs:element name="tileSize" type="xs:int"/>
+        <xs:element name="resolution1x" type="xs:boolean"/>
+        <xs:element name="resolution2x" type="xs:boolean"/>
+        <xs:element name="directory" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="map">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="layer" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="backgroundColor" type="xs:string" use="optional"/>
+      <xs:attribute name="backgroundOpacity" type="xs:decimal" use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="layer">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="subLayer" minOccurs="1" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="selector" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="condition" maxOccurs="unbounded" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                        <xs:attribute name="key" type="xs:string" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:choice>
+                <xs:element name="line" type="LineType"/>
+                <xs:element name="point" type="PointType"/>
+                <xs:element name="area" type="AreaType"/>
+              </xs:choice>
+              <xs:element name="label" type="LabelType" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="optional"/>
+            <xs:attribute name="visible" type="xs:boolean" use="optional"/>
+            <xs:attribute name="minZoom" type="xs:int" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="dataSource" type="xs:string" use="required"/>
+      <xs:attribute name="k" type="xs:string" use="required"/>
+      <xs:attribute name="type" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="line"/>
+            <xs:enumeration value="point"/>
+            <xs:enumeration value="area"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="LineType">
+    <xs:sequence>
+      <xs:element name="color" type="xs:string"/>
+      <xs:element name="casingColor" type="xs:string"/>
+      <xs:element name="width" type="xs:decimal"/>
+      <xs:element name="casingWidth" type="xs:decimal"/>
+      <xs:element name="opacity" type="xs:decimal"/>
+      <xs:element name="smooth" type="xs:decimal"/>
+      <xs:element name="dashArray" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PointType">
+    <xs:sequence>
+      <xs:element name="image" type="xs:string"/>
+      <xs:element name="opacity" type="xs:decimal"/>
+      <xs:element name="color" type="xs:string"/>
+      <xs:element name="width" type="xs:decimal"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AreaType">
+    <xs:sequence>
+      <xs:element name="color" type="xs:string"/>
+      <xs:element name="opacity" type="xs:decimal"/>
+      <xs:element name="casingWidth" type="xs:decimal"/>
+      <xs:element name="casingColor" type="xs:string"/>
+      <xs:element name="fillImage" type="xs:string"/>
+      <xs:element name="fillImageOpacity" type="xs:decimal"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LabelType">
+    <xs:sequence>
+      <xs:element name="text" type="xs:string"/>
+      <xs:element name="height" type="xs:decimal"/>
+      <xs:element name="weight" type="xs:decimal"/>
+      <xs:element name="color" type="xs:string"/>
+      <xs:element name="haloSize" type="xs:decimal"/>
+      <xs:element name="haloColor" type="xs:string"/>
+      <xs:element name="lineLaxSpacing" type="xs:decimal" minOccurs="0"/>
+      <xs:element name="maxWrapWidth" type="xs:decimal"/>
+      <xs:element name="offsetY" type="xs:decimal"/>
+      <xs:element name="priority" type="xs:int"/>
+    </xs:sequence>
+    <xs:attribute name="minZoom" type="xs:int" use="optional"/>
+  </xs:complexType>
+
+</xs:schema>

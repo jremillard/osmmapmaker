@@ -6,29 +6,20 @@
 
 /// Loads OSM data from a local file and imports it using
 /// the common OsmData parsing logic.
-class OsmDataFile : public OsmData
-{
+class OsmDataFile : public OsmData {
 public:
-	OsmDataFile();
-	OsmDataFile(QDomElement projectNode);
+    OsmDataFile();
+    OsmDataFile(QDomElement projectNode);
 
-	~OsmDataFile();
+    ~OsmDataFile();
 
-	void importData(SQLite::Database &db);
+    void importData(SQLite::Database& db);
 
-	QString localFile();
-	void    SetLocalFile(QString file);
+    QString localFile();
+    void SetLocalFile(QString file);
 
-	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
+    virtual void saveXML(QDomDocument& doc, QDomElement& toElement);
 
 private:
-	QString fileName_;
-
+    QString fileName_;
 };
-
-
-
-
-
-
-

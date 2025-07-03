@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(osmmapmaker VERSION 1.0 LANGUAGES CXX)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core Xml)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Core Xml XmlPatterns)
 find_package(BZip2 REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(EXPAT REQUIRED)

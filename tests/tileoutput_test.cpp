@@ -2,7 +2,8 @@
 #include "output.h"
 #include <QtXml>
 
-TEST_CASE("TileOutput default values", "[TileOutput]") {
+TEST_CASE("TileOutput default values", "[TileOutput]")
+{
     TileOutput out("test");
     REQUIRE(out.maxZoom() == 18);
     REQUIRE(out.minZoom() == 13);
@@ -12,7 +13,8 @@ TEST_CASE("TileOutput default values", "[TileOutput]") {
     REQUIRE(out.outputDirectory() == "");
 }
 
-TEST_CASE("TileOutput setters and getters", "[TileOutput]") {
+TEST_CASE("TileOutput setters and getters", "[TileOutput]")
+{
     TileOutput out("temp");
     out.setMaxZoom(10);
     out.setMinZoom(5);
@@ -29,7 +31,8 @@ TEST_CASE("TileOutput setters and getters", "[TileOutput]") {
     REQUIRE(out.outputDirectory() == "dir");
 }
 
-TEST_CASE("TileOutput saveXML populates document", "[TileOutput]") {
+TEST_CASE("TileOutput saveXML populates document", "[TileOutput]")
+{
     TileOutput out("xml");
     out.setMaxZoom(15);
     out.setMinZoom(8);
@@ -51,4 +54,3 @@ TEST_CASE("TileOutput saveXML populates document", "[TileOutput]") {
     REQUIRE(elem.firstChildElement("resolution2x").text() == "false");
     REQUIRE(elem.firstChildElement("directory").text() == "outdir");
 }
-

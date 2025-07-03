@@ -21,6 +21,16 @@ target_link_libraries(tileoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(tileoutput_test PRIVATE cxx_std_17)
 add_test(NAME tileoutput_test COMMAND tileoutput_test)
 
+add_executable(project_schema_test
+    project_schema_test.cpp
+    ../mapmaker/resources.qrc
+)
+set_target_properties(project_schema_test PROPERTIES AUTORCC ON)
+target_link_libraries(project_schema_test PRIVATE Catch2::Catch2WithMain mapmaker Qt5::XmlPatterns)
+target_compile_features(project_schema_test PRIVATE cxx_std_17)
+target_compile_definitions(project_schema_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME project_schema_test COMMAND project_schema_test)
+
 add_executable(labelpriority_test labelpriority_test.cpp)
 target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)

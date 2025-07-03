@@ -4,27 +4,26 @@
 #include <QImage>
 
 /// Renders a project to a QImage using Qt's painting API.
-class RenderQT
-{
+class RenderQT {
 public:
-	RenderQT(Project *project, int scale = 1);
+    RenderQT(Project* project, int scale = 1);
 
-	QImage RenderImage();
+    QImage RenderImage();
 
-	void SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution);
-	void SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top);
+    void SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution);
+    void SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top);
 
 private:
-	void RenderGeom(QPainter &painter, std::map<int, double> &zoomScale);
-	void RenderLabels(QPainter &painter, std::map<int, double> &zoomScale);
+    void RenderGeom(QPainter& painter, std::map<int, double>& zoomScale);
+    void RenderLabels(QPainter& painter, std::map<int, double>& zoomScale);
 
-	int imageWithPixels_;
-	int imageHeightPixels_;
-	double left_;
-	double right_;
-	double bottom_;
-	double top_;
-	int scale_;
+    int imageWithPixels_;
+    int imageHeightPixels_;
+    double left_;
+    double right_;
+    double bottom_;
+    double top_;
+    int scale_;
 
-	Project *project_;
+    Project* project_;
 };

@@ -5,23 +5,22 @@
 
 OsmDataDirectDownload::OsmDataDirectDownload(QDomNode projectNode)
 {
-	userName_ = "OSM";
-	dataName_ = "OSM";
-	//importFile("C:\\Remillard\\Documents\\osmmapmaker\\groton.osm");
+    userName_ = "OSM";
+    dataName_ = "OSM";
+    // importFile("C:\\Remillard\\Documents\\osmmapmaker\\groton.osm");
 }
 
 OsmDataDirectDownload::~OsmDataDirectDownload()
 {
 }
 
-void OsmDataDirectDownload::importData(SQLite::Database &db)
+void OsmDataDirectDownload::importData(SQLite::Database& db)
 {
 }
 
-void OsmDataDirectDownload::saveXML(QDomDocument &doc, QDomElement &toElement)
+void OsmDataDirectDownload::saveXML(QDomDocument& doc, QDomElement& toElement)
 {
-	toElement = doc.createElement("openStreetMapDirectDownload");
+    toElement = doc.createElement("openStreetMapDirectDownload");
 
-	DataSource::saveXML(doc, toElement);
+    DataSource::saveXML(doc, toElement);
 }
-

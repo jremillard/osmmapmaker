@@ -8,19 +8,12 @@
 ///
 /// This class currently only stores the configuration and shares
 /// the import logic from OsmData.
-class OsmDataDirectDownload : public OsmData
-{
+class OsmDataDirectDownload : public OsmData {
 public:
-	OsmDataDirectDownload(QDomNode projectNode);
-	~OsmDataDirectDownload();
+    OsmDataDirectDownload(QDomNode projectNode);
+    ~OsmDataDirectDownload();
 
-	void importData(SQLite::Database &db);
+    void importData(SQLite::Database& db);
 
-	virtual void saveXML(QDomDocument &doc, QDomElement &toElement);
-
+    virtual void saveXML(QDomDocument& doc, QDomElement& toElement);
 };
-
-
-
-
-

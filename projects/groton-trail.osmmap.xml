@@ -40,6 +40,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>5</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
   </layer>
@@ -118,6 +119,7 @@
      <haloColor>#ffffff</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
   </layer>
@@ -151,6 +153,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>150</maxWrapWidth>
      <offsetY>-5</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -188,6 +191,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>150</maxWrapWidth>
      <offsetY>-5</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="15">
@@ -273,6 +277,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>800</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="14">
@@ -317,6 +322,7 @@
      <haloColor>#ffffff</haloColor>
      <maxWrapWidth>300</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -346,6 +352,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>300</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -440,6 +447,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -480,6 +488,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>50</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
   </layer>
@@ -527,6 +536,7 @@
      <haloColor>#ffffff</haloColor>
      <maxWrapWidth>600</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="14">
@@ -554,6 +564,7 @@
      <haloColor>#ffffff</haloColor>
      <maxWrapWidth>600</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
   </layer>
@@ -581,6 +592,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -606,6 +618,7 @@
      <haloColor>#000000</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="14">
@@ -631,6 +644,7 @@
      <haloColor>#f4efe1</haloColor>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
   </layer>
@@ -675,6 +689,7 @@
      <haloColor>#f4efe1</haloColor>
      <maxWrapWidth>70</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -702,6 +717,7 @@
      <haloColor>#ffffff</haloColor>
      <maxWrapWidth>70</maxWrapWidth>
      <offsetY>0</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
