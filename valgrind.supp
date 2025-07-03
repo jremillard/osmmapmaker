@@ -68,13 +68,24 @@
 }
 {
    QtHelgrindAllRace
-   Helgrind
+   Helgrind:Race
    ...
    obj:/usr/lib/x86_64-linux-gnu/libQt5*
 }
 {
    QtHelgrindAllMutex
-   Helgrind
+   Helgrind:Race
    ...
    obj:/usr/lib/x86_64-linux-gnu/libQt5*
+}
+
+{
+   QtHelgrindPthreadDestroyNetwork
+   Helgrind:Race
+   obj:*libQt5Network.so*
+}
+{
+   QtHelgrindPthreadDestroyCore
+   Helgrind:Race
+   obj:*libQt5Core.so*
 }
