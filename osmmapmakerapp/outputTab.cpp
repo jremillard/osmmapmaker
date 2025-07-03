@@ -289,7 +289,7 @@ void OutputTab::on_generate_clicked()
 
 			for (int x = int(px0.first / tileSize); x < int(px1.first / tileSize) + 1; ++x)
 			{
-				// Validate x co - ordinate
+                                // Validate x coordinate
 				if ((x < 0) || (x >= pow(2, z)))
 					continue;
 
@@ -304,13 +304,13 @@ void OutputTab::on_generate_clicked()
 				for (int y = int(px0.second / tileSize); y < yEnd; y += 1)
 				{
 
-					// Validate x co - ordinate
+                                        // Validate y coordinate
 					if ((y < 0) || (y >= pow(2, z)))
 						continue;
 
 					std::string str_y = QString::number(y).toStdString();
 
-					// Submit tile to be rendered into the queue
+                                        // Render tile image
 					//t = (name, tile_uri, x, y, z)
 					if (tileOutput->resolution1x())
 					{
@@ -345,14 +345,13 @@ void OutputTab::RenderTile(RenderQT &render, const path &imagePath, int tileSize
 	std::pair<double, double> l0 = fromPixelToLL(tileSize, p0, z);
 	std::pair<double, double> l1 = fromPixelToLL(tileSize,p1, z);
 
-	// Convert to map projection (e.g. mercator co-ords EPSG:900913)
-	// c0 = self.prj.forward(mapnik.Coord(l0[0], l0[1]));
-	double x0, y0;
-	project_->convertDataToMap(l0.first, l0.second, &x0, &y0);
+        // Convert to map projection coordinates (e.g. mercator EPSG:900913)
+        double x0, y0;
+        project_->convertDataToMap(l0.first, l0.second, &x0, &y0);
 
-	// c1 = self.prj.forward(mapnik.Coord(l1[0], l1[1]));
-	double x1, y1;
-	project_->convertDataToMap(l1.first, l1.second, &x1, &y1);
+        // Convert second point to map projection
+        double x1, y1;
+        project_->convertDataToMap(l1.first, l1.second, &x1, &y1);
 
 	render.SetupZoomBoundingBox(tileSize*resolutionScale, tileSize*resolutionScale, x0, x1, y0, y1);
 

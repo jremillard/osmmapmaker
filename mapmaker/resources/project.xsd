@@ -161,6 +161,7 @@
       <xs:element name="lineLaxSpacing" type="xs:decimal" minOccurs="0"/>
       <xs:element name="maxWrapWidth" type="xs:decimal"/>
       <xs:element name="offsetY" type="xs:decimal"/>
+      <xs:element name="priority" type="xs:int"/>
     </xs:sequence>
     <xs:attribute name="minZoom" type="xs:int" use="optional"/>
   </xs:complexType>

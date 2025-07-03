@@ -30,3 +30,8 @@ target_link_libraries(project_schema_test PRIVATE Catch2::Catch2WithMain mapmake
 target_compile_features(project_schema_test PRIVATE cxx_std_17)
 target_compile_definitions(project_schema_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME project_schema_test COMMAND project_schema_test)
+
+add_executable(labelpriority_test labelpriority_test.cpp)
+target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(labelpriority_test PRIVATE cxx_std_17)
+add_test(NAME labelpriority_test COMMAND labelpriority_test)

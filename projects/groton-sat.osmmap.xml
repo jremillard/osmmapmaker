@@ -64,6 +64,7 @@
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>-4</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="14">
@@ -102,6 +103,7 @@
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>30</maxWrapWidth>
      <offsetY>-4</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="15">
@@ -222,6 +224,7 @@
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>0</maxWrapWidth>
      <offsetY>-3</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="true" minZoom="0">
@@ -252,6 +255,7 @@
      <lineLaxSpacing>0</lineLaxSpacing>
      <maxWrapWidth>300</maxWrapWidth>
      <offsetY>-4</offsetY>
+     <priority>0</priority>
     </label>
    </subLayer>
    <subLayer name="" visible="false" minZoom="0">

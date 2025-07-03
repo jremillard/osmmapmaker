@@ -6,6 +6,7 @@
 #include <sstream>
 #include <memory>
 #include <geos.h>
+#include <numeric>
 #include "linebreaking.h"
 #include <geos/simplify/DouglasPeuckerLineSimplifier.h>
 #include "textfield.h"
@@ -176,10 +177,10 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 			{
 				std::vector<std::string> selectionValues;
 
-				bool subLayerRendered = false;
-				for (int subLayerIndex = 0; subLayerRendered == false && subLayerIndex < names.size(); ++subLayerIndex)
-				{
-					const StyleSelector &selector = projectLayer->subLayerSelectors(subLayerIndex);
+                                bool subLayerRendered = false;
+                                for (int subLayerIndex = 0; subLayerRendered == false && subLayerIndex < names.size(); ++subLayerIndex)
+                                {
+                                        const StyleSelector &selector = projectLayer->subLayerSelectors(subLayerIndex);
 
 					subLayerRendered = true;
 
@@ -431,13 +432,18 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 	{
 		StyleLayer *projectLayer = *projectLayerI;
 
-		std::vector<QString> names = projectLayer->subLayerNames();
+                std::vector<QString> names = projectLayer->subLayerNames();
 
-		bool layerActive = false;
+                std::vector<int> order(names.size());
+                std::iota(order.begin(), order.end(), 0);
+                std::sort(order.begin(), order.end(), [&](int a, int b) { return projectLayer->label(a).priority_ < projectLayer->label(b).priority_; });
 
-		for (int subLayerIndex = 0; layerActive == false && subLayerIndex < names.size(); ++subLayerIndex)
-		{
-			Label label = projectLayer->label(subLayerIndex);
+                bool layerActive = false;
+
+                for (size_t orderIndex = 0; layerActive == false && orderIndex < order.size(); ++orderIndex)
+                {
+                        int subLayerIndex = order[orderIndex];
+                        Label label = projectLayer->label(subLayerIndex);
 
 			if (label.mapnikText().isEmpty())
 				continue;
@@ -518,12 +524,13 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 			{
 				std::vector<std::string> selectionValues;
 
-				bool subLayerRendered = false;
-				for (int subLayerIndex = 0; subLayerRendered == false && subLayerIndex < names.size(); ++subLayerIndex)
-				{
-					const StyleSelector &selector = projectLayer->subLayerSelectors(subLayerIndex);
+                                bool subLayerRendered = false;
+                                for (size_t orderIndex = 0; subLayerRendered == false && orderIndex < order.size(); ++orderIndex)
+                                {
+                                        int subLayerIndex = order[orderIndex];
+                                        const StyleSelector &selector = projectLayer->subLayerSelectors(subLayerIndex);
 
-					Label label = projectLayer->label(subLayerIndex);
+                                        Label label = projectLayer->label(subLayerIndex);
 
 					subLayerRendered = true;
 
