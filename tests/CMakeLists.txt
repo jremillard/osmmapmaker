@@ -36,6 +36,11 @@ target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)
 add_test(NAME labelpriority_test COMMAND labelpriority_test)
 
+add_executable(style_selector_test style_selector_test.cpp)
+target_link_libraries(style_selector_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(style_selector_test PRIVATE cxx_std_17)
+add_test(NAME style_selector_test COMMAND style_selector_test)
+
 add_executable(sublayer_test sublayer_test.cpp)
 target_link_libraries(sublayer_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(sublayer_test PRIVATE cxx_std_17)
