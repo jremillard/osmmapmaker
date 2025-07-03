@@ -35,3 +35,8 @@ add_executable(labelpriority_test labelpriority_test.cpp)
 target_link_libraries(labelpriority_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(labelpriority_test PRIVATE cxx_std_17)
 add_test(NAME labelpriority_test COMMAND labelpriority_test)
+
+add_executable(linebreaking_test linebreaking_test.cpp)
+target_link_libraries(linebreaking_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(linebreaking_test PRIVATE cxx_std_17)
+add_test(NAME linebreaking_test COMMAND linebreaking_test)
