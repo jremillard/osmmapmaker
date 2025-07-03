@@ -34,3 +34,24 @@ TEST_CASE("TextFieldProcessor Expand with fallback", "[TextFieldProcessor]")
     kv["alt"] = "Buddy";
     REQUIRE(TextFieldProcessor::Expand("Hello [name, alt]", kv) == "Hello Buddy");
 }
+
+TEST_CASE("TextFieldProcessor Expand prefer first key", "[TextFieldProcessor]")
+{
+    std::map<QString, QString> kv;
+    kv["name"] = "OpenAI";
+    kv["alt"] = "Buddy";
+    REQUIRE(TextFieldProcessor::Expand("Hello [name, alt]", kv) == "Hello OpenAI");
+}
+
+TEST_CASE("TextFieldProcessor Expand unknown key", "[TextFieldProcessor]")
+{
+    std::map<QString, QString> kv;
+    REQUIRE(TextFieldProcessor::Expand("Hello [name]", kv) == "Hello ");
+}
+
+TEST_CASE("TextFieldProcessor Expand with escaping", "[TextFieldProcessor]")
+{
+    std::map<QString, QString> kv;
+    kv["name"] = "OpenAI";
+    REQUIRE(TextFieldProcessor::Expand("Show \\[name] and [name]", kv) == "Show \\[name] and OpenAI");
+}
