@@ -158,3 +158,29 @@ TBD
 ### Specification
 TBD
 
+## RenderQT Unit Testing
+### Goal
+Automate verification of the Qt renderer so that geometry and label output stay
+consistent across code changes.
+
+### Specification
+1. Create `tests/renderqt_data` containing:
+   - minimal project XML files and style definitions
+   - SQL or OSM snippets used to populate geometry tables
+   - benchmark PNG images for comparison
+2. Each test should:
+   - load sample data into an in-memory SQLite database
+   - construct a `Project` instance using the sample XML
+   - configure `RenderQT` with `SetupZoomAtCenter` or `SetupZoomBoundingBox`
+   - render an image and compare every pixel to the benchmark PNG with a small
+     tolerance
+3. Provide helper functions to build the database and load the expected images.
+4. Test cases derived from `renderqt.cpp` include:
+   - single point rendering with varying symbol sizes
+   - lines with width, casing and dash patterns
+   - area fills with casing
+   - label placement for points and lines including halos and word wrapping
+   - zoom-based visibility using `minZoom` values
+   - background color fill and bounding box transforms at multiple DPI scales
+5. Run tests at 1x and 2x DPI to ensure scaling logic works.
+
