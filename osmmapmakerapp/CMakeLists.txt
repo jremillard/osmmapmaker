@@ -29,11 +29,9 @@ set(UI_FILES
     outputTab.ui
     styleTab.ui
     newtoplevelstyle.ui
-    sublayertextpage.ui
+    subLayerTextPage.ui
     sublayerselectpage.ui
     selectvalueeditdialog.ui)
-
-find_library(geos_cpp NAMES geosd)
 
 add_executable(osmmapmakerapp ${SRC_FILES} ${UI_FILES} resources.qrc)
 
@@ -45,9 +43,11 @@ target_link_libraries(osmmapmakerapp
       ZLIB::ZLIB
       EXPAT::EXPAT
       PROJ4::proj
-      SQLiteCpp
-      SQLite::SQLite3
-      ${geos_cpp})
+  SQLiteCpp
+  SQLite::SQLite3
+  GEOS::geos
+  GEOS::geos_c
+)
 
 if(WIN32)
   target_link_libraries(osmmapmakerapp PRIVATE Qt5::WinMain)

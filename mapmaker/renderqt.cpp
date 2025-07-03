@@ -2,9 +2,10 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPainterPathStroker>
-#include <iostream>     
+#include <iostream>
 #include <sstream>
-#include <geos/geos.h>
+#include <memory>
+#include <geos.h>
 #include "linebreaking.h"
 #include <geos/simplify/DouglasPeuckerLineSimplifier.h>
 #include "textfield.h"
@@ -208,7 +209,7 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 
                                                 std::istringstream strStr(col.getString());
 
-                                                std::auto_ptr<geos::geom::Geometry> geom(geomFactory.read(strStr));
+                                                std::unique_ptr<geos::geom::Geometry> geom = geomFactory.read(strStr);
 
 						struct toMap : public CoordinateFilter
 						{
@@ -246,9 +247,8 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 								QBrush brush(c);
 								painter.setBrush(brush);
 
-								auto *location = geom->getCentroid();
-								painter.drawEllipse(QPointF(location->getX(), location->getY()), point.width_ * penScaleMPerPixel / 2, penScaleMPerPixel * point.width_ / 2);
-								delete location;
+                                                                std::unique_ptr<geos::geom::Point> location = geom->getCentroid();
+                                                                painter.drawEllipse(QPointF(location->getX(), location->getY()), point.width_ * penScaleMPerPixel / 2, penScaleMPerPixel * point.width_ / 2);
 							}
 
 							break;
@@ -330,12 +330,11 @@ void RenderQT::RenderGeom(QPainter &painter, std::map<int, double> &zoomToScale)
 							if (currentScale > minZoomScale)
 								continue;
 
-							geos::geom::MultiPolygon *poly = dynamic_cast<geos::geom::MultiPolygon *>(geom.get());
+                                                        geos::geom::MultiPolygon *poly = dynamic_cast<geos::geom::MultiPolygon *>(geom.get());
 
-
-							for (geos::geom::Geometry *polyG : *poly)
-							{
-								geos::geom::Polygon *poly = dynamic_cast<geos::geom::Polygon*>(polyG);
+                                                        for (const auto& polyG_ptr : *poly)
+                                                        {
+                                                                geos::geom::Polygon *poly = dynamic_cast<geos::geom::Polygon*>(polyG_ptr.get());
 
 								const LineString* polyOuter = poly->getExteriorRing();
 
@@ -422,7 +421,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 	geos::io::WKBReader geomFactoryWKB;
 
-	GeometryFactory::unique_ptr geomFactory = GeometryFactory::create();
+        GeometryFactory::Ptr geomFactory = GeometryFactory::create();
 
 	QFont normalFont("Arial", -1, QFont::Normal, false);
 	QFont lightFont("Arial", -1, QFont::Light, false);
@@ -554,7 +553,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 						std::istringstream strStr(col.getString());
 
-                                                std::auto_ptr<geos::geom::Geometry> geom(geomFactoryWKB.read(strStr));
+                                                std::unique_ptr<geos::geom::Geometry> geom = geomFactoryWKB.read(strStr);
 
 						struct toMap : public CoordinateFilter
 						{
@@ -590,7 +589,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							for (int cc = 0; cc < query.getColumnCount(); ++cc)
 							{
 								QString col = query.getColumnName(cc);
-								QString val = query.getColumn(cc);
+                                                                QString val = QString::fromStdString(query.getColumn(cc).getString());
 								keys.insert(std::pair<QString,QString>(col, val));
 							}
 
@@ -643,7 +642,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 								continue;
 
 
-							std::auto_ptr<geos::geom::Point> center(geom->getCentroid());
+                                                        std::unique_ptr<geos::geom::Point> center = geom->getCentroid();
 
 							float x = (center->getX() - left_)* xScale;
 							float y = (top_ - center->getY())* yScale;
@@ -690,18 +689,14 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 								continue;
 
 
-							std::auto_ptr< CoordinateSequence> cs(geom->getCoordinates());
-							
-							geos::simplify::DouglasPeuckerLineSimplifier s(*(cs->toVector()));
+                                                        std::unique_ptr<CoordinateSequence> cs = geom->getCoordinates();
 
-							s.setDistanceTolerance(5.0 / xScale);
+                                                        geos::simplify::DouglasPeuckerLineSimplifier s(*cs);
+                                                        s.setDistanceTolerance(5.0 / xScale);
 
-							std::auto_ptr<geos::simplify::DouglasPeuckerLineSimplifier::CoordsVect> newCoords = s.simplify();
+                                                        std::unique_ptr<CoordinateSequence> newCoords = s.simplify();
 
-							CoordinateArraySequenceFactory csF;
-					
-							// do not need to delete
-							LineString *lineString = geomFactory->createLineString(cs.get());
+                                                        std::unique_ptr<LineString> lineString = geomFactory->createLineString(std::move(newCoords));
 
 							std::size_t nPoints = lineString->getNumPoints();
 
@@ -713,8 +708,8 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							double lengthPixels = 0;
 							for (int i = 1; i < nPoints; ++i)
 							{
-								std::auto_ptr<geos::geom::Point> pt1(lineString->getPointN(i - 1));
-								std::auto_ptr<geos::geom::Point> pt2(lineString->getPointN(i));
+                                                                std::unique_ptr<geos::geom::Point> pt1 = lineString->getPointN(i - 1);
+                                                                std::unique_ptr<geos::geom::Point> pt2 = lineString->getPointN(i);
 
 								double pt1X = pt1->getX();
 								double pt1Y = pt1->getY();
@@ -753,8 +748,8 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 							double nextLabel = pitch;
 							for (int i = 1; i < nPoints; ++i)
 							{
-								std::auto_ptr<geos::geom::Point> pt1(lineString->getPointN(i - 1));
-								std::auto_ptr<geos::geom::Point> pt2(lineString->getPointN(i));
+                                                                std::unique_ptr<geos::geom::Point> pt1 = lineString->getPointN(i - 1);
+                                                                std::unique_ptr<geos::geom::Point> pt2 = lineString->getPointN(i);
 
 								double pt1X = pt1->getX();
 								double pt1Y = pt1->getY();
@@ -835,7 +830,7 @@ void RenderQT::RenderLabels(QPainter &painter, std::map<int, double> &zoomToScal
 
 							QPainterPath path;
 
-							std::auto_ptr<geos::geom::Point> center(geom->getCentroid());
+                                                        std::unique_ptr<geos::geom::Point> center = geom->getCentroid();
 
 							QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
 							const double goldenRatio = 1.618;

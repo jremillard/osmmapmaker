@@ -9,6 +9,7 @@ find_package(EXPAT REQUIRED)
 find_package(SQLiteCpp REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(PROJ4 REQUIRED)
+find_package(GEOS REQUIRED)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

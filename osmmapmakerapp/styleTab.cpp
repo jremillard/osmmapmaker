@@ -573,16 +573,16 @@ void StyleTab::updateTree()
 				assert(false);
 		}
 
-		QTreeWidgetItem *w = new QTreeWidgetItem(names);
-		w->setData(0, Qt::UserRole, layerIndex);
+                QTreeWidgetItem *w = new QTreeWidgetItem(names);
+                w->setData(0, Qt::UserRole, static_cast<qulonglong>(layerIndex));
 
 		size_t subLayerIndex = 0;
 		for (auto sl : s->subLayerNames())
 		{
 			QStringList names;
 			names.push_back(sl);
-			QTreeWidgetItem *subL = new QTreeWidgetItem(names);
-			subL->setData(0, Qt::UserRole, subLayerIndex);
+                        QTreeWidgetItem *subL = new QTreeWidgetItem(names);
+                        subL->setData(0, Qt::UserRole, static_cast<qulonglong>(subLayerIndex));
 			w->addChild(subL);
 			++subLayerIndex;
 		}
