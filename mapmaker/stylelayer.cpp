@@ -173,13 +173,14 @@ Area::Area()
 
 Label::Label()
 {
-	text_ = "[name]";
-	height_ = 10;
-	haloSize_ = 0;
-	haloColor_ = QColor(Qt::black);
-	maxWrapWidth_ = 30;
-	offsetY_ = 0;
-        fontWeight = 400; // use CSS font-weight system.
+        text_ = "[name]";
+        height_ = 10;
+        haloSize_ = 0;
+        haloColor_ = QColor(Qt::black);
+        maxWrapWidth_ = 30;
+        offsetY_ = 0;
+        fontWeight = 400; // use ccs font-weight system.
+        priority_ = 0;
 }
 
 QString Label::mapnikText()
@@ -370,10 +371,15 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 			layerLabel.haloSize_ = labelNode.firstChildElement("haloSize").text().toDouble();
 			layerLabel.haloColor_ = labelNode.firstChildElement("haloColor").text();
 			layerLabel.maxWrapWidth_ = labelNode.firstChildElement("maxWrapWidth").text().toDouble();
-			layerLabel.offsetY_ = labelNode.firstChildElement("offsetY").text().toDouble(); 
 
-			labels_[i] = layerLabel;
-		}
+                        layerLabel.offsetY_ = labelNode.firstChildElement("offsetY").text().toDouble();
+
+                        QDomElement priorityNode = labelNode.firstChildElement("priority");
+                        if (!priorityNode.isNull())
+                                layerLabel.priority_ = priorityNode.text().toInt();
+
+                        labels_[i] = layerLabel;
+                }
 	}
 
 	if (key_.isNull())
@@ -607,9 +613,13 @@ void StyleLayer::saveXML(QDomDocument &doc, QDomElement &layerElement)
 			maxWrapWidthNode.appendChild(doc.createTextNode(QString::number(label.maxWrapWidth_)));
 			labelNode.appendChild(maxWrapWidthNode);
 
-			QDomElement offsetYNode = doc.createElement("offsetY");
-			offsetYNode.appendChild(doc.createTextNode(QString::number(label.offsetY_)));
-			labelNode.appendChild(offsetYNode);
+                        QDomElement offsetYNode = doc.createElement("offsetY");
+                        offsetYNode.appendChild(doc.createTextNode(QString::number(label.offsetY_)));
+                        labelNode.appendChild(offsetYNode);
+
+                        QDomElement priorityNode = doc.createElement("priority");
+                        priorityNode.appendChild(doc.createTextNode(QString::number(label.priority_)));
+                        labelNode.appendChild(priorityNode);
 
 			subLayerNode.appendChild(labelNode);
 		}

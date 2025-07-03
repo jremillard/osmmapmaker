@@ -98,17 +98,18 @@ public:
 class Label : public SubLayer
 {
 public:
-	Label();
+        Label();
 
-	QString mapnikText();
+        QString mapnikText();
 
-	int fontWeight;
-	QString text_;
-	double height_;
-	double haloSize_;
-	QColor haloColor_;
+        int fontWeight;
+        QString text_;
+        double height_;
+        double haloSize_;
+        QColor haloColor_;
        double maxWrapWidth_;
        double offsetY_;
+       int priority_;
 };
 
 /// Represents a map layer referencing a data source and one key.
