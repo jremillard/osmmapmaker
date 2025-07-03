@@ -98,6 +98,11 @@ void SubLayerTextPage::on_haloColorPick_clicked()
 	}
 }
 
+void SubLayerTextPage::on_priority_editingFinished()
+{
+        emit editingFinished();
+}
+
 
 void SubLayerTextPage::SaveTo(Label *label)
 {
@@ -106,10 +111,11 @@ void SubLayerTextPage::SaveTo(Label *label)
 	label->height_ = ui->height->value();
 	label->color_ = QColor(ui->color->text());
 	label->haloSize_ = ui->haloSize->value();
-	label->haloColor_ = QColor(ui->haloColor->text());
-	label->minZoom_ = ui->minZoom->value();
-	label->maxWrapWidth_ = ui->maxWrapWidth->value();
-	label->offsetY_ = ui->offset->value();
+        label->haloColor_ = QColor(ui->haloColor->text());
+        label->minZoom_ = ui->minZoom->value();
+        label->maxWrapWidth_ = ui->maxWrapWidth->value();
+        label->offsetY_ = ui->offset->value();
+        label->priority_ = ui->priority->value();
 
 	int weight = ui->fontWeight->itemData(ui->fontWeight->currentIndex()).toInt();
 
@@ -123,10 +129,11 @@ void SubLayerTextPage::Load(const Label &label)
 	ui->height->setValue(label.height_);
 	ui->color->setText(label.color_.name());
 	ui->haloSize->setValue(label.haloSize_);
-	ui->haloColor->setText(label.haloColor_.name());
-	ui->minZoom->setValue(label.minZoom_);
-	ui->maxWrapWidth->setValue(label.maxWrapWidth_);
-	ui->offset->setValue(label.offsetY_);
+        ui->haloColor->setText(label.haloColor_.name());
+        ui->minZoom->setValue(label.minZoom_);
+        ui->maxWrapWidth->setValue(label.maxWrapWidth_);
+        ui->offset->setValue(label.offsetY_);
+        ui->priority->setValue(label.priority_);
 
 	suppressUpdates_ = true;
 
