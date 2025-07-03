@@ -12,10 +12,10 @@ set(CMAKE_AUTOMOC ON)
 #add_test(NAME textsplittest COMMAND textsplittest)
 
 add_executable(textsplittest textsplittest.cpp)
-target_link_libraries(textsplittest PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 ${geos_cpp} )
+target_link_libraries(textsplittest PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 GEOS::geos GEOS::geos_c)
 
 add_executable(projecttest projecttest.cpp)
-target_link_libraries(projecttest  PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 ${geos_cpp} )
+target_link_libraries(projecttest  PRIVATE mapmaker Qt5::Test BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT ${PROJ4_LIBRARIES} SQLiteCpp sqlite3 GEOS::geos GEOS::geos_c)
 
 
 

@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <memory>
 
 #include <osmium/io/any_input.hpp>
 
@@ -28,7 +29,7 @@
 // This will work for all input files keeping the index in memory.
 #include <osmium/index/map/flex_mem.hpp>
 
-#include <geos/geos.h>
+#include <geos.h>
 
 // The type of index used. This must match the include file above
 using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
@@ -247,12 +248,10 @@ void OsmDataImportHandler::way(const osmium::Way& way)
 
                         std::istringstream strStr(wkbBuffer);
 
-                       geos::geom::Geometry *geom = geomFactory.read(strStr);
+                       std::unique_ptr<geos::geom::Geometry> geom = geomFactory.read(strStr);
 
                        double length = geom->getLength();
                        queryAdd_->bind(4, length*detToM);
-
-                       delete geom;
 
                        double area = 0;
                        queryAdd_->bind(5, area);
@@ -325,15 +324,13 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 
                         std::istringstream strStr(wkbBuffer);
 
-                       geos::geom::Geometry *geom = geomFactory.read(strStr);
+                       std::unique_ptr<geos::geom::Geometry> geom = geomFactory.read(strStr);
 
                        double lengthDeg = geom->getLength();
                        queryAdd_->bind(4, lengthDeg * detToM);
 
                        double areaDegSq = geom->getArea();
                        queryAdd_->bind(5, areaDegSq * detToM * detToM);
-
-                       delete geom;
 
                        queryAdd_->exec();
 
