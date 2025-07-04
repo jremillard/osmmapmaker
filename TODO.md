@@ -242,6 +242,10 @@ levels.
 3. Apply abbreviation sets and case preservation to the chosen variant.
 4. Provide unit tests covering names with multiple semicolons and ensuring the
    fallback behaves as expected.
+5. Example tag values using semicolons in OSM include:
+   - `name=Bundesautobahn 2;A2` for roads with both long and short forms.
+   - `name=Rue de la Paix;Peace Street` demonstrating bilingual labeling.
+   - `alt_name=I 495;Capital Beltway` for alternate highway names.
 
 ### Automated Testing
 - Render names with multiple semicolons at varying widths to ensure the correct variant is chosen.
