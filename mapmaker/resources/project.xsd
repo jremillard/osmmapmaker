@@ -16,6 +16,13 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- Valid OSM tag/field names -->
+  <xs:simpleType name="fieldName">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z0-9:_-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:element name="osmmapmakerproject">
     <xs:complexType>
       <xs:sequence>
@@ -100,7 +107,7 @@
                         <xs:sequence>
                           <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                         </xs:sequence>
-                        <xs:attribute name="key" type="xs:string" use="required"/>
+                        <xs:attribute name="key" type="fieldName" use="required"/>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
@@ -120,7 +127,7 @@
         </xs:element>
       </xs:sequence>
       <xs:attribute name="dataSource" type="xs:string" use="required"/>
-      <xs:attribute name="k" type="xs:string" use="required"/>
+        <xs:attribute name="k" type="fieldName" use="required"/>
       <xs:attribute name="type" use="required">
         <xs:simpleType>
           <xs:restriction base="xs:string">

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <tileOutput name="lineTiles">
+  <maxZoom>12</maxZoom>
+  <minZoom>10</minZoom>
+  <tileSize>256</tileSize>
+  <resolution1x>true</resolution1x>
+  <resolution2x>true</resolution2x>
+  <directory></directory>
+ </tileOutput>
+ <map backgroundColor="#ffffff" backgroundOpacity="1">
+  <layer dataSource="Primary" k="invalid$" type="line">
+   <subLayer name="roads" visible="true" minZoom="10">
+    <selector>
+     <condition key="invalid$">
+      <value>residential</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#000000</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1</width>
+     <casingWidth>1</casingWidth>
+     <opacity>1</opacity>
+     <smooth>0</smooth>
+     <dashArray></dashArray>
+    </line>
+    <label minZoom="12">
+     <text>[name]</text>
+     <height>12</height>
+     <weight>700</weight>
+     <color>#000000</color>
+     <haloSize>1</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <maxWrapWidth>100</maxWrapWidth>
+     <offsetY>0</offsetY>
+     <priority>1</priority>
+    </label>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>

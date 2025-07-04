@@ -82,7 +82,8 @@ TEST_CASE("Invalid project files fail validation", "[Project]")
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_root.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_missing_layer_attribute.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_tileoutput_boolean.osmmap.xml"),
-        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_two_geometry_tags.osmmap.xml")
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_two_geometry_tags.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_field_name.osmmap.xml")
     };
 
     for (const QString& fileName : files) {
@@ -112,7 +113,8 @@ TEST_CASE("Invalid project files throw on load", "[Project]")
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_missing_layer_attribute.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_tileoutput_boolean.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_two_geometry_tags.osmmap.xml"),
-        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_negative_zoom.osmmap.xml")
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_negative_zoom.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_field_name.osmmap.xml")
     };
 
     for (const QString& fileName : files) {
