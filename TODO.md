@@ -196,21 +196,21 @@ format.
 
 ## Handling Invalid Field Names
 ### Goal
-Prevent crashes when project files reference invalid or unknown field names.
+Abort loading of project files that reference invalid or unknown field names and inform the user of the problem.
 
 ### Specification
-1. Validate field names during project load against the list of allowed tags and
-   characters.
-2. Skip invalid fields while logging a warning so the rest of the project
-   continues to load.
-3. Highlight problematic entries in the GUI with a tooltip explaining the
-   issue.
-4. Sanitize field names used in generated SQL to avoid quoting errors and add
-   tests that open projects containing bad fields.
+1. Extend `resources/project.xsd` so that `<field>` elements can only contain
+   known tags and valid characters.
+2. Validate project files against the updated schema during loading.
+3. When validation fails due to an unknown field name (or any other schema
+   issue), display a clear error dialog explaining which field caused the
+   problem and refuse to open the project.
+4. Remove the old behavior of skipping invalid fields; loading must either
+   succeed completely or fail with the friendly message.
 
 ### Automated Testing
-- Load projects with invalid fields and ensure warnings are logged while loading continues.
-- Confirm GUI highlights bad fields without crashing.
+- Attempt to load projects containing bad field names and verify the load
+  operation fails with the expected error message.
 
 ## Fix Stuck Focus in Zoom Box
 ### Goal
