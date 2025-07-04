@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<osm version="0.6" generator="test">
+  <node id="1" lat="0.0" lon="0.0">
+    <tag k="name" v="n8"/>
+  </node>
+  <node id="2" lat="0.0" lon="1.0"/>
+  <node id="3" lat="1.0" lon="1.0"/>
+  <node id="4" lat="1.0" lon="0.0"/>
+  <way id="10">
+    <nd ref="1"/>
+    <nd ref="2"/>
+    <nd ref="3"/>
+    <nd ref="4"/>
+    <nd ref="1"/>
+    <tag k="area" v="yes"/>
+  </way>
+  <relation id="100">
+    <member type="way" ref="10" role="outer"/>
+    <tag k="type" v="boundary"/>
+    <tag k="boundary" v="administrative"/>
+    <tag k="admin_level" v="8"/>
+  </relation>
+</osm>

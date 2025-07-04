@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<osm version="0.6" generator="test">
+  <node id="1" lat="0.0" lon="0.0">
+    <tag k="name" v="n1"/>
+  </node>
+</osm>
