@@ -7,6 +7,8 @@ set(SRC_FILES
     project.cpp
     osmdataextractdownload.cpp
     osmdatadirectdownload.cpp
+    osmdataoverpass.cpp
+    renderdatabase.cpp
     datasource.cpp
     osmdata.cpp
     osmdatafile.cpp
@@ -33,5 +35,6 @@ target_link_libraries(mapmaker
         Qt5::Widgets
         Qt5::Xml
         Qt5::XmlPatterns
+        Qt5::Network
 )
 

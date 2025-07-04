@@ -2,17 +2,7 @@
 #include "osmdatafile.h"
 #include <QtXml>
 #include <SQLiteCpp/SQLiteCpp.h>
-#include <fstream>
-#include <sstream>
-
-static void execSqlFile(SQLite::Database& db, const std::string& path)
-{
-    std::ifstream in(path);
-    REQUIRE(in.good());
-    std::stringstream ss;
-    ss << in.rdbuf();
-    db.exec(ss.str());
-}
+#include "renderdatabase.h"
 
 TEST_CASE("OsmDataFile setters and getters", "[OsmDataFile]")
 {
@@ -50,10 +40,8 @@ TEST_CASE("OsmDataFile XML round trip", "[OsmDataFile]")
 
 TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 {
-    QString baseDir = QStringLiteral(SOURCE_DIR);
-    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-0.sql").toStdString());
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-1.sql").toStdString());
+    RenderDatabase rdb;
+    SQLite::Database& db = rdb.db();
 
     QTemporaryFile osmTemp("XXXXXX.osm");
     REQUIRE(osmTemp.open());
@@ -100,10 +88,8 @@ TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 
 TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
 {
-    QString baseDir = QStringLiteral(SOURCE_DIR);
-    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-0.sql").toStdString());
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-1.sql").toStdString());
+    RenderDatabase rdb;
+    SQLite::Database& db = rdb.db();
 
     OsmDataFile file;
 
