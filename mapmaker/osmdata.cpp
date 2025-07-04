@@ -2,6 +2,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QTemporaryFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -95,6 +96,16 @@ void OsmData::importFile(SQLite::Database& db, QString fileName)
     }));
 
     reader.close();
+}
+
+void OsmData::importBuffer(SQLite::Database& db, const QByteArray& buffer)
+{
+    QTemporaryFile tmp("XXXXXX.osm");
+    tmp.open();
+    tmp.write(buffer);
+    tmp.flush();
+    tmp.close();
+    importFile(db, tmp.fileName());
 }
 
 OsmDataImportHandler::OsmDataImportHandler(SQLite::Database& db, QString dataSource)

@@ -108,3 +108,25 @@ target_link_libraries(project_load_save_test PRIVATE
 target_compile_features(project_load_save_test PRIVATE cxx_std_17)
 target_compile_definitions(project_load_save_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME project_load_save_test COMMAND project_load_save_test)
+
+add_executable(overpass_test
+    overpass_test.cpp
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(overpass_test PROPERTIES AUTORCC ON)
+target_link_libraries(overpass_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::Network
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(overpass_test PRIVATE cxx_std_17)
+target_compile_definitions(overpass_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME overpass_test COMMAND overpass_test)
