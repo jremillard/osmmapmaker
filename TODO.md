@@ -126,19 +126,24 @@ and contour lines can be generated.
 Fetch OSM features directly from the Overpass API without requiring external
 downloads.
 
-### Specification
-1. Provide a wizard for entering an Overpass query or selecting from templates
-   (e.g. amenities, building outlines).
-2. Download the results as `.osm` data and feed them into the existing import
-   pipeline.
-3. Cache query results during a session to avoid duplicate network requests and
-   show progress with a cancel option.
-4. Gracefully handle Overpass errors and document example queries in the user
-   manual.
+### As Built
+Implemented a new `OsmDataOverpass` data source. The class posts the user
+defined query to the Overpass interpreter and imports the returned `.osm`
+payload through the existing `OsmData` parser. Results are stored in a static
+cache keyed by query so repeat imports during a session do not trigger network
+access. If the network is unavailable or Overpass returns an error the importer
+throws a runtime exception.
+
+### Next Steps
+- Add an import wizard that assists users in constructing queries.
+  - The first templates should download by bounding box or by administrative
+    boundary.
 
 ### Automated Testing
-- Mock Overpass responses to test successful imports and error handling.
-- Verify results are cached within a session and imported into the pipeline.
+- Added `overpass_test` which seeds the cache with a small XML snippet and
+  verifies the importer inserts entities without contacting the network.
+- A second test confirms an exception is raised when the network is disabled and
+  no cached result exists.
 
 ## Golf Theme Stylesheet
 ### Goal

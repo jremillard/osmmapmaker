@@ -24,6 +24,7 @@ public:
     ~OsmData();
 
     void importFile(SQLite::Database& db, QString fileName);
+    void importBuffer(SQLite::Database& db, const QByteArray& buffer);
 };
 
 /// osmium handler that imports nodes, ways and areas into SQLite.
