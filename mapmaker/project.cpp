@@ -1,5 +1,8 @@
 #include "project.h"
 #include <QtXml>
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
+#include <QAbstractMessageHandler>
 #include <exception>
 
 #include "osmdataextractdownload.h"
@@ -10,6 +13,32 @@
 #include <SQLiteCpp/VariadicBind.h>
 
 #include <set>
+
+class SchemaMessageHandler : public QAbstractMessageHandler {
+public:
+    SchemaMessageHandler()
+        : line_(-1)
+    {
+    }
+
+    QString statusMessage() const { return statusMessage_; }
+    int line() const { return line_; }
+
+protected:
+    void handleMessage(QtMsgType,
+        const QString& description,
+        const QUrl&,
+        const QSourceLocation& location) override
+    {
+        statusMessage_ = description;
+        if (!location.isNull())
+            line_ = location.line();
+    }
+
+private:
+    QString statusMessage_;
+    int line_;
+};
 
 Project::Project(path fileName)
 {
@@ -29,6 +58,40 @@ Project::Project(path fileName)
     db_ = NULL;
 
     backgroundOpacity_ = 1;
+
+    if (!f.open(QIODevice::ReadOnly)) {
+        auto s = QString("Can't open file %1.").arg(pathStrQ);
+        throw std::runtime_error(s.toStdString());
+    }
+
+    // Validate project file against XSD before parsing
+    SchemaMessageHandler handler;
+    QXmlSchema schema;
+    schema.setMessageHandler(&handler);
+
+    QFile xsdFile(":/resources/project.xsd");
+    if (xsdFile.open(QIODevice::ReadOnly)) {
+        schema.load(&xsdFile);
+        xsdFile.close();
+    }
+
+    if (!schema.isValid()) {
+        throw std::runtime_error("Internal project schema is invalid");
+    }
+
+    QXmlSchemaValidator validator(schema);
+    validator.setMessageHandler(&handler);
+
+    bool valid = validator.validate(&f);
+    f.close();
+
+    if (!valid) {
+        QString msg = QString("%1:%2: %3")
+                          .arg(pathStrQ)
+                          .arg(handler.line())
+                          .arg(handler.statusMessage());
+        throw std::runtime_error(msg.toStdString());
+    }
 
     if (!f.open(QIODevice::ReadOnly)) {
         auto s = QString("Can't open file %1.").arg(pathStrQ);

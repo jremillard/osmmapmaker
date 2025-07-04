@@ -32,5 +32,6 @@ target_link_libraries(mapmaker
     PUBLIC
         Qt5::Widgets
         Qt5::Xml
+        Qt5::XmlPatterns
 )
 

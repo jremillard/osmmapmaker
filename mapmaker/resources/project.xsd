@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
+  <!-- Common numeric types used throughout the project schema -->
+  <xs:simpleType name="nonNegativeInt">
+    <xs:restriction base="xs:nonNegativeInteger"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="positiveInt">
+    <xs:restriction base="xs:positiveInteger"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="nonNegativeDecimal">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:element name="osmmapmakerproject">
     <xs:complexType>
       <xs:sequence>
@@ -18,7 +33,7 @@
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
         <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
-        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+        <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
         <xs:element name="fileName" type="xs:string"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
@@ -30,7 +45,7 @@
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
         <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
-        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+        <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
@@ -41,7 +56,7 @@
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
         <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
-        <xs:element name="importDurationS" type="xs:int" minOccurs="0"/>
+        <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
@@ -50,9 +65,9 @@
   <xs:element name="tileOutput">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="maxZoom" type="xs:int"/>
-        <xs:element name="minZoom" type="xs:int"/>
-        <xs:element name="tileSize" type="xs:int"/>
+        <xs:element name="maxZoom" type="nonNegativeInt"/>
+        <xs:element name="minZoom" type="nonNegativeInt"/>
+        <xs:element name="tileSize" type="positiveInt"/>
         <xs:element name="resolution1x" type="xs:boolean"/>
         <xs:element name="resolution2x" type="xs:boolean"/>
         <xs:element name="directory" type="xs:string"/>
@@ -67,7 +82,7 @@
         <xs:element ref="layer" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
       <xs:attribute name="backgroundColor" type="xs:string" use="optional"/>
-      <xs:attribute name="backgroundOpacity" type="xs:decimal" use="optional"/>
+      <xs:attribute name="backgroundOpacity" type="nonNegativeDecimal" use="optional"/>
     </xs:complexType>
   </xs:element>
 
@@ -100,7 +115,7 @@
             </xs:sequence>
             <xs:attribute name="name" type="xs:string" use="optional"/>
             <xs:attribute name="visible" type="xs:boolean" use="optional"/>
-            <xs:attribute name="minZoom" type="xs:int" use="optional"/>
+            <xs:attribute name="minZoom" type="nonNegativeInt" use="optional"/>
           </xs:complexType>
         </xs:element>
       </xs:sequence>
@@ -122,10 +137,10 @@
     <xs:sequence>
       <xs:element name="color" type="xs:string"/>
       <xs:element name="casingColor" type="xs:string"/>
-      <xs:element name="width" type="xs:decimal"/>
-      <xs:element name="casingWidth" type="xs:decimal"/>
-      <xs:element name="opacity" type="xs:decimal"/>
-      <xs:element name="smooth" type="xs:decimal"/>
+      <xs:element name="width" type="nonNegativeDecimal"/>
+      <xs:element name="casingWidth" type="nonNegativeDecimal"/>
+      <xs:element name="opacity" type="nonNegativeDecimal"/>
+      <xs:element name="smooth" type="nonNegativeDecimal"/>
       <xs:element name="dashArray" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
@@ -133,37 +148,37 @@
   <xs:complexType name="PointType">
     <xs:sequence>
       <xs:element name="image" type="xs:string"/>
-      <xs:element name="opacity" type="xs:decimal"/>
+      <xs:element name="opacity" type="nonNegativeDecimal"/>
       <xs:element name="color" type="xs:string"/>
-      <xs:element name="width" type="xs:decimal"/>
+      <xs:element name="width" type="nonNegativeDecimal"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="AreaType">
     <xs:sequence>
       <xs:element name="color" type="xs:string"/>
-      <xs:element name="opacity" type="xs:decimal"/>
-      <xs:element name="casingWidth" type="xs:decimal"/>
+      <xs:element name="opacity" type="nonNegativeDecimal"/>
+      <xs:element name="casingWidth" type="nonNegativeDecimal"/>
       <xs:element name="casingColor" type="xs:string"/>
       <xs:element name="fillImage" type="xs:string"/>
-      <xs:element name="fillImageOpacity" type="xs:decimal"/>
+      <xs:element name="fillImageOpacity" type="nonNegativeDecimal"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="LabelType">
     <xs:sequence>
       <xs:element name="text" type="xs:string"/>
-      <xs:element name="height" type="xs:decimal"/>
-      <xs:element name="weight" type="xs:decimal"/>
+      <xs:element name="height" type="nonNegativeDecimal"/>
+      <xs:element name="weight" type="nonNegativeDecimal"/>
       <xs:element name="color" type="xs:string"/>
-      <xs:element name="haloSize" type="xs:decimal"/>
+      <xs:element name="haloSize" type="nonNegativeDecimal"/>
       <xs:element name="haloColor" type="xs:string"/>
-      <xs:element name="lineLaxSpacing" type="xs:decimal" minOccurs="0"/>
-      <xs:element name="maxWrapWidth" type="xs:decimal"/>
+      <xs:element name="lineLaxSpacing" type="nonNegativeDecimal" minOccurs="0"/>
+      <xs:element name="maxWrapWidth" type="nonNegativeDecimal"/>
       <xs:element name="offsetY" type="xs:decimal"/>
-      <xs:element name="priority" type="xs:int"/>
+      <xs:element name="priority" type="nonNegativeInt"/>
     </xs:sequence>
-    <xs:attribute name="minZoom" type="xs:int" use="optional"/>
+    <xs:attribute name="minZoom" type="nonNegativeInt" use="optional"/>
   </xs:complexType>
 
 </xs:schema>

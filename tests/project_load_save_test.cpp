@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 #include <QCoreApplication>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
@@ -92,6 +93,66 @@ TEST_CASE("Invalid project files fail validation", "[Project]")
     }
 
     schema = QXmlSchema();
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Invalid project files throw on load", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QStringList files = {
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_no_map.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_root.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_missing_layer_attribute.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_bad_tileoutput_boolean.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_two_geometry_tags.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_negative_zoom.osmmap.xml")
+    };
+
+    for (const QString& fileName : files) {
+        INFO(fileName.toStdString());
+        std::filesystem::path p = fileName.toStdString();
+        try {
+            Project proj(p);
+            FAIL("Expected exception not thrown");
+        } catch (const std::runtime_error& e) {
+            std::string msg = e.what();
+            CHECK_THAT(msg, Catch::Matchers::ContainsSubstring(fileName.toStdString()));
+            CHECK_THAT(msg, Catch::Matchers::Matches(".*:\\d+:.*"));
+        }
+    }
+
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Malformed project file reports parse location", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/malformed/malformed_missing_lt.osmmap.xml");
+    std::filesystem::path p = fileName.toStdString();
+
+    try {
+        Project proj(p);
+        FAIL("Expected exception not thrown");
+    } catch (const std::runtime_error& e) {
+        std::string msg = e.what();
+        CHECK_THAT(msg, Catch::Matchers::ContainsSubstring(fileName.toStdString()));
+        CHECK_THAT(msg, Catch::Matchers::Matches(".*:\\d+:.*"));
+    }
+
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
