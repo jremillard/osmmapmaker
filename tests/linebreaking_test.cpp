@@ -33,3 +33,11 @@ TEST_CASE("breakLines multiple breaks", "[linebreaking]")
     breakLines(words, 10, &breaks);
     REQUIRE(breaks == std::vector<size_t> { 2, 4 });
 }
+
+TEST_CASE("breakLines first word larger than width", "[linebreaking]")
+{
+    std::vector<int> words = { 15, 2, 3 };
+    std::vector<size_t> breaks;
+    breakLines(words, 10, &breaks);
+    REQUIRE(breaks == std::vector<size_t> { 1 });
+}
