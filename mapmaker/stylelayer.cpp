@@ -1,5 +1,6 @@
 #include "stylelayer.h"
 #include "textfield.h"
+#include <QRegularExpression>
 
 StyleSelector::StyleSelector()
 {
@@ -151,6 +152,16 @@ StyleLayer::StyleLayer(QDomElement layerNode)
     key_ = layerNode.attributes().namedItem("k").nodeValue();
     dataSource_ = layerNode.attributes().namedItem("dataSource").nodeValue();
 
+    if (key_.isEmpty()) {
+        throw std::runtime_error("Layer missing required field name");
+    }
+
+    static const QRegularExpression fieldRegex(QStringLiteral("^[A-Za-z0-9:_-]+$"));
+    if (!fieldRegex.match(key_).hasMatch()) {
+        auto msg = QString("Invalid field name '%1'").arg(key_);
+        throw std::runtime_error(msg.toStdString());
+    }
+
     QString typeStr = layerNode.attributes().namedItem("type").nodeValue();
 
     QDomNodeList subLayers = layerNode.elementsByTagName("subLayer");
@@ -164,6 +175,10 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 
             for (size_t condIndex = 0; condIndex < conditionsNodes.count(); ++condIndex) {
                 QString key = conditionsNodes.at(condIndex).attributes().namedItem("key").nodeValue();
+                if (!fieldRegex.match(key).hasMatch()) {
+                    auto msg = QString("Invalid field name '%1'").arg(key);
+                    throw std::runtime_error(msg.toStdString());
+                }
 
                 QDomElement condElement = conditionsNodes.at(condIndex).toElement();
 
@@ -305,10 +320,6 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 
             labels_[i] = layerLabel;
         }
-    }
-
-    if (key_.isNull()) {
-        // TODO
     }
 }
 
