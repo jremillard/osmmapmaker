@@ -55,3 +55,11 @@ TEST_CASE("TextFieldProcessor Expand with escaping", "[TextFieldProcessor]")
     kv["name"] = "OpenAI";
     REQUIRE(TextFieldProcessor::Expand("Show \\[name] and [name]", kv) == "Show \\[name] and OpenAI");
 }
+
+TEST_CASE("TextFieldProcessor Expand trims keys", "[TextFieldProcessor]")
+{
+    std::map<QString, QString> kv;
+    kv["name"] = "OpenAI";
+    kv["alt"] = "Buddy";
+    REQUIRE(TextFieldProcessor::Expand("Hello [ name , alt ]", kv) == "Hello OpenAI");
+}

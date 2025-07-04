@@ -139,3 +139,29 @@ TEST_CASE("StyleLayer sub layer names", "[StyleLayer]")
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
+
+TEST_CASE("StyleLayer renderSQLSelect includes joins", "[StyleLayer]")
+{
+    int argc = 0;
+    QCoreApplication app(argc, nullptr);
+
+    StyleLayer layer("ds", "highway", ST_LINE);
+    Line ln;
+    layer.setSubLayerLine(0, ln);
+
+    Label lb = layer.label(0);
+    lb.text_ = "[name]";
+    layer.setLabel(0, lb);
+
+    StyleSelector sel = layer.subLayerSelectors(0);
+    sel.insertCondition(1, "access", { "private" });
+    layer.setSubLayerSelectors(0, sel);
+
+    QString sql = layer.renderSQLSelect(false);
+    REQUIRE(sql.contains("\"highway\".value as \"highway\""));
+    REQUIRE(sql.contains("\"name\".value as \"name\""));
+    REQUIRE(sql.contains("left outer join entityKV as \"access\""));
+
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
