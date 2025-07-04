@@ -3,6 +3,10 @@
 #include "osmdatadirectdownload.h"
 #include "osmdataextractdownload.h"
 #include <QtXml>
+#include <QXmlSchema>
+#include <QXmlSchemaValidator>
+#include <QDir>
+#include <QNetworkAccessManager>
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "renderdatabase.h"
 
@@ -61,8 +65,8 @@ TEST_CASE("OsmDataFile XML round trip", "[OsmDataFile]")
 
 TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 {
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    QString baseDir = QStringLiteral(SOURCE_DIR);
+    RenderDatabase db;
 
     OsmDataFile data;
     data.SetLocalFile(baseDir + "/tests/osm/basic.osm");
@@ -87,8 +91,7 @@ TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 
 TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
 {
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    RenderDatabase db;
 
     OsmDataFile file;
 
@@ -115,9 +118,7 @@ TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
 TEST_CASE("Administrative boundary relations import as lines", "[OsmData]")
 {
     QString baseDir = QStringLiteral(SOURCE_DIR);
-    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-0.sql").toStdString());
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-1.sql").toStdString());
+    RenderDatabase db;
 
     OsmDataFile data;
     data.SetLocalFile(baseDir + "/tests/osm/admin_boundary.osm");
@@ -159,4 +160,53 @@ TEST_CASE("OsmDataExtractDownload saveXML", "[OsmData]")
 
     REQUIRE(outElem.tagName() == "openStreetMapExtractDownload");
     REQUIRE(outElem.firstChildElement("dataSource").text() == "OSM");
+}
+
+TEST_CASE("Rendering sample OSM files import", "[OsmData]")
+{
+    QString baseDir = QStringLiteral(SOURCE_DIR);
+    QDir dir(baseDir + "/tests/osm/render_cases");
+    QStringList files = dir.entryList(QStringList() << "case*.osm", QDir::Files);
+    REQUIRE(files.size() == 30);
+
+    for (const QString& fileName : files) {
+        RenderDatabase rdb;
+        SQLite::Database& db = rdb.db();
+
+        OsmDataFile data;
+        data.SetLocalFile(dir.filePath(fileName));
+        data.importData(db);
+
+        SQLite::Statement countStmt(db, "SELECT COUNT(*) FROM entity");
+        REQUIRE(countStmt.executeStep());
+        REQUIRE(countStmt.getColumn(0).getInt() > 0);
+    }
+}
+
+TEST_CASE("Rendering sample OSM schema validation", "[OsmSchema]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QXmlSchema schema;
+    QFile xsdFile(QStringLiteral(SOURCE_DIR "/tests/osm/osm_test.xsd"));
+    REQUIRE(xsdFile.open(QIODevice::ReadOnly));
+    schema.load(&xsdFile);
+    REQUIRE(schema.isValid());
+
+    QDir dir(QStringLiteral(SOURCE_DIR "/tests/osm/render_cases"));
+    QStringList files = dir.entryList(QStringList() << "case*.osm", QDir::Files);
+    for (const QString& f : files) {
+        QFile dataFile(dir.filePath(f));
+        REQUIRE(dataFile.open(QIODevice::ReadOnly));
+        QXmlSchemaValidator validator(schema);
+        REQUIRE(validator.validate(&dataFile));
+    }
+    schema = QXmlSchema();
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

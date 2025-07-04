@@ -25,7 +25,7 @@ void OsmDataFile::SetLocalFile(QString file)
     fileName_ = file;
 }
 
-void OsmDataFile::importData(SQLite::Database& db)
+void OsmDataFile::importData(RenderDatabase& db)
 {
     importFile(db, fileName_);
 }

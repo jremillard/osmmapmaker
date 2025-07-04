@@ -59,7 +59,7 @@ QByteArray OsmDataOverpass::download()
     return data;
 }
 
-void OsmDataOverpass::importData(SQLite::Database& db)
+void OsmDataOverpass::importData(RenderDatabase& db)
 {
     QByteArray data = download();
     importBuffer(db, data);

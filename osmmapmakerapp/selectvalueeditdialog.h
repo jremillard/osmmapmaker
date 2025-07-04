@@ -12,7 +12,7 @@ class SelectValueEditDialog : public QDialog {
     Q_OBJECT
 
 public:
-    SelectValueEditDialog(SQLite::Database*, const QString& dataSource, QWidget* parent);
+    SelectValueEditDialog(RenderDatabase*, const QString& dataSource, QWidget* parent);
     ~SelectValueEditDialog();
 
     void SetSelections(const QString& key, std::vector<QString>& values, bool allowKeyChange);
@@ -30,7 +30,7 @@ private:
     void updateValueListFull();
     void updateValueList();
 
-    SQLite::Database* db_;
+    RenderDatabase* db_;
     QString dataSource_;
 
     bool surpressSelectChangeSignals_;

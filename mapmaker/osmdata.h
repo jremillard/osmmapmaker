@@ -1,6 +1,7 @@
 #pragma once
 
 #include "datasource.h"
+#include "renderdatabase.h"
 
 #include <osmium/handler.hpp>
 #include <osmium/osm/node.hpp>
@@ -23,14 +24,14 @@ public:
     OsmData(QDomElement projectNode);
     ~OsmData();
 
-    void importFile(SQLite::Database& db, QString fileName);
-    void importBuffer(SQLite::Database& db, const QByteArray& buffer);
+    void importFile(RenderDatabase& db, QString fileName);
+    void importBuffer(RenderDatabase& db, const QByteArray& buffer);
 };
 
 /// osmium handler that imports nodes, ways and areas into SQLite.
 class OsmDataImportHandler : public osmium::handler::Handler {
 public:
-    OsmDataImportHandler(SQLite::Database& db, QString dataSource);
+    OsmDataImportHandler(RenderDatabase& db, QString dataSource);
     ~OsmDataImportHandler();
 
     void node(const osmium::Node& node);
@@ -53,5 +54,5 @@ private:
     SQLite::Statement* queryAddKV_;
     SQLite::Statement* queryAddSpatialIndex_;
 
-    SQLite::Database& db_;
+    RenderDatabase& db_;
 };

@@ -14,7 +14,7 @@ OsmDataExtractDownload::~OsmDataExtractDownload()
 {
 }
 
-void OsmDataExtractDownload::importData(SQLite::Database& db)
+void OsmDataExtractDownload::importData(RenderDatabase& db)
 {
 }
 
