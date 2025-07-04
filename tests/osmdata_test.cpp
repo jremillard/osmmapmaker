@@ -22,6 +22,23 @@ TEST_CASE("OsmDataFile setters and getters", "[OsmDataFile]")
     REQUIRE(file.localFile() == "abc");
 }
 
+TEST_CASE("DataSource basic properties", "[DataSource]")
+{
+    OsmDataFile file;
+    REQUIRE(DataSource::primarySourceName() == "Primary");
+
+    file.setUserName("u");
+    file.setDataName("d");
+    QDateTime t = QDateTime::currentDateTimeUtc();
+    file.setImportTime(t);
+    file.setImportDurationS(7);
+
+    REQUIRE(file.userName() == "u");
+    REQUIRE(file.dataName() == "d");
+    REQUIRE(file.importTime() == t);
+    REQUIRE(file.importDurationS() == 7);
+}
+
 TEST_CASE("OsmDataFile XML round trip", "[OsmDataFile]")
 {
     OsmDataFile file;
