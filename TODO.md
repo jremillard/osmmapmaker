@@ -106,18 +106,19 @@ Support specialized styling and labeling of municipal, county and state
 boundaries.
 
 ### Specification
-1. Import `boundary=administrative` relations along with their `admin_level`
-   tags during OSM loading.
-2. Add style properties for dashed line patterns, colors and label text so each
-   admin level can be drawn distinctly.
-3. Ensure boundaries render above area fills but below road casings and that
-   labels follow the boundary line with repeat intervals.
-4. Provide default style snippets for common levels and include examples in the
-   sample projects.
+1. Relations tagged `boundary=administrative` are imported as line entities and
+   retain their `admin_level` tags.
+2. Style layers can use `dashArray`, `color` and `label` settings to draw each
+   level differently. Labels repeat along the boundary geometry.
+3. Boundaries render after area fills but before road casings.
+4. Sample projects include default styles for levels 4 (state), 6 (county) and
+   8 (municipal).
 
 ### Automated Testing
-- Load sample administrative relations and apply styles per level.
-- Verify boundaries render in correct order with labels following the lines.
+- Unit test imports a sample administrative relation and confirms the line
+  entity with the expected `admin_level` exists.
+- Rendering tests ensure boundaries appear in the proper order with repeated
+  labels.
 
 ## Elevation Data Import
 ### Goal
