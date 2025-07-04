@@ -14,11 +14,7 @@ SelectValueEditDialog::SelectValueEditDialog(RenderDatabase* db, const QString& 
     dataSource_ = dataSource;
     surpressSelectChangeSignals_ = false;
 
-    SQLite::Statement query(*db_, "select key, count(key) as freq from entityKV, entity where entity.source = ? and entity.id = entityKV.id group by key order by freq desc");
-    query.bind(1, dataSource_.toStdString());
-
-    while (query.executeStep()) {
-        const char* key = query.getColumn(0);
+    for (const QString& key : db_->keysByFrequency(dataSource_)) {
         keys_.push_back(key);
     }
 
@@ -95,15 +91,10 @@ void SelectValueEditDialog::updateKeyLists()
 
 void SelectValueEditDialog::updateValueListFull()
 {
-    SQLite::Statement query(*db_, "select value, count(value) as freq from entityKV, entity where entity.source = ? and entity.id = entityKV.id and entityKV.key = ? group by value order by freq desc");
-    query.bind(1, dataSource_.toStdString());
-    query.bind(2, ui->key->text().toStdString());
-
     values_.clear();
     values_.push_back("*");
 
-    while (query.executeStep()) {
-        const char* value = query.getColumn(0);
+    for (const QString& value : db_->valuesByFrequency(dataSource_, ui->key->text())) {
         values_.push_back(value);
     }
 }

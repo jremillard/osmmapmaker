@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QString>
+#include <vector>
 #include <string>
 #include <SQLiteCpp/SQLiteCpp.h>
 
@@ -24,4 +25,13 @@ public:
     int latestVersion();
     SchemaStatus schemaStatus();
     void upgrade();
+
+    /// Return all keys ordered by frequency of occurrence.
+    std::vector<QString> allKeysByFrequency();
+
+    /// Return keys for a specific data source ordered by frequency.
+    std::vector<QString> keysByFrequency(const QString& dataSource);
+
+    /// Return values for a given key/data source ordered by frequency.
+    std::vector<QString> valuesByFrequency(const QString& dataSource, const QString& key);
 };
