@@ -227,3 +227,39 @@ TEST_CASE("StyleLayer removeSubLayer for points", "[StyleLayer]")
     REQUIRE(layer.subLayerCount() == 1);
     REQUIRE(layer.subLayerPoint(0).width_ == Catch::Approx(2.0));
 }
+TEST_CASE("StyleLayer renderSQLSelect deduplicates keys", "[StyleLayer]")
+{
+    int argc = 0;
+    QCoreApplication app(argc, nullptr);
+
+    StyleLayer layer("ds", "highway", ST_LINE);
+    Line line;
+    layer.setSubLayerLine(0, line);
+    layer.setSubLayerLine(1, line);
+
+    Label lb = layer.label(0);
+    lb.visible_ = true;
+    lb.text_ = "[name]";
+    layer.setLabel(0, lb);
+
+    StyleSelector sel0 = layer.subLayerSelectors(0);
+    sel0.insertCondition(1, "access", { "private" });
+    sel0.insertCondition(2, "foo", { "bar" });
+    layer.setSubLayerSelectors(0, sel0);
+
+    StyleSelector sel1 = layer.subLayerSelectors(1);
+    sel1.insertCondition(1, "foo", { "baz" });
+    layer.setSubLayerSelectors(1, sel1);
+
+    QString sql = layer.renderSQLSelect(false);
+
+    REQUIRE(sql.contains("\"highway\".value as \"highway\""));
+    REQUIRE(sql.contains("\"name\".value as \"name\""));
+    REQUIRE(sql.contains("\"access\".value as \"access\""));
+    REQUIRE(sql.contains("\"foo\".value as \"foo\""));
+
+    REQUIRE(sql.count("left outer join entityKV as \"foo\"") == 1);
+
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
