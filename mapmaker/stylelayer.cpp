@@ -199,7 +199,7 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 
         // no selector, add one in that is key=*, which does nothing.
         if (selector.conditionCount() == 0) {
-            selector.insertCondition(0, key_, std::vector<QString>() = { QString("*") });
+            selector.insertCondition(0, key_, std::vector<QString> { QString("*") });
         }
 
         selectors_.push_back(selector);
