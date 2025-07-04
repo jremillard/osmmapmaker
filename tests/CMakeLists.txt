@@ -21,6 +21,22 @@ target_link_libraries(tileoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(tileoutput_test PRIVATE cxx_std_17)
 add_test(NAME tileoutput_test COMMAND tileoutput_test)
 
+add_executable(batchtileoutput_test batchtileoutput_test.cpp)
+target_link_libraries(batchtileoutput_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(batchtileoutput_test PRIVATE cxx_std_17)
+add_test(NAME batchtileoutput_test COMMAND batchtileoutput_test)
+
 add_executable(project_schema_test
     project_schema_test.cpp
     ../mapmaker/resources.qrc

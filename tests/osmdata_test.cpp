@@ -10,6 +10,8 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "renderdatabase.h"
 
+static const QString baseDir = QStringLiteral(SOURCE_DIR);
+
 TEST_CASE("OsmDataFile setters and getters", "[OsmDataFile]")
 {
     OsmDataFile file;
