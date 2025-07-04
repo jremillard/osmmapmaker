@@ -2,6 +2,7 @@
 
 void breakLines(std::vector<int>& words, int maxLineWidth, std::vector<size_t>* breaks)
 {
+    breaks->clear();
     if (words.size() > 0) {
         int lineLength = words[0];
         for (size_t i = 1; i < words.size(); ++i) {
