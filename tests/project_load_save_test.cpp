@@ -9,6 +9,9 @@
 #include <QEvent>
 #include <QStringList>
 #include "project.h"
+#include "osmdatafile.h"
+#include "stylelayer.h"
+#include "output.h"
 #include <filesystem>
 
 TEST_CASE("Valid project files load and save", "[Project]")
@@ -194,6 +197,58 @@ TEST_CASE("Project coordinate conversions", "[Project]")
 
     std::filesystem::remove_all(p.replace_extension(""));
 
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Project add and remove components", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
+    std::filesystem::path p = fileName.toStdString();
+
+    {
+        Project proj(p);
+        size_t dataCount = proj.dataSources().size();
+        size_t outCount = proj.outputs().size();
+        size_t layerCount = proj.styleLayers().size();
+
+        auto* ds = new OsmDataFile();
+        proj.addDataSource(ds);
+        REQUIRE(proj.dataSources().size() == dataCount + 1);
+        proj.removeDataSource(ds);
+        REQUIRE(proj.dataSources().size() == dataCount);
+
+        auto* out = new TileOutput("extra");
+        proj.addOutput(out);
+        REQUIRE(proj.outputs().size() == outCount + 1);
+        proj.removeOutput(out);
+        REQUIRE(proj.outputs().size() == outCount);
+
+        auto* layer = new StyleLayer("Primary", "amenity", ST_POINT);
+        proj.addStyleLayer(proj.styleLayers().size(), layer);
+        REQUIRE(proj.styleLayers().size() == layerCount + 1);
+        proj.removeStyleLayer(layer);
+        REQUIRE(proj.styleLayers().size() == layerCount);
+
+        QColor origColor = proj.backgroundColor();
+        proj.setBackgroundColor(Qt::red);
+        REQUIRE(proj.backgroundColor() == QColor(Qt::red));
+        proj.setBackgroundColor(origColor);
+
+        double origOp = proj.backgroundOpacity();
+        proj.setBackgroundOpacity(0.25);
+        REQUIRE(proj.backgroundOpacity() == Catch::Approx(0.25));
+        proj.setBackgroundOpacity(origOp);
+    }
+
+    std::filesystem::remove_all(p.replace_extension(""));
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
