@@ -15,6 +15,7 @@ set(SRC_FILES
     stylelayer.cpp
     textfield.cpp
     output.cpp
+    batchtileoutput.cpp
     renderqt.cpp
     linebreaking.cpp
 )
