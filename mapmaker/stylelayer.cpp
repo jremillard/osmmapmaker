@@ -9,7 +9,7 @@ StyleSelector::StyleSelector()
 StyleSelector::StyleSelector(const QString& key)
 {
     keys_.push_back(key);
-    values_.push_back(std::vector<QString>() = { QString("*") });
+    values_.push_back(std::vector<QString> { QString("*") });
 
     keysStd_.push_back(key.toStdString());
     std::vector<std::string> valuesStd;
