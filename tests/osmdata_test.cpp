@@ -1,5 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "osmdatafile.h"
+#include "osmdatadirectdownload.h"
+#include "osmdataextractdownload.h"
 #include <QtXml>
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <fstream>
@@ -20,6 +22,23 @@ TEST_CASE("OsmDataFile setters and getters", "[OsmDataFile]")
     REQUIRE(file.localFile().isEmpty());
     file.SetLocalFile("abc");
     REQUIRE(file.localFile() == "abc");
+}
+
+TEST_CASE("DataSource basic properties", "[DataSource]")
+{
+    OsmDataFile file;
+    REQUIRE(DataSource::primarySourceName() == "Primary");
+
+    file.setUserName("u");
+    file.setDataName("d");
+    QDateTime t = QDateTime::currentDateTimeUtc();
+    file.setImportTime(t);
+    file.setImportDurationS(7);
+
+    REQUIRE(file.userName() == "u");
+    REQUIRE(file.dataName() == "d");
+    REQUIRE(file.importTime() == t);
+    REQUIRE(file.importDurationS() == 7);
 }
 
 TEST_CASE("OsmDataFile XML round trip", "[OsmDataFile]")
@@ -125,4 +144,32 @@ TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
     SQLite::Statement countIdx(db, "SELECT COUNT(*) FROM entitySpatialIndex");
     REQUIRE(countIdx.executeStep());
     REQUIRE(countIdx.getColumn(0).getInt() == 0);
+}
+
+TEST_CASE("OsmDataDirectDownload saveXML", "[OsmData]")
+{
+    QDomDocument doc;
+    QDomElement elem = doc.createElement("openStreetMapDirectDownload");
+    OsmDataDirectDownload dl(elem);
+
+    QDomDocument outDoc;
+    QDomElement outElem;
+    dl.saveXML(outDoc, outElem);
+
+    REQUIRE(outElem.tagName() == "openStreetMapDirectDownload");
+    REQUIRE(outElem.firstChildElement("dataSource").text() == "OSM");
+}
+
+TEST_CASE("OsmDataExtractDownload saveXML", "[OsmData]")
+{
+    QDomDocument doc;
+    QDomElement elem = doc.createElement("openStreetMapExtractDownload");
+    OsmDataExtractDownload ex(elem);
+
+    QDomDocument outDoc;
+    QDomElement outElem;
+    ex.saveXML(outDoc, outElem);
+
+    REQUIRE(outElem.tagName() == "openStreetMapExtractDownload");
+    REQUIRE(outElem.firstChildElement("dataSource").text() == "OSM");
 }
