@@ -16,20 +16,63 @@
  </tileOutput>
  <map backgroundColor="#2d4842" backgroundOpacity="0">
   <layer dataSource="Primary" k="admin_level" type="line">
-   <subLayer name="" visible="true" minZoom="0">
+   <subLayer name="state" visible="true" minZoom="0">
     <selector>
      <condition key="admin_level">
-      <value>*</value>
+      <value>4</value>
      </condition>
     </selector>
     <line>
-     <color>#ffffff</color>
+     <color>#ff0000</color>
      <casingColor>#ffffff</casingColor>
      <width>2</width>
      <casingWidth>0</casingWidth>
-     <opacity>0.5</opacity>
+     <opacity>0.7</opacity>
      <smooth>0</smooth>
-     <dashArray></dashArray>
+     <dashArray>8,4</dashArray>
+    </line>
+    <label minZoom="0">
+     <text>[name]</text>
+     <height>10</height>
+     <weight>700</weight>
+     <color>#ff0000</color>
+     <haloSize>1</haloSize>
+     <haloColor>#ffffff</haloColor>
+     <maxWrapWidth>50</maxWrapWidth>
+     <offsetY>-4</offsetY>
+     <priority>0</priority>
+    </label>
+   </subLayer>
+   <subLayer name="county" visible="true" minZoom="0">
+    <selector>
+     <condition key="admin_level">
+      <value>6</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#0000ff</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1.5</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.7</opacity>
+     <smooth>0</smooth>
+     <dashArray>6,3</dashArray>
+    </line>
+   </subLayer>
+   <subLayer name="municipal" visible="true" minZoom="0">
+    <selector>
+     <condition key="admin_level">
+      <value>8</value>
+     </condition>
+    </selector>
+    <line>
+     <color>#00aa00</color>
+     <casingColor>#ffffff</casingColor>
+     <width>1</width>
+     <casingWidth>0</casingWidth>
+     <opacity>0.7</opacity>
+     <smooth>0</smooth>
+     <dashArray>4,2</dashArray>
     </line>
    </subLayer>
   </layer>
