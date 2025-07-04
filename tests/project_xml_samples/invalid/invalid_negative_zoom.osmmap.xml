@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <tileOutput name="negZoom">
+  <maxZoom>-1</maxZoom>
+  <minZoom>0</minZoom>
+  <tileSize>256</tileSize>
+  <resolution1x>true</resolution1x>
+  <resolution2x>true</resolution2x>
+  <directory></directory>
+ </tileOutput>
+ <map>
+  <layer dataSource="Primary" k="amenity" type="point">
+   <subLayer>
+    <point>
+     <image>i.png</image>
+     <opacity>1</opacity>
+     <color>#fff</color>
+     <width>1</width>
+    </point>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>

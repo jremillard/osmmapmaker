@@ -5,7 +5,7 @@ Filename                          |Rate     Num|Rate    Num|Rate     Num
 project.h                         | 100%      2| 0.0%     1|    -      0
 output.cpp                        |27.6%     87| 0.0%    23|    -      0
 osmdata.cpp                       | 8.7%    161| 0.0%    12|    -      0
-project.cpp                       |18.8%    138| 0.0%     9|    -      0
+project.cpp                       |17.9%    168| 0.0%    13|    -      0
 textfield.cpp                     | 4.5%     44| 0.0%     2|    -      0
 stylelayer.cpp                    | 8.9%    507| 0.0%    43|    -      0
 datasource.cpp                    |31.9%     47| 0.0%    10|    -      0
@@ -13,4 +13,4 @@ osmdatafile.cpp                   |33.3%     24| 0.0%     8|    -      0
 linebreaking.cpp                  |11.1%      9| 0.0%     1|    -      0
 osmdataextractdownload.cpp        |50.0%     10| 0.0%     4|    -      0
                                   |Lines       |Functions  |Branches    
-                            Total:|13.8%   1029| 0.0%   113|    -      0
+                            Total:|13.8%   1059| 0.0%   117|    -      0
