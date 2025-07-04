@@ -9,7 +9,7 @@ StyleSelector::StyleSelector()
 StyleSelector::StyleSelector(const QString& key)
 {
     keys_.push_back(key);
-    values_.push_back(std::vector<QString>() = { QString("*") });
+    values_.push_back(std::vector<QString> { QString("*") });
 
     keysStd_.push_back(key.toStdString());
     std::vector<std::string> valuesStd;
@@ -199,7 +199,7 @@ StyleLayer::StyleLayer(QDomElement layerNode)
 
         // no selector, add one in that is key=*, which does nothing.
         if (selector.conditionCount() == 0) {
-            selector.insertCondition(0, key_, std::vector<QString>() = { QString("*") });
+            selector.insertCondition(0, key_, std::vector<QString> { QString("*") });
         }
 
         selectors_.push_back(selector);

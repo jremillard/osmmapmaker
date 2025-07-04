@@ -12,7 +12,6 @@ set(SRC_FILES
     datasource.cpp
     osmdata.cpp
     osmdatafile.cpp
-    tilecache.cpp
     stylelayer.cpp
     textfield.cpp
     output.cpp

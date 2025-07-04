@@ -39,25 +39,6 @@ used to shorten labels when rendering maps.
 - Add unit tests that load a project with multiple abbreviation sets.
 - Verify labels using `abbrevSet` render the expected text.
 
-## Word-based Line Wrapping
-### Goal
-Allow label text to break at word boundaries instead of arbitrary character
-positions so that multi line labels remain legible on narrow features.
-
-### Specification
-1. Add an optional `wordWrap="true"` attribute on `<label>` elements.
-2. When enabled, determine the maximum line width using the label's bounding
-   box and font metrics.
-3. Use `QTextBoundaryFinder` to iterate over Unicode word breaks and build lines
-   that fit within the width.  Hyphenate only when a single word exceeds the
-   width.
-4. Update `RenderQT` and `TextFieldProcessor` to respect the new attribute.
-5. Create unit tests verifying wrapped output for long road names and points of
-   interest.
-
-### Automated Testing
-- Render labels at small widths with and without `wordWrap` enabled.
-- Confirm breaks occur at word boundaries and long words hyphenate.
 
 ## Additional Marker Types for Points
 ### Goal
