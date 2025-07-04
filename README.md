@@ -10,7 +10,7 @@ To see example output, visit [grotontrails.org](http://www.grotontrails.org) and
 
 The project relies on the following libraries:
 
-- Qt 5 (Widgets, Core, and Xml)
+- Qt 5 (Widgets, Core, Xml, and XmlPatterns)
 - BZip2
 - Zlib
 - Expat
@@ -20,6 +20,8 @@ The project relies on the following libraries:
 - GEOS
 - Libosmium
 - Catch2
+
+Development and testing also require `clang-format`, `lcov`, and `valgrind`.
 
 On Debian-based systems you can install them with `install_dependencies.sh`.
 
