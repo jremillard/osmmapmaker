@@ -7,10 +7,11 @@ output.cpp                        |27.6%     87| 0.0%    23|    -      0
 osmdata.cpp                       | 8.7%    161| 0.0%    12|    -      0
 project.cpp                       |16.1%    186| 0.0%    16|    -      0
 textfield.cpp                     | 4.5%     44| 0.0%     2|    -      0
-stylelayer.cpp                    | 8.5%    527| 0.0%    44|    -      0
+stylelayer.cpp                    | 8.7%    530| 0.0%    45|    -      0
 datasource.cpp                    |27.8%     54| 0.0%    11|    -      0
 osmdatafile.cpp                   |33.3%     24| 0.0%     8|    -      0
 linebreaking.cpp                  |11.1%      9| 0.0%     1|    -      0
+osmdatadirectdownload.cpp         |50.0%     10| 0.0%     4|    -      0
 osmdataextractdownload.cpp        |50.0%     10| 0.0%     4|    -      0
                                   |Lines       |Functions  |Branches    
-                            Total:|13.2%   1104| 0.0%   122|    -      0
+                            Total:|13.6%   1117| 0.0%   127|    -      0

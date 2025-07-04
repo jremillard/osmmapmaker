@@ -115,7 +115,7 @@ Project::Project(path fileName)
         if (name == "openStreetMapExtractDownload") {
             dataSources_.push_back(new OsmDataExtractDownload(topNode));
         } else if (name == "openStreetMapDirectDownload") {
-            dataSources_.push_back(new OsmDataExtractDownload(topNode));
+            dataSources_.push_back(new OsmDataDirectDownload(topNode));
         } else if (name == "openStreetMapFileSource") {
             dataSources_.push_back(new OsmDataFile(topNode));
         } else if (name == "tileOutput") {
