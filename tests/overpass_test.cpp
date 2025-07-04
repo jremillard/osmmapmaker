@@ -7,8 +7,7 @@
 
 TEST_CASE("Overpass import uses cache", "[Overpass]")
 {
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    RenderDatabase db;
 
     QNetworkAccessManager nam;
     nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
@@ -33,8 +32,7 @@ TEST_CASE("Overpass network failure throws", "[Overpass]")
     OsmDataOverpass over(&nam);
     over.setQuery("foo");
 
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    RenderDatabase db;
 
     REQUIRE_THROWS(over.importData(db));
 }

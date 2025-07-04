@@ -14,7 +14,7 @@ OsmDataDirectDownload::~OsmDataDirectDownload()
 {
 }
 
-void OsmDataDirectDownload::importData(SQLite::Database& db)
+void OsmDataDirectDownload::importData(RenderDatabase& db)
 {
 }
 

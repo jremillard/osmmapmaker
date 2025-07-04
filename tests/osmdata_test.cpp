@@ -64,8 +64,7 @@ TEST_CASE("OsmDataFile XML round trip", "[OsmDataFile]")
 TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 {
     QString baseDir = QStringLiteral(SOURCE_DIR);
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    RenderDatabase db;
 
     OsmDataFile data;
     data.SetLocalFile(baseDir + "/tests/osm/basic.osm");
@@ -90,8 +89,7 @@ TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
 
 TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
 {
-    RenderDatabase rdb;
-    SQLite::Database& db = rdb.db();
+    RenderDatabase db;
 
     OsmDataFile file;
 
@@ -118,9 +116,7 @@ TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
 TEST_CASE("Administrative boundary relations import as lines", "[OsmData]")
 {
     QString baseDir = QStringLiteral(SOURCE_DIR);
-    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-0.sql").toStdString());
-    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-1.sql").toStdString());
+    RenderDatabase db;
 
     OsmDataFile data;
     data.SetLocalFile(baseDir + "/tests/osm/admin_boundary.osm");

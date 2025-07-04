@@ -35,7 +35,7 @@ void SubLayerSelectPage::SaveTo(StyleSelector* selector)
     }
 }
 
-void SubLayerSelectPage::Load(SQLite::Database* db, const QString& dataSource, const StyleSelector& selector)
+void SubLayerSelectPage::Load(RenderDatabase* db, const QString& dataSource, const StyleSelector& selector)
 {
     db_ = db;
     dataSource_ = dataSource;

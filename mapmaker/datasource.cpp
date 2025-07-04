@@ -94,7 +94,7 @@ void DataSource::setImportDurationS(int timeS)
     importDurationS_ = timeS;
 }
 
-void DataSource::cleanDataSource(SQLite::Database& db)
+void DataSource::cleanDataSource(RenderDatabase& db)
 {
     // clean out the entity, entityKV deleted with a trigger.
     SQLite::Statement removeDataStatement(db, "DELETE FROM entity WHERE source = ?");

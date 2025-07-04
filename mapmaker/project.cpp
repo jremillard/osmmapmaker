@@ -140,11 +140,7 @@ Project::Project(path fileName)
 
     path renderDbPath = renderDatabasePath();
     QString nativePath = QString::fromStdString(renderDbPath.string());
-    db_ = new SQLite::Database(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE);
-    db_->exec("PRAGMA cache_size = -256000");
-    db_->exec("PRAGMA default_cache_size = 256000");
-
-    upgradeRenderDatabase();
+    db_ = new RenderDatabase(nativePath);
 }
 
 Project::~Project()
@@ -176,45 +172,11 @@ void Project::createRenderDatabaseIfNotExist()
     if (exists(renderDbPath) == false) {
         QString nativePath = QString::fromStdString(renderDbPath.string());
 
-        SQLite::Database db(nativePath.toUtf8().constBegin(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-
-        SQLite::Transaction transaction(db);
-
-        QFile file(":/resources/render-0.sql");
-        file.open(QIODevice::ReadOnly | QIODevice::Text);
-        QByteArray sql = file.readAll();
-
-        db.exec(sql.begin());
-
-        transaction.commit();
+        RenderDatabase db(nativePath);
     }
 }
 
-void Project::upgradeRenderDatabase()
-{
-    SQLite::Transaction transaction(*db_);
-
-    const std::string currentSchemaNumber = db_->execAndGet("SELECT version FROM version");
-
-    for (int rev = stoi(currentSchemaNumber) + 1; true; ++rev) {
-        QString sqlFileNAme = QString(":/resources/render-%1.sql").arg(rev);
-
-        QFile file(sqlFileNAme);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text) == false)
-            break;
-        QByteArray sql = file.readAll();
-
-        db_->exec(sql.begin());
-
-        SQLite::Statement query(*db_, "UPDATE version SET version = ?");
-        SQLite::bind(query, rev);
-        query.exec();
-    }
-
-    transaction.commit();
-}
-
-SQLite::Database* Project::renderDatabase()
+RenderDatabase* Project::renderDatabase()
 {
     return db_;
 }
@@ -312,7 +274,7 @@ void Project::save(path fileName)
 
 void Project::createViews()
 {
-    SQLite::Database* db = renderDatabase();
+    RenderDatabase* db = renderDatabase();
 
     SQLite::Transaction transaction(*db);
 
@@ -350,7 +312,7 @@ void Project::createViews()
     transaction.commit();
 }
 
-void Project::createView(SQLite::Database& db, const QString& viewName, const QString& dataSource, OsmEntityType type, const QString& primaryKey, std::vector<QString>& attributes)
+void Project::createView(RenderDatabase& db, const QString& viewName, const QString& dataSource, OsmEntityType type, const QString& primaryKey, std::vector<QString>& attributes)
 {
     db.exec(QString("DROP VIEW IF EXISTS %1").arg(viewName).toStdString());
 

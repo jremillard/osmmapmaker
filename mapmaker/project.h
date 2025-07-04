@@ -5,6 +5,7 @@
 #include "datasource.h"
 #include "stylelayer.h"
 #include "output.h"
+#include "renderdatabase.h"
 
 #include <filesystem>
 #include <proj.h>
@@ -52,7 +53,7 @@ public:
     void setBackgroundColor(QColor c);
 
     path renderDatabasePath();
-    SQLite::Database* renderDatabase();
+    RenderDatabase* renderDatabase();
 
     path assetDirectory();
     path projectPath();
@@ -69,14 +70,13 @@ public:
     PJ* dataToMap_;
 
 private:
-    void createView(SQLite::Database& db, const QString& viewName, const QString& dataSource, OsmEntityType type, const QString& primaryKey, std::vector<QString>& attributes);
+    void createView(RenderDatabase& db, const QString& viewName, const QString& dataSource, OsmEntityType type, const QString& primaryKey, std::vector<QString>& attributes);
 
     void createRenderDatabaseIfNotExist();
-    void upgradeRenderDatabase();
 
     double backgroundOpacity_;
     QColor backgroundColor_;
-    SQLite::Database* db_;
+    RenderDatabase* db_;
     std::vector<DataSource*> dataSources_;
     std::vector<StyleLayer*> styleLayers_;
     std::vector<Output*> outputs_;
