@@ -1,9 +1,10 @@
 #pragma once
 
+#include <QObject>
 #include <QPixmap>
 
 /// Simple cache for rendered map tiles.
-class TileCache : QObject {
+class TileCache : public QObject {
     Q_OBJECT
 
 public:

@@ -13,4 +13,4 @@ osmdatafile.cpp                   |33.3%     24| 0.0%     8|    -      0
 linebreaking.cpp                  |11.1%      9| 0.0%     1|    -      0
 osmdataextractdownload.cpp        |50.0%     10| 0.0%     4|    -      0
                                   |Lines       |Functions  |Branches    
-                            Total:|13.8%   1059| 0.0%   117|    -      0
+                            Total:|13.5%   1079| 0.0%   118|    -      0
