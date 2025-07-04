@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
 #include "stylelayer.h"
 #include <QCoreApplication>
 #include <QEvent>
@@ -164,4 +165,65 @@ TEST_CASE("StyleLayer renderSQLSelect includes joins", "[StyleLayer]")
 
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("StyleLayer save and load point", "[StyleLayer]")
+{
+    int argc = 0;
+    QCoreApplication app(argc, nullptr);
+
+    StyleLayer layer("ds", "k", ST_POINT);
+    Point pt;
+    pt.name_ = "pt";
+    pt.minZoom_ = 2;
+    pt.color_ = QColor(Qt::green);
+    pt.opacity_ = 0.5;
+    pt.image_ = "img";
+    pt.width_ = 7;
+    layer.setSubLayerPoint(0, pt);
+
+    Label lb;
+    lb.visible_ = true;
+    lb.text_ = "[name]";
+    lb.color_ = QColor(Qt::yellow);
+    lb.height_ = 8;
+    layer.setLabel(0, lb);
+
+    QDomDocument doc;
+    QDomElement elem = doc.createElement("layer");
+    layer.saveXML(doc, elem);
+    doc.appendChild(elem);
+
+    StyleLayer loaded(elem);
+    REQUIRE(loaded.layerType() == ST_POINT);
+    Point loadedPt = loaded.subLayerPoint(0);
+    REQUIRE(loadedPt.name_ == "pt");
+    REQUIRE(loadedPt.minZoom_ == 2);
+    REQUIRE(loadedPt.color_ == QColor(Qt::green));
+    REQUIRE(loadedPt.opacity_ == Catch::Approx(0.5));
+    REQUIRE(loadedPt.image_ == "img");
+    REQUIRE(loadedPt.width_ == Catch::Approx(7.0));
+    Label loadedLb = loaded.label(0);
+    REQUIRE(loadedLb.visible_);
+    REQUIRE(loadedLb.text_ == "[name]");
+    REQUIRE(loadedLb.color_ == QColor(Qt::yellow));
+    REQUIRE(loadedLb.height_ == Catch::Approx(8.0));
+
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("StyleLayer removeSubLayer for points", "[StyleLayer]")
+{
+    StyleLayer layer("ds", "k", ST_POINT);
+    Point p1;
+    p1.width_ = 1.0;
+    Point p2;
+    p2.width_ = 2.0;
+    layer.setSubLayerPoint(0, p1);
+    layer.setSubLayerPoint(1, p2);
+    REQUIRE(layer.subLayerCount() == 2);
+    layer.removeSubLayer(0);
+    REQUIRE(layer.subLayerCount() == 1);
+    REQUIRE(layer.subLayerPoint(0).width_ == Catch::Approx(2.0));
 }
