@@ -97,3 +97,32 @@ TEST_CASE("OsmData importFile inserts entities", "[OsmData]")
     REQUIRE(typeCounts[OET_LINE] == 1);
     REQUIRE(typeCounts[OET_AREA] == 1);
 }
+
+TEST_CASE("DataSource cleanDataSource removes data", "[DataSource]")
+{
+    QString baseDir = QStringLiteral(SOURCE_DIR);
+    SQLite::Database db(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-0.sql").toStdString());
+    execSqlFile(db, (baseDir + "/osmmapmakerapp/resources/render-1.sql").toStdString());
+
+    OsmDataFile file;
+
+    SQLite::Statement insertEnt(db, "INSERT INTO entity (source, type, geom, linearLengthM, areaM) VALUES (?,?,?,?,?)");
+    SQLite::bind(insertEnt, file.dataName().toStdString(), 0, "", 0.0, 0.0);
+    insertEnt.exec();
+    long long id = db.getLastInsertRowid();
+
+    SQLite::Statement insertIdx(db, "INSERT INTO entitySpatialIndex(pkid,xmin,xmax,ymin,ymax) VALUES (?,?,?,?,?)");
+    SQLite::bind(insertIdx, static_cast<int64_t>(id), 0.0, 0.0, 0.0, 0.0);
+    insertIdx.exec();
+
+    file.cleanDataSource(db);
+
+    SQLite::Statement countEnt(db, "SELECT COUNT(*) FROM entity");
+    REQUIRE(countEnt.executeStep());
+    REQUIRE(countEnt.getColumn(0).getInt() == 0);
+
+    SQLite::Statement countIdx(db, "SELECT COUNT(*) FROM entitySpatialIndex");
+    REQUIRE(countIdx.executeStep());
+    REQUIRE(countIdx.getColumn(0).getInt() == 0);
+}

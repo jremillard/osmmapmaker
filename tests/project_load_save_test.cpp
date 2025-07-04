@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_string.hpp>
+#include <catch2/catch_approx.hpp>
 #include <QCoreApplication>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
@@ -154,6 +155,44 @@ TEST_CASE("Malformed project file reports parse location", "[Project]")
         CHECK_THAT(msg, Catch::Matchers::ContainsSubstring(fileName.toStdString()));
         CHECK_THAT(msg, Catch::Matchers::Matches(".*:\\d+:.*"));
     }
+
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Project coordinate conversions", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
+    std::filesystem::path p = fileName.toStdString();
+
+    {
+        Project proj(p);
+
+        REQUIRE(proj.mapSRS().find("merc") != std::string::npos);
+        REQUIRE(proj.dataSRS().find("longlat") != std::string::npos);
+
+        double x = 0.0;
+        double y = 0.0;
+        proj.convertDataToMap(1.0, 2.0, &x, &y);
+        double lon = 0.0;
+        double lat = 0.0;
+        proj.convertMapToData(x, y, &lon, &lat);
+
+        REQUIRE(lon == Catch::Approx(1.0).margin(1e-6));
+        REQUIRE(lat == Catch::Approx(2.0).margin(1e-6));
+
+        REQUIRE(proj.projectPath() == p);
+        REQUIRE(std::filesystem::exists(proj.assetDirectory()));
+    }
+
+    std::filesystem::remove_all(p.replace_extension(""));
 
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
