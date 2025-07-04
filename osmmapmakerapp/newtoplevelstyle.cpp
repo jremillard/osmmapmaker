@@ -12,7 +12,7 @@ NewStopLeveStyle::NewStopLeveStyle(Project* project, QWidget* parent)
 {
     ui->setupUi(this);
 
-    SQLite::Database* db = project->renderDatabase();
+    RenderDatabase* db = project->renderDatabase();
 
     for (auto data : project->dataSources()) {
         QString name = data->dataName();

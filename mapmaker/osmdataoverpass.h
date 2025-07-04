@@ -14,7 +14,7 @@ public:
     void setQuery(const QString& query);
     QString query() const;
 
-    void importData(SQLite::Database& db) override;
+    void importData(RenderDatabase& db) override;
 
     void saveXML(QDomDocument& doc, QDomElement& toElement) override;
 

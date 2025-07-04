@@ -98,7 +98,7 @@ void RenderQT::RenderGeom(QPainter& painter, std::map<int, double>& zoomToScale)
 
     std::vector<StyleLayer*> layers = project_->styleLayers();
 
-    SQLite::Database* db = project_->renderDatabase();
+    RenderDatabase* db = project_->renderDatabase();
 
     geos::io::WKBReader geomFactory;
 
@@ -380,7 +380,7 @@ void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScal
 
     std::vector<StyleLayer*> layers = project_->styleLayers();
 
-    SQLite::Database* db = project_->renderDatabase();
+    RenderDatabase* db = project_->renderDatabase();
 
     geos::io::WKBReader geomFactoryWKB;
 

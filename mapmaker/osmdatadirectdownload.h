@@ -13,7 +13,7 @@ public:
     OsmDataDirectDownload(QDomNode projectNode);
     ~OsmDataDirectDownload();
 
-    void importData(SQLite::Database& db);
+    void importData(RenderDatabase& db);
 
     virtual void saveXML(QDomDocument& doc, QDomElement& toElement);
 };

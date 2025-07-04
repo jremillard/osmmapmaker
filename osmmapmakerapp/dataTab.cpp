@@ -138,7 +138,7 @@ void DataTab::on_OSMFileImport_clicked()
 
         for (DataSource* output : project_->dataSources()) {
             if (name == output->userName()) {
-                SQLite::Database* db = project_->renderDatabase();
+                RenderDatabase* db = project_->renderDatabase();
 
                 QDateTime startTime = QDateTime::currentDateTime();
 

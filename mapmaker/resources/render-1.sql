@@ -26,7 +26,9 @@ CREATE VIRTUAL TABLE entitySpatialIndex USING rtree(
 );
 
 CREATE INDEX entityKV_Index ON entityKV ( id, key, value); 
-CREATE INDEX entity_Index ON entity (source, type); 
+CREATE INDEX entity_Index ON entity (source, type);
+
+UPDATE version SET version=1;
 
 
 

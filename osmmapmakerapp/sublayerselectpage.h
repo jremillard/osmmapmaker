@@ -16,7 +16,7 @@ public:
     ~SubLayerSelectPage();
 
     void SaveTo(StyleSelector* sel);
-    void Load(SQLite::Database* db, const QString& dataSource, const StyleSelector& sel);
+    void Load(RenderDatabase* db, const QString& dataSource, const StyleSelector& sel);
 
 signals:
     void editingFinished();
@@ -33,7 +33,7 @@ private:
 
     void ValuesToUI(std::vector<QString> values, QString* valuesStr, QStringList* valueQList);
 
-    SQLite::Database* db_;
+    RenderDatabase* db_;
     QString dataSource_;
     Ui::SubLayerSelectPage* ui;
 };

@@ -6,6 +6,7 @@
 
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
+#include "renderdatabase.h"
 
 enum OsmEntityType {
     OET_POINT = 0,
@@ -36,8 +37,8 @@ public:
     virtual int importDurationS();
     virtual void setImportDurationS(int timeS);
 
-    virtual void importData(SQLite::Database& db) = 0;
-    virtual void cleanDataSource(SQLite::Database& db);
+    virtual void importData(RenderDatabase& db) = 0;
+    virtual void cleanDataSource(RenderDatabase& db);
 
     static QString primarySourceName();
 

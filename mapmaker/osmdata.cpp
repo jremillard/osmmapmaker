@@ -54,7 +54,7 @@ OsmData::~OsmData()
 {
 }
 
-void OsmData::importFile(SQLite::Database& db, QString fileName)
+void OsmData::importFile(RenderDatabase& db, QString fileName)
 {
     osmium::io::File input_file(fileName.toStdString());
 
@@ -99,7 +99,7 @@ void OsmData::importFile(SQLite::Database& db, QString fileName)
     reader.close();
 }
 
-void OsmData::importBuffer(SQLite::Database& db, const QByteArray& buffer)
+void OsmData::importBuffer(RenderDatabase& db, const QByteArray& buffer)
 {
     QTemporaryFile tmp("XXXXXX.osm");
     tmp.open();
@@ -109,7 +109,7 @@ void OsmData::importBuffer(SQLite::Database& db, const QByteArray& buffer)
     importFile(db, tmp.fileName());
 }
 
-OsmDataImportHandler::OsmDataImportHandler(SQLite::Database& db, QString dataSource)
+OsmDataImportHandler::OsmDataImportHandler(RenderDatabase& db, QString dataSource)
     : db_(db)
     , dataSource_(dataSource)
 {

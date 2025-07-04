@@ -4,7 +4,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 
-SelectValueEditDialog::SelectValueEditDialog(SQLite::Database* db, const QString& dataSource, QWidget* parent)
+SelectValueEditDialog::SelectValueEditDialog(RenderDatabase* db, const QString& dataSource, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::SelectValueEditDialog)
 {
