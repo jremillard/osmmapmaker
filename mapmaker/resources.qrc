@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/project.xsd</file>
+        <file>resources/render-0.sql</file>
+        <file>resources/render-1.sql</file>
     </qresource>
 </RCC>

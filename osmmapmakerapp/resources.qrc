@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-      <file>resources/render-0.sql</file>
-      <file>resources/render-1.sql</file>
       <file>resources/discarded.txt</file>
       <file>resources/download.svg</file>
       <file>resources/plus.svg</file>

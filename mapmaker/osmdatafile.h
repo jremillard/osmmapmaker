@@ -13,7 +13,7 @@ public:
 
     ~OsmDataFile();
 
-    void importData(SQLite::Database& db);
+    void importData(RenderDatabase& db);
 
     QString localFile();
     void SetLocalFile(QString file);

@@ -9,7 +9,7 @@ public:
     OsmDataExtractDownload(QDomNode projectNode);
     ~OsmDataExtractDownload();
 
-    void importData(SQLite::Database& db);
+    void importData(RenderDatabase& db);
 
     virtual void saveXML(QDomDocument& doc, QDomElement& toElement);
 };
