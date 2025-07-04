@@ -104,3 +104,36 @@ RenderDatabase::SchemaStatus RenderDatabase::schemaStatus()
     }
     return SchemaStatus::Upgradeable;
 }
+
+std::vector<QString> RenderDatabase::allKeysByFrequency()
+{
+    std::vector<QString> keys;
+    SQLite::Statement query(*this, "select key, count(key) as freq from entityKV group by key order by freq desc");
+    while (query.executeStep()) {
+        keys.push_back(query.getColumn(0).getText());
+    }
+    return keys;
+}
+
+std::vector<QString> RenderDatabase::keysByFrequency(const QString& dataSource)
+{
+    std::vector<QString> keys;
+    SQLite::Statement query(*this, "select key, count(key) as freq from entityKV, entity where entity.source = ? and entity.id = entityKV.id group by key order by freq desc");
+    query.bind(1, dataSource.toStdString());
+    while (query.executeStep()) {
+        keys.push_back(query.getColumn(0).getText());
+    }
+    return keys;
+}
+
+std::vector<QString> RenderDatabase::valuesByFrequency(const QString& dataSource, const QString& key)
+{
+    std::vector<QString> values;
+    SQLite::Statement query(*this, "select value, count(value) as freq from entityKV, entity where entity.source = ? and entity.id = entityKV.id and entityKV.key = ? group by value order by freq desc");
+    query.bind(1, dataSource.toStdString());
+    query.bind(2, key.toStdString());
+    while (query.executeStep()) {
+        values.push_back(query.getColumn(0).getText());
+    }
+    return values;
+}

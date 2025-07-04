@@ -21,13 +21,8 @@ NewStopLeveStyle::NewStopLeveStyle(Project* project, QWidget* parent)
         ui->dataSource->addItem(name);
     }
 
-    SQLite::Statement query(*db, "select key, count(key) as freq from entityKV group by key order by freq desc");
-
-    while (query.executeStep()) {
-        const char* key = query.getColumn(0);
-        int count = query.getColumn(1);
-
-        keys_.push_back(QString(key));
+    for (const QString& key : db->allKeysByFrequency()) {
+        keys_.push_back(key);
         ui->keyList->addItem(key);
     }
 

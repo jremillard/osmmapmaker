@@ -171,13 +171,12 @@ TEST_CASE("Rendering sample OSM files import", "[OsmData]")
 
     for (const QString& fileName : files) {
         RenderDatabase rdb;
-        SQLite::Database& db = rdb.db();
 
         OsmDataFile data;
         data.SetLocalFile(dir.filePath(fileName));
-        data.importData(db);
+        data.importData(rdb);
 
-        SQLite::Statement countStmt(db, "SELECT COUNT(*) FROM entity");
+        SQLite::Statement countStmt(rdb, "SELECT COUNT(*) FROM entity");
         REQUIRE(countStmt.executeStep());
         REQUIRE(countStmt.getColumn(0).getInt() > 0);
     }
