@@ -15,7 +15,8 @@ set(SRC_FILES
     newtoplevelstyle.cpp
     subLayerTextPage.cpp
     sublayerselectpage.cpp
-    selectvalueeditdialog.cpp)
+    selectvalueeditdialog.cpp
+    colorpickerdialog.cpp)
 set(UI_FILES
     mainwindow.ui
     dataTab.ui
@@ -24,7 +25,8 @@ set(UI_FILES
     newtoplevelstyle.ui
     subLayerTextPage.ui
     sublayerselectpage.ui
-    selectvalueeditdialog.ui)
+    selectvalueeditdialog.ui
+    colorpickerdialog.ui)
 
 add_executable(osmmapmakerapp ${APP_TYPE} ${SRC_FILES} ${UI_FILES} resources.qrc)
 

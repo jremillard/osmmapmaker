@@ -1,13 +1,16 @@
 #include "subLayerTextPage.h"
 #include "ui_subLayerTextPage.h"
 
-#include <QColorDialog>
+#include "colorpickerdialog.h"
+#include <project.h>
 
 SubLayerTextPage::SubLayerTextPage(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SubLayerTextPage)
 {
     ui->setupUi(this);
+
+    project_ = nullptr;
 
     suppressUpdates_ = true;
 
@@ -20,6 +23,11 @@ SubLayerTextPage::SubLayerTextPage(QWidget* parent)
 
 SubLayerTextPage::~SubLayerTextPage()
 {
+}
+
+void SubLayerTextPage::setProject(Project* project)
+{
+    project_ = project;
 }
 
 void SubLayerTextPage::on_hasLabel_clicked()
@@ -76,7 +84,7 @@ void SubLayerTextPage::on_fontWeight_currentIndexChanged(int i)
 
 void SubLayerTextPage::on_colorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->color->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->color->text()), this);
 
     if (newColor.isValid()) {
         ui->color->setText(newColor.name());
@@ -86,7 +94,7 @@ void SubLayerTextPage::on_colorPick_clicked()
 
 void SubLayerTextPage::on_haloColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->haloColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->haloColor->text()), this);
 
     if (newColor.isValid()) {
         ui->haloColor->setText(newColor.name());

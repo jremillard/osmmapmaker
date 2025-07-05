@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QMessageBox>
-#include <QColorDialog>
+#include "colorpickerdialog.h"
 
 #include <renderqt.h>
 #include "maputils.h"
@@ -96,6 +96,10 @@ void StyleTab::setProject(Project* project)
 
     ui->zoom->setValue(13);
     updatePixelResolutionFromZoom();
+
+    lineLabelPage_->setProject(project_);
+    areaLabelPage_->setProject(project_);
+    pointLabelPage_->setProject(project_);
 
     delete render_;
     render_ = NULL;
@@ -657,7 +661,7 @@ void StyleTab::on_mapBackgroundOpacity_valueChanged(double v)
 
 void StyleTab::on_mapBackgroundColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->mapBackgroundColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->mapBackgroundColor->text()), this);
 
     if (newColor.isValid()) {
         ui->mapBackgroundColor->setText(newColor.name());
@@ -733,7 +737,7 @@ void StyleTab::on_areaMinZoom_editingFinished()
 
 void StyleTab::on_areaColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->areaColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->areaColor->text()), this);
 
     if (newColor.isValid()) {
         ui->areaColor->setText(newColor.name());
@@ -743,7 +747,7 @@ void StyleTab::on_areaColorPick_clicked()
 
 void StyleTab::on_areaBorderColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->areaBorderColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->areaBorderColor->text()), this);
 
     if (newColor.isValid()) {
         ui->areaBorderColor->setText(newColor.name());
@@ -911,7 +915,7 @@ void StyleTab::on_lineMinZoom_editingFinished()
 
 void StyleTab::on_lineCasingColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->lineCasingColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->lineCasingColor->text()), this);
 
     if (newColor.isValid()) {
         ui->lineCasingColor->setText(newColor.name());
@@ -921,7 +925,7 @@ void StyleTab::on_lineCasingColorPick_clicked()
 
 void StyleTab::on_lineColorPick_clicked()
 {
-    QColor newColor = QColorDialog::getColor(QColor(ui->lineColor->text()), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->lineColor->text()), this);
 
     if (newColor.isValid()) {
         ui->lineColor->setText(newColor.name());
