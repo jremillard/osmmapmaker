@@ -4,6 +4,7 @@
 #include <QXmlSchemaValidator>
 #include <QAbstractMessageHandler>
 #include <exception>
+#include <stdexcept>
 
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
@@ -70,10 +71,11 @@ Project::Project(path fileName)
     schema.setMessageHandler(&handler);
 
     QFile xsdFile(":/resources/project.xsd");
-    if (xsdFile.open(QIODevice::ReadOnly)) {
-        schema.load(&xsdFile);
-        xsdFile.close();
+    if (!xsdFile.open(QIODevice::ReadOnly)) {
+        throw std::runtime_error(std::string("Cannot open resource: ") + xsdFile.fileName().toStdString());
     }
+    schema.load(&xsdFile);
+    xsdFile.close();
 
     if (!schema.isValid()) {
         throw std::runtime_error("Internal project schema is invalid");
