@@ -210,3 +210,17 @@ consistent across code changes.
 - Provide scripts to generate benchmarks and fail when pixels differ beyond tolerance.
 
 
+
+## Recent Projects MRU
+### Goal
+Add a Most Recently Used list of projects so the application can quickly reopen recent work. The map main window should load the last project automatically.
+
+### Specification
+1. Store opened project paths using `QStandardPaths::AppDataLocation` so the configuration works across Windows, Linux and macOS.
+2. Maintain the list in order of use and cap it at five entries.
+3. On startup, load the list and attempt to open the most recent project if it still exists.
+4. Expose the list in the File menu under a `Recent Projects` section.
+
+### Automated Testing
+- Save multiple project paths and verify the MRU file persists across sessions.
+- Launch the app with an existing MRU file and confirm the most recent project opens automatically.
