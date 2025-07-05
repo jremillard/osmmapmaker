@@ -3,6 +3,8 @@
 #include <QMainWindow>
 
 #include "project.h"
+#include <filesystem>
+using std::filesystem::path;
 
 namespace Ui {
 class MainWindow;
@@ -12,7 +14,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow(path projectPath = path(), QWidget* parent = 0);
     ~MainWindow();
 
 private slots:

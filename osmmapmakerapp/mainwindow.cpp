@@ -12,7 +12,7 @@
 #include <QStandardPaths>
 #include <QApplication>
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(path projectPath, QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -23,9 +23,16 @@ MainWindow::MainWindow(QWidget* parent)
 
     project_ = NULL;
 
-    try {
-        openProject("C:\\Remillard\\Documents\\osmmapmaker\\projects\\groton-trail.osmmap.xml");
-    } catch (std::exception&) {
+    bool opened = false;
+    if (!projectPath.empty()) {
+        try {
+            openProject(projectPath);
+            opened = true;
+        } catch (std::exception&) {
+        }
+    }
+
+    if (!opened) {
         auto locs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
         QString loc;
         if (locs.size() > 0)
