@@ -248,3 +248,18 @@ Duplicate an existing project to a different location for experimentation.
 
 ### Automated Testing
 - Verify the copied project opens correctly and produces the same output as the original.
+
+## Daily Logging to File
+### Goal
+Capture trace output in a rotating log so issues can be diagnosed easily.
+
+### Specification
+1. Use the header-only [spdlog](https://github.com/gabime/spdlog) library for cross‑platform logging.
+2. Create a daily logger that writes to `Preferences::logDirectory()/osmmapmaker.log` so the location can be customized by the user.
+3. Rotate (delete) the previous log at startup so each run begins fresh.
+4. Provide a small wrapper that initializes the logger and exposes simple `log::info` style functions.
+5. Allow logging to be disabled in release builds via a compile flag.
+
+### Automated Testing
+- Launch the application twice and verify the log file from the first run is removed before the second begins.
+- Run the unit test suite and confirm no log file is created.
