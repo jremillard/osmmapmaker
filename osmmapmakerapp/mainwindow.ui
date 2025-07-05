@@ -47,6 +47,12 @@
     <addaction name="action_Project_Open"/>
     <addaction name="action_Project_Save"/>
     <addaction name="action_Project_Copy"/>
+    <widget class="QMenu" name="menuRecentProjects">
+     <property name="title">
+      <string>Recent Projects</string>
+     </property>
+    </widget>
+    <addaction name="menuRecentProjects"/>
     <addaction name="actionExit"/>
    </widget>
    <addaction name="menuProject"/>

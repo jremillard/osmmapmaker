@@ -6,6 +6,7 @@
 #include "outputTab.h"
 
 #include "project.h"
+#include "applicationpreferences.h"
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -13,6 +14,8 @@
 #include <QDir>
 #include <QApplication>
 #include <filesystem>
+#include <QFile>
+#include <QCoreApplication>
 
 MainWindow::MainWindow(path projectPath, QWidget* parent)
     : QMainWindow(parent)
@@ -22,6 +25,8 @@ MainWindow::MainWindow(path projectPath, QWidget* parent)
     ui->tabWidget->addTab(new DataTab(this), tr("Data"));
     ui->tabWidget->addTab(new StyleTab(this), tr("Style"));
     ui->tabWidget->addTab(new OutputTab(this), tr("Output"));
+    recentMenu_ = ui->menuRecentProjects;
+    updateRecentMenu();
 
     project_ = NULL;
 
@@ -31,6 +36,17 @@ MainWindow::MainWindow(path projectPath, QWidget* parent)
             openProject(projectPath);
             opened = true;
         } catch (std::exception&) {
+        }
+    }
+
+    if (!opened) {
+        QString recent = ApplicationPreferences::mostRecentExistingMRU();
+        if (!recent.isEmpty()) {
+            try {
+                openProject(recent.toStdString());
+                opened = true;
+            } catch (std::exception&) {
+            }
         }
     }
 
@@ -58,7 +74,9 @@ void MainWindow::openProject(path projectPath)
     delete project_;
     project_ = NULL;
     project_ = new Project(projectPath);
-    setWindowTitle(QString("OSM Map Maker - %1").arg(QString::fromStdWString(projectPath.filename().wstring())));
+    setWindowTitle(QString("OSM Map Maker %1 - %2")
+            .arg(QCoreApplication::applicationVersion(),
+                QString::fromStdWString(projectPath.filename().wstring())));
 
     DataTab* dataTab = dynamic_cast<DataTab*>(ui->tabWidget->widget(0));
     dataTab->setProject(project_);
@@ -74,6 +92,9 @@ void MainWindow::openProject(path projectPath)
     } else {
         ui->tabWidget->setCurrentIndex(1);
     }
+
+    ApplicationPreferences::addProjectToMRU(QString::fromStdWString(projectPath.wstring()));
+    updateRecentMenu();
 }
 
 MainWindow::~MainWindow()
@@ -99,10 +120,7 @@ void MainWindow::on_action_Project_Open_triggered()
     QString file = QFileDialog::getOpenFileName(this, tr("Open Project"), loc, tr("Map Project Files (*.xml)"));
 
     if (file.isEmpty() == false) {
-        QMessageBox msgBox(this);
-
-        msgBox.setText(QString("Open %1").arg(file));
-        msgBox.exec();
+        openProject(file.toStdString());
     }
 }
 
@@ -160,4 +178,31 @@ void MainWindow::on_action_Project_Save_triggered()
 void MainWindow::on_actionExit_triggered()
 {
     this->close();
+}
+
+void MainWindow::openRecentProject()
+{
+    QAction* a = qobject_cast<QAction*>(sender());
+    if (!a)
+        return;
+    QString path = a->data().toString();
+    if (!path.isEmpty())
+        openProject(path.toStdString());
+}
+
+void MainWindow::updateRecentMenu()
+{
+    recentMenu_->clear();
+    QStringList list = ApplicationPreferences::readMRU();
+    int added = 0;
+    for (const QString& p : list) {
+        if (!QFile::exists(p))
+            continue;
+        QAction* act = recentMenu_->addAction(p);
+        act->setData(p);
+        connect(act, &QAction::triggered, this, &MainWindow::openRecentProject);
+        if (++added >= MAX_MENU_RECENT)
+            break;
+    }
+    recentMenu_->setEnabled(added > 0);
 }
