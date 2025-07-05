@@ -21,6 +21,12 @@ target_link_libraries(textfieldprocessor_test PRIVATE Catch2::Catch2WithMain map
 target_compile_features(textfieldprocessor_test PRIVATE cxx_std_17)
 add_test(NAME textfieldprocessor_test COMMAND textfieldprocessor_test)
 
+add_executable(demdata_test demdata_test.cpp)
+target_link_libraries(demdata_test PRIVATE Catch2::Catch2WithMain mapmaker SQLiteCpp SQLite::SQLite3)
+target_compile_features(demdata_test PRIVATE cxx_std_17)
+target_compile_definitions(demdata_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME demdata_test COMMAND demdata_test)
+
 add_executable(tileoutput_test tileoutput_test.cpp)
 target_link_libraries(tileoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(tileoutput_test PRIVATE cxx_std_17)
@@ -192,3 +198,8 @@ target_link_libraries(overpass_test PRIVATE
 target_compile_features(overpass_test PRIVATE cxx_std_17)
 target_compile_definitions(overpass_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME overpass_test COMMAND overpass_test)
+
+add_executable(applicationpreferences_test applicationpreferences_test.cpp)
+target_link_libraries(applicationpreferences_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(applicationpreferences_test PRIVATE cxx_std_17)
+add_test(NAME applicationpreferences_test COMMAND applicationpreferences_test)
