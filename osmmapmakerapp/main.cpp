@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include <QCoreApplication>
 #include <QMessageBox>
 #include <QCommandLineParser>
 #include <filesystem>
@@ -7,6 +8,8 @@
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv);
+    QCoreApplication::setApplicationName("OSM Map Maker");
+    QCoreApplication::setApplicationVersion("0.2");
 
     QCommandLineParser parser;
     parser.addHelpOption();

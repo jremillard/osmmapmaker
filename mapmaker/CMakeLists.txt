@@ -20,6 +20,7 @@ set(SRC_FILES
     linebreaking.cpp
     maputils.cpp
     textonpath.cpp
+    applicationpreferences.cpp
 )
 add_library(mapmaker STATIC ${SRC_FILES} mapmaker_resources.qrc)
 
