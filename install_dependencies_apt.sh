@@ -10,5 +10,6 @@ sudo apt-get install -y build-essential cmake \
     libproj-dev clang-format lcov \
     libsqlite3-dev sqlite3-doc libsqlitecpp-dev \
     libgeos-dev libgeos++-dev libgeos-doc catch2 \
-    libosmium2-dev valgrind libosmium2-doc
+    libosmium2-dev valgrind libosmium2-doc \
+    libspdlog-dev
 

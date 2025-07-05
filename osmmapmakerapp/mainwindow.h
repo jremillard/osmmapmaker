@@ -3,6 +3,7 @@
 #include <QMainWindow>
 
 #include "project.h"
+#include "applicationpreferences.h"
 #include <filesystem>
 using std::filesystem::path;
 
@@ -24,9 +25,15 @@ private slots:
     void on_action_Project_Copy_triggered();
     void on_action_Project_Save_triggered();
 
+    void openRecentProject();
+
     void openProject(path projectPath);
+    void updateRecentMenu();
 
 private:
     Ui::MainWindow* ui;
     Project* project_ = NULL;
+    QMenu* recentMenu_ = nullptr;
+
+    static constexpr int MAX_MENU_RECENT = 5;
 };
