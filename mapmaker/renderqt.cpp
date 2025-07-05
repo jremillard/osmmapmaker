@@ -17,19 +17,19 @@ RenderQT::RenderQT(Project* project, int dpiScale)
     scale_ = dpiScale;
 }
 
-void RenderQT::SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
+void RenderQT::SetupZoomAtCenter(int imageWidthPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution)
 {
-    imageWithPixels_ = imageWithPixels;
+    imageWidthPixels_ = imageWidthPixels;
     imageHeightPixels_ = imageHeightPixels;
-    left_ = centerX - imageWithPixels / 2 * pixelResolution;
-    right_ = centerX + imageWithPixels / 2 * pixelResolution;
+    left_ = centerX - imageWidthPixels / 2 * pixelResolution;
+    right_ = centerX + imageWidthPixels / 2 * pixelResolution;
     bottom_ = centerY - imageHeightPixels / 2 * pixelResolution;
     top_ = centerY + imageHeightPixels / 2 * pixelResolution;
 }
 
-void RenderQT::SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top)
+void RenderQT::SetupZoomBoundingBox(int imageWidthPixels, int imageHeightPixels, double left, double right, double bottom, double top)
 {
-    imageWithPixels_ = imageWithPixels;
+    imageWidthPixels_ = imageWidthPixels;
     imageHeightPixels_ = imageHeightPixels;
     left_ = left;
     right_ = right;
@@ -39,13 +39,13 @@ void RenderQT::SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, 
 
 QImage RenderQT::RenderImage()
 {
-    QImage img(imageWithPixels_, imageHeightPixels_, QImage::Format_ARGB32_Premultiplied);
+    QImage img(imageWidthPixels_, imageHeightPixels_, QImage::Format_ARGB32_Premultiplied);
 
     QPainter painter(&img);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
     QColor backgroundColor = project_->backgroundColor();
-    painter.fillRect(0, 0, imageWithPixels_, imageHeightPixels_, backgroundColor);
+    painter.fillRect(0, 0, imageWidthPixels_, imageHeightPixels_, backgroundColor);
 
     auto zoomToScale = std::map<int, double>();
     zoomToScale[0] = 1000000000 / scale_;
@@ -88,9 +88,9 @@ void RenderQT::RenderGeom(QPainter& painter, std::map<int, double>& zoomToScale)
     transform1.translate(-left_, -top_);
 
     QTransform transform2;
-    transform2.scale(imageWithPixels_ / (right_ - left_), -imageHeightPixels_ / (top_ - bottom_));
+    transform2.scale(imageWidthPixels_ / (right_ - left_), -imageHeightPixels_ / (top_ - bottom_));
 
-    double penScaleMPerPixel = (right_ - left_) / imageWithPixels_;
+    double penScaleMPerPixel = (right_ - left_) / imageWidthPixels_;
 
     QTransform t = transform1 * transform2;
 
@@ -374,7 +374,7 @@ void RenderQT::RenderGeom(QPainter& painter, std::map<int, double>& zoomToScale)
 
 void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScale)
 {
-    double penScaleMPerPixel = (right_ - left_) / imageWithPixels_;
+    double penScaleMPerPixel = (right_ - left_) / imageWidthPixels_;
 
     painter.resetTransform();
 
@@ -569,7 +569,7 @@ void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScal
 
                         QFontMetricsF metrics(*font);
 
-                        double xScale = imageWithPixels_ / (right_ - left_);
+                        double xScale = imageWidthPixels_ / (right_ - left_);
                         double yScale = imageHeightPixels_ / (top_ - bottom_);
 
                         switch (projectLayer->layerType()) {

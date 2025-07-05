@@ -10,14 +10,14 @@ public:
 
     QImage RenderImage();
 
-    void SetupZoomAtCenter(int imageWithPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution);
-    void SetupZoomBoundingBox(int imageWithPixels, int imageHeightPixels, double left, double right, double bottom, double top);
+    void SetupZoomAtCenter(int imageWidthPixels, int imageHeightPixels, double centerX, double centerY, double pixelResolution);
+    void SetupZoomBoundingBox(int imageWidthPixels, int imageHeightPixels, double left, double right, double bottom, double top);
 
 private:
     void RenderGeom(QPainter& painter, std::map<int, double>& zoomScale);
     void RenderLabels(QPainter& painter, std::map<int, double>& zoomScale);
 
-    int imageWithPixels_;
+    int imageWidthPixels_;
     int imageHeightPixels_;
     double left_;
     double right_;
