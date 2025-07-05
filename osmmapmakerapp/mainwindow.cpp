@@ -10,7 +10,9 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QStandardPaths>
+#include <QDir>
 #include <QApplication>
+#include <filesystem>
 
 MainWindow::MainWindow(path projectPath, QWidget* parent)
     : QMainWindow(parent)
@@ -106,10 +108,35 @@ void MainWindow::on_action_Project_Open_triggered()
 
 void MainWindow::on_action_Project_Copy_triggered()
 {
-    QMessageBox msgBox(this);
+    if (project_ == NULL)
+        return;
 
-    msgBox.setText(QString("Copy"));
-    msgBox.exec();
+    auto locs = QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
+    QString loc;
+    if (!locs.isEmpty())
+        loc = locs[0];
+
+    QString defaultName = QString::fromStdString(project_->projectPath().filename().string());
+    QString filter = tr("Map Project Files (*%1)").arg(Project::projectFileExtension());
+    QString file = QFileDialog::getSaveFileName(this, tr("Copy Project"), loc + QDir::separator() + defaultName, filter);
+    if (file.isEmpty())
+        return;
+
+    std::filesystem::path dest = std::filesystem::path(file.toStdString());
+    if (std::filesystem::exists(dest) || std::filesystem::exists(dest.replace_extension(""))) {
+        QMessageBox::warning(this, tr("Copy Project"), tr("Destination already exists."));
+        return;
+    }
+
+    try {
+        project_->saveTo(dest);
+        QMessageBox::information(this, tr("Copy Project"),
+            QString("Copied to %1").arg(QString::fromStdString(dest.string())));
+    } catch (const std::exception& e) {
+        QMessageBox msgBox(this);
+        msgBox.setText(QString("Failed copy: %1").arg(e.what()));
+        msgBox.exec();
+    }
 }
 
 void MainWindow::on_action_Project_Save_triggered()
