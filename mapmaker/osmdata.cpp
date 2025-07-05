@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <memory>
+#include <stdexcept>
 
 #include <osmium/io/any_input.hpp>
 
@@ -114,7 +115,9 @@ OsmDataImportHandler::OsmDataImportHandler(RenderDatabase& db, QString dataSourc
     , dataSource_(dataSource)
 {
     QFile jsonFile(":/resources/areaKeys.json");
-    jsonFile.open(QFile::ReadOnly);
+    if (!jsonFile.open(QFile::ReadOnly)) {
+        throw std::runtime_error(std::string("Cannot open resource: ") + jsonFile.fileName().toStdString());
+    }
     QJsonDocument areaKeysDoc = QJsonDocument::fromJson(jsonFile.readAll());
 
     QJsonObject areaKey = areaKeysDoc.object().value("areaKeys").toObject();
@@ -134,11 +137,12 @@ OsmDataImportHandler::OsmDataImportHandler(RenderDatabase& db, QString dataSourc
     queryAddSpatialIndex_ = new SQLite::Statement(db_, "INSERT INTO entitySpatialIndex(pkid, xmin, xmax,ymin, ymax) VALUES (?,?,?,?,?)");
 
     {
-        QFile file(":/resources/discarded.txt");
-        bool open = file.open(QIODevice::ReadOnly | QIODevice::Text);
-        assert(open);
+        QFile discardedFile(":/resources/discarded.txt");
+        if (!discardedFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            throw std::runtime_error(std::string("Cannot open resource: ") + discardedFile.fileName().toStdString());
+        }
 
-        QTextStream in(&file);
+        QTextStream in(&discardedFile);
         while (!in.atEnd()) {
             QString line = in.readLine().trimmed();
             if (line.isEmpty() == false) {
