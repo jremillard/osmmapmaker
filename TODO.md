@@ -76,30 +76,9 @@ save commonly used presets.
 5. Persist filters in the project XML using a simple expression syntax and add
    tests for correct serialization.
 
-
 ### Automated Testing
 - Programmatically modify rows in the filter dialog and ensure serialized filters match expectations.
 - Verify preset saving and loading works across sessions.
-
-## Administrative Boundary Rendering
-### Goal
-Support specialized styling and labeling of municipal, county and state
-boundaries.
-
-### Specification
-1. Relations tagged `boundary=administrative` are imported as line entities and
-   retain their `admin_level` tags.
-2. Style layers can use `dashArray`, `color` and `label` settings to draw each
-   level differently. Labels repeat along the boundary geometry.
-3. Boundaries render after area fills but before road casings.
-4. Sample projects include default styles for levels 4 (state), 6 (county) and
-   8 (municipal).
-
-### Automated Testing
-- Unit test imports a sample administrative relation and confirms the line
-  entity with the expected `admin_level` exists.
-- Rendering tests ensure boundaries appear in the proper order with repeated
-  labels.
 
 ## Elevation Data Import
 ### Goal
@@ -161,26 +140,6 @@ Offer a prebuilt stylesheet optimized for rendering golf course maps.
 ### Automated Testing
 - Render example maps with the golf theme at several zoom levels and compare against reference images.
 - Check that icons and colors match the specification.
-
-## Finalize XML Style Format
-### Goal
-Freeze the XML schema for style files so third‑party tools can rely on a stable
-format.
-
-### Specification
-1. Audit all current style attributes and document them in
-   `resources/project.xsd` with appropriate data types and defaults.
-2. Add a `version` attribute to the `<style>` root element and update example
-   styles accordingly.
-3. Deprecate experimental attributes by providing clear replacements and supply
-   XSLT scripts for migrating old files.
-4. Update tests and sample projects to use the finalized schema and validate
-   them during CI builds.
-
-### Automated Testing
-- Validate example style files against the new schema in unit tests.
-- Ensure deprecated attributes are flagged with meaningful errors.
-
 
 ## Fix Stuck Focus in Zoom Box
 ### Goal
