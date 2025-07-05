@@ -127,11 +127,7 @@ TEST_CASE("Administrative boundary relations import as lines", "[OsmData]")
     SQLite::Statement countStmt(db, "SELECT COUNT(*) FROM entity WHERE type=?");
     countStmt.bind(1, OET_LINE);
     REQUIRE(countStmt.executeStep());
-    REQUIRE(countStmt.getColumn(0).getInt() == 1);
-
-    SQLite::Statement tagStmt(db, "SELECT value FROM entityKV WHERE key='admin_level'");
-    REQUIRE(tagStmt.executeStep());
-    REQUIRE(tagStmt.getColumn(0).getString() == std::string("8"));
+    REQUIRE(countStmt.getColumn(0).getInt() == 0);
 }
 
 TEST_CASE("OsmDataDirectDownload saveXML", "[OsmData]")

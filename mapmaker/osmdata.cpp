@@ -32,7 +32,6 @@
 #include <osmium/index/map/flex_mem.hpp>
 
 #include <geos.h>
-#include <geos/io/WKBWriter.h>
 
 // The type of index used. This must match the include file above
 using index_type = osmium::index::map::FlexMem<osmium::unsigned_object_id_type, osmium::Location>;
@@ -276,7 +275,6 @@ void OsmDataImportHandler::area(const osmium::Area& area)
 {
     try {
         bool addArea = false;
-        bool adminBoundary = false;
 
         for (const osmium::Tag& tag : area.tags()) {
             QString keyName = QString(tag.key());
@@ -289,9 +287,6 @@ void OsmDataImportHandler::area(const osmium::Area& area)
                 if (areaKeyValBlackList_.find(keyVal) != areaKeyValBlackList_.end())
                     addArea = false;
             }
-
-            if (strcmp(tag.key(), "boundary") == 0 && strcmp(tag.value(), "administrative") == 0)
-                adminBoundary = true;
         }
 
         // area tag overrides everything
@@ -302,33 +297,26 @@ void OsmDataImportHandler::area(const osmium::Area& area)
                 addArea = false;
         }
 
-        if (addArea || adminBoundary) {
-            int entityType = adminBoundary ? OET_LINE : OET_AREA;
-            queryAdd_->bind(1, entityType);
+        if (addArea) {
+            if (addArea)
+                queryAdd_->bind(1, OET_AREA);
+            else
+                queryAdd_->bind(1, OET_LINE);
 
             queryAdd_->bind(2, dataSource_.toStdString());
             std::string wkbBuffer = factory_.create_multipolygon(area);
+            queryAdd_->bind(3, wkbBuffer.c_str(), wkbBuffer.size());
 
             geos::io::WKBReader geomFactory;
+
             std::istringstream strStr(wkbBuffer);
+
             std::unique_ptr<geos::geom::Geometry> geom = geomFactory.read(strStr);
 
-            std::unique_ptr<geos::geom::Geometry> outGeom;
-            if (adminBoundary)
-                outGeom = geom->getBoundary();
-            else
-                outGeom = std::move(geom);
-
-            geos::io::WKBWriter writer;
-            std::ostringstream out;
-            writer.write(*outGeom, out);
-            std::string outWkb = out.str();
-            queryAdd_->bind(3, outWkb.c_str(), outWkb.size());
-
-            double lengthDeg = outGeom->getLength();
+            double lengthDeg = geom->getLength();
             queryAdd_->bind(4, lengthDeg * detToM);
 
-            double areaDegSq = adminBoundary ? 0 : outGeom->getArea();
+            double areaDegSq = geom->getArea();
             queryAdd_->bind(5, areaDegSq * detToM * detToM);
 
             queryAdd_->exec();

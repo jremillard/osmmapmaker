@@ -4,7 +4,7 @@
 Filename                                       |Rate    Num|Rate  Num|Rate   Num
 mapmaker/project.h                             |50.0%     6| 0.0%   3|    -    0
 mapmaker/output.cpp                            |27.6%    87| 0.0%  23|    -    0
-mapmaker/osmdata.cpp                           | 8.0%   187| 0.0%  14|    -    0
+mapmaker/osmdata.cpp                           | 8.7%   172| 0.0%  14|    -    0
 mapmaker/project.cpp                           |15.2%   191| 0.0%  25|    -    0
 mapmaker/renderqt.cpp                          |    -     0|    -   0|    -    0
 mapmaker/maputils.cpp                          |50.0%     2| 0.0%   1|    -    0
