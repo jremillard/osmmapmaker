@@ -10,6 +10,7 @@ mapmaker/renderqt.cpp                          |    -     0|    -   0|    -    0
 mapmaker/maputils.cpp                          |50.0%     2| 0.0%   1|    -    0
 mapmaker/textfield.cpp                         | 4.5%    44| 0.0%   2|    -    0
 mapmaker/stylelayer.cpp                        | 8.7%   530| 0.0%  45|    -    0
+mapmaker/textonpath.cpp                        |15.4%    26| 0.0%   2|    -    0
 mapmaker/datasource.cpp                        |26.8%    56| 0.0%  14|    -    0
 mapmaker/osmdatafile.cpp                       |33.3%    24| 0.0%   8|    -    0
 mapmaker/linebreaking.cpp                      |10.0%    10| 0.0%   1|    -    0
@@ -20,4 +21,4 @@ mapmaker/osmdatadirectdownload.cpp             |50.0%    10| 0.0%   4|    -    0
 mapmaker/osmdataextractdownload.cpp            |50.0%    10| 0.0%   4|    -    0
                                                |Lines      |Functions|Branches  
 bin/coverage/mapmaker/...mapmaker_resources.cpp|38.5%    13| 0.0%   5|    -    0
-                                         Total:|15.4%  1275| 0.0% 165|    -    0
+                                         Total:|15.4%  1301| 0.0% 167|    -    0

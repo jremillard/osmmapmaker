@@ -10,6 +10,7 @@
 #include "linebreaking.h"
 #include <geos/simplify/DouglasPeuckerLineSimplifier.h>
 #include "textfield.h"
+#include "textonpath.h"
 
 RenderQT::RenderQT(Project* project, int dpiScale)
 {
@@ -638,114 +639,22 @@ void RenderQT::RenderLabels(QPainter& painter, std::map<int, double>& zoomToScal
 
                             std::unique_ptr<CoordinateSequence> newCoords = s.simplify();
 
-                            std::unique_ptr<LineString> lineString = geomFactory->createLineString(std::move(newCoords));
-
-                            std::size_t nPoints = lineString->getNumPoints();
-
-                            double length = geom->getLength();
-
-                            QSizeF textWidthPixels = metrics.size(Qt::TextSingleLine, labelText);
-
-                            // length in pixels
-                            double lengthPixels = 0;
-                            for (int i = 1; i < nPoints; ++i) {
-                                std::unique_ptr<geos::geom::Point> pt1 = lineString->getPointN(i - 1);
-                                std::unique_ptr<geos::geom::Point> pt2 = lineString->getPointN(i);
-
-                                double pt1X = pt1->getX();
-                                double pt1Y = pt1->getY();
-
-                                double pt2X = pt2->getX();
-                                double pt2Y = pt2->getY();
-
-                                double dX = pt2X - pt1X;
-                                double dY = pt2Y - pt1Y;
-
-                                double deltaRatio = 0;
-
-                                bool emitText = false;
-
-                                double distPixels = sqrt(dX * dX * xScale * xScale + dY * dY * yScale * yScale);
-                                lengthPixels += distPixels;
+                            std::vector<QPointF> pts;
+                            for (std::size_t i = 0; i < newCoords->size(); ++i) {
+                                const Coordinate& c = newCoords->getAt(i);
+                                double x = (c.x - left_) * xScale;
+                                double y = (top_ - c.y) * yScale;
+                                pts.emplace_back(x, y);
                             }
 
-                            double labelMaxGap = label.maxWrapWidth_;
-                            if (labelMaxGap <= 0)
-                                labelMaxGap = 400;
-
-                            // spacing specified
-                            double maxPitch = textWidthPixels.width() + labelMaxGap;
-                            double numberOfLabelGaps = ceil(lengthPixels / maxPitch);
-                            if (numberOfLabelGaps <= 1)
-                                numberOfLabelGaps = 2.0;
-
-                            double pitch = lengthPixels / numberOfLabelGaps;
-
-                            if (pitch < textWidthPixels.width() / 2.2)
-                                break; // too small don't render it.
-
-                            double t = 0;
-                            double lengthTotal = 0;
-                            double nextLabel = pitch;
-                            for (int i = 1; i < nPoints; ++i) {
-                                std::unique_ptr<geos::geom::Point> pt1 = lineString->getPointN(i - 1);
-                                std::unique_ptr<geos::geom::Point> pt2 = lineString->getPointN(i);
-
-                                double pt1X = pt1->getX();
-                                double pt1Y = pt1->getY();
-
-                                double pt2X = pt2->getX();
-                                double pt2Y = pt2->getY();
-
-                                double dX = pt2X - pt1X;
-                                double dY = pt2Y - pt1Y;
-
-                                double segmentLengthPixels = sqrt(dX * dX * xScale * xScale + dY * dY * yScale * yScale);
-
-                                while (lengthTotal + segmentLengthPixels > nextLabel) {
-                                    double usedPixels = nextLabel - lengthTotal;
-
-                                    double deltaRatio = usedPixels / segmentLengthPixels;
-
-                                    segmentLengthPixels -= usedPixels;
-                                    lengthTotal += usedPixels;
-                                    nextLabel += pitch;
-
-                                    QPainterPath path;
-
-                                    double centerX = pt1X + (deltaRatio * dX);
-                                    double centerY = pt1Y + (deltaRatio * dY);
-
-                                    float x = (centerX - left_) * xScale;
-                                    float y = (top_ - centerY) * yScale;
-
-                                    painter.resetTransform();
-                                    painter.translate(x, y);
-                                    double rotAngleDeg = atan2(dY, dX) * -180.0 / 3.141596;
-                                    if (rotAngleDeg > 90)
-                                        rotAngleDeg -= 180;
-                                    else if (rotAngleDeg < -90)
-                                        rotAngleDeg += 180;
-
-                                    painter.rotate(rotAngleDeg);
-
-                                    path.addText(-textWidthPixels.width() / 2, label.offsetY_, *font, labelText);
-
-                                    painter.setPen(QPen(Qt::NoPen));
-
-                                    if (label.haloSize_ > 0) {
-                                        QPainterPathStroker halo;
-                                        halo.setWidth(label.haloSize_ * 2 * scale_);
-                                        painter.setBrush(label.haloColor_);
-                                        painter.drawPath(halo.createStroke(path));
-                                    }
-
-                                    painter.setBrush(label.color_);
-                                    painter.drawPath(path);
-                                }
-
-                                lengthTotal += segmentLengthPixels;
-                            }
+                            painter.resetTransform();
+                            QFontMetricsF textMetrics(*font);
+                            TextOnPath::drawTextOnPath(painter,
+                                labelText,
+                                *font,
+                                pts,
+                                label.color_,
+                                label.offsetY_);
                         } break;
 
                         case ST_AREA: {
