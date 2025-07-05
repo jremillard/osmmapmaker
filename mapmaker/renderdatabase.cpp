@@ -20,7 +20,7 @@ static void execSqlResource(RenderDatabase& db, const QString& resource)
 {
     QFile file(resource);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        throw std::runtime_error("Cannot open resource: " + resource.toStdString());
+        throw std::runtime_error(std::string("Cannot open resource: ") + resource.toStdString());
     QByteArray sql = file.readAll();
     db.exec(sql.constData());
 }

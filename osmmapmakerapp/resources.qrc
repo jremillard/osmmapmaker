@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-      <file>resources/discarded.txt</file>
       <file>resources/download.svg</file>
       <file>resources/plus.svg</file>
       <file>resources/minus.svg</file>
@@ -9,7 +8,6 @@
       <file>resources/downarrow.svg</file>
       <file>resources/leftarrow.svg</file>
       <file>resources/rightarrow.svg</file>
-      <file>resources/presets.json</file>
-      <file>resources/areaKeys.json</file>
+      <!-- areaKeys.json and discarded.txt moved to mapmaker resources -->
     </qresource>
 </RCC>

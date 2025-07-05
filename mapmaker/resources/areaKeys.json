@@ -45,6 +45,9 @@
         },
         "building:part": {
         },
+        "boundary": {
+            "administrative": true
+        },
         "club": {
         },
         "craft": {
