@@ -5,6 +5,26 @@
 
 void BatchTileOutput::generateTiles(Project* project, TileOutput& output)
 {
+    generateTiles(project, output, {});
+}
+
+void BatchTileOutput::generateTiles(Project* project, TileOutput& output,
+    const std::function<bool(int, int)>& progress)
+{
+    using std::filesystem::path;
+
+    int total = 0;
+    if (progress) {
+        total = processTiles(project, output, true, {}, 0);
+        progress(0, total);
+    }
+
+    processTiles(project, output, false, progress, total);
+}
+
+int BatchTileOutput::processTiles(Project* project, TileOutput& output, bool countOnly,
+    const std::function<bool(int, int)>& progress, int total)
+{
     using std::filesystem::path;
 
     path tileDir;
@@ -20,10 +40,12 @@ void BatchTileOutput::generateTiles(Project* project, TileOutput& output)
         tileDir /= output.name().toStdString();
     }
 
-    for (int z = 0; z <= 25; ++z) {
-        path zoomDir = tileDir / QString::number(z).toStdString();
-        std::error_code ec;
-        remove_all(zoomDir, ec);
+    if (!countOnly) {
+        for (int z = 0; z <= 25; ++z) {
+            path zoomDir = tileDir / QString::number(z).toStdString();
+            std::error_code ec;
+            remove_all(zoomDir, ec);
+        }
     }
 
     int tileSize = output.tileSizePixels();
@@ -38,11 +60,15 @@ void BatchTileOutput::generateTiles(Project* project, TileOutput& output)
     RenderQT render1x(project, 1);
     RenderQT render2x(project, 2);
 
+    int done = 0;
+    int count = 0;
+
     for (int z = output.minZoom(); z <= output.maxZoom(); ++z) {
         std::string zoomStr = QString::number(z).toStdString();
         path zoomDir = tileDir / zoomStr;
 
-        create_directories(zoomDir);
+        if (!countOnly)
+            create_directories(zoomDir);
 
         std::pair<double, double> px0 = fromLLtoPixel(tileSize, ll0, z);
         std::pair<double, double> px1 = fromLLtoPixel(tileSize, ll1, z);
@@ -53,8 +79,10 @@ void BatchTileOutput::generateTiles(Project* project, TileOutput& output)
 
             std::string str_x = QString::number(x).toStdString();
 
-            if (!exists(tileDir / zoomStr / str_x))
-                create_directories(tileDir / zoomStr / str_x);
+            if (!countOnly) {
+                if (!exists(tileDir / zoomStr / str_x))
+                    create_directories(tileDir / zoomStr / str_x);
+            }
 
             int yEnd = int(px1.second / tileSize) + 1;
 
@@ -65,17 +93,31 @@ void BatchTileOutput::generateTiles(Project* project, TileOutput& output)
                 std::string str_y = QString::number(y).toStdString();
 
                 if (output.resolution1x()) {
-                    path tile_uri1x = tileDir / zoomStr / str_x / (str_y + ".png");
-                    renderTile(project, render1x, tile_uri1x, tileSize, 1, x, y, z);
+                    count++;
+                    if (!countOnly) {
+                        path tile_uri1x = tileDir / zoomStr / str_x / (str_y + ".png");
+                        renderTile(project, render1x, tile_uri1x, tileSize, 1, x, y, z);
+                        done++;
+                        if (progress && !progress(done, total))
+                            return count;
+                    }
                 }
 
                 if (output.resolution2x()) {
-                    path tile_uri2x = tileDir / zoomStr / str_x / (str_y + "@2x.png");
-                    renderTile(project, render2x, tile_uri2x, tileSize, 2, x, y, z);
+                    count++;
+                    if (!countOnly) {
+                        path tile_uri2x = tileDir / zoomStr / str_x / (str_y + "@2x.png");
+                        renderTile(project, render2x, tile_uri2x, tileSize, 2, x, y, z);
+                        done++;
+                        if (progress && !progress(done, total))
+                            return count;
+                    }
                 }
             }
         }
     }
+
+    return count;
 }
 
 void BatchTileOutput::renderTile(Project* project, RenderQT& render, const std::filesystem::path& imagePath, int tileSize, int resolutionScale, int x, int y, int z)
