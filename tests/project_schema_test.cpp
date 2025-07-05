@@ -5,18 +5,16 @@
 #include <QUrl>
 #include <QCoreApplication>
 #include <QStringList>
-#include <QNetworkAccessManager>
 #include <QEvent>
 
 TEST_CASE("Project files validate against schema", "[ProjectSchema]")
 {
     int argc = 0;
     qputenv("QT_PLUGIN_PATH", "");
+    qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
     Q_INIT_RESOURCE(mapmaker_resources);
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
     QXmlSchema schema;
     QFile xsdFile(":/resources/project.xsd");
     REQUIRE(xsdFile.open(QIODevice::ReadOnly));

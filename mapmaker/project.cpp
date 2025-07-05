@@ -10,6 +10,7 @@
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
+#include "projecttemplate.h"
 
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
@@ -168,6 +169,34 @@ Project::~Project()
 
     proj_context_destroy(proj_context_);
     proj_context_ = NULL;
+}
+
+void Project::createNew(const QString& projectName,
+    const std::filesystem::path& directory,
+    const QByteArray& templateData)
+{
+    std::filesystem::path dirPath = directory;
+    if (!std::filesystem::exists(dirPath))
+        std::filesystem::create_directories(dirPath);
+
+    std::filesystem::path projectFile = dirPath / (projectName.toStdString() + ".osmmap.xml");
+
+    QFile out(QString::fromStdString(projectFile.string()));
+    if (!out.open(QIODevice::WriteOnly))
+        throw std::runtime_error("Unable to create project file");
+    if (out.write(templateData) != templateData.size()) {
+        out.close();
+        throw std::runtime_error("Failed to write project file");
+    }
+    out.close();
+
+    std::filesystem::path assetDir = projectFile;
+    assetDir.replace_extension("");
+    if (!std::filesystem::exists(assetDir))
+        std::filesystem::create_directories(assetDir);
+
+    QString dbPath = QString::fromStdString((assetDir / "render.sqlite").string());
+    RenderDatabase db(dbPath);
 }
 
 void Project::createRenderDatabaseIfNotExist()
