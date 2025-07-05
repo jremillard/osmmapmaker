@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QEvent>
 #include <QStringList>
+#include <QNetworkAccessManager>
 #include "project.h"
 #include "osmdatafile.h"
 #include "stylelayer.h"
