@@ -19,4 +19,4 @@ osmdataoverpass.cpp               |56.2%     16| 0.0%     5|    -      0
 osmdatadirectdownload.cpp         |50.0%     10| 0.0%     4|    -      0
 osmdataextractdownload.cpp        |50.0%     10| 0.0%     4|    -      0
                                   |Lines       |Functions  |Branches    
-                            Total:|15.0%   1264| 0.0%   159|    -      0
+                            Total:|15.1%   1266| 0.0%   160|    -      0

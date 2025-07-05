@@ -19,8 +19,9 @@ set(SRC_FILES
     renderqt.cpp
     linebreaking.cpp
     maputils.cpp
+    resourceinit.cpp
 )
-add_library(mapmaker STATIC ${SRC_FILES} resources.qrc)
+add_library(mapmaker STATIC ${SRC_FILES} mapmaker_resources.qrc)
 
 target_include_directories(mapmaker
     PUBLIC
