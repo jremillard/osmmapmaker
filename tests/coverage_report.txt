@@ -4,6 +4,7 @@
 Filename                                       |Rate    Num|Rate  Num|Rate   Num
 mapmaker/project.h                             |50.0%     6| 0.0%   3|    -    0
 mapmaker/output.cpp                            |27.6%    87| 0.0%  23|    -    0
+mapmaker/demdata.cpp                           | 7.7%   155| 0.0%   7|    -    0
 mapmaker/osmdata.cpp                           | 8.5%   176| 0.0%  14|    -    0
 mapmaker/project.cpp                           |14.4%   222| 0.0%  27|    -    0
 mapmaker/renderqt.cpp                          |    -     0|    -   0|    -    0
@@ -21,4 +22,5 @@ mapmaker/applicationpreferences.cpp            |14.0%    43| 0.0%   6|    -    0
 mapmaker/osmdataextractdownload.cpp            |50.0%    10| 0.0%   4|    -    0
                                                |Lines      |Functions|Branches  
 bin/coverage/mapmaker/...mapmaker_resources.cpp|38.5%    13| 0.0%   5|    -    0
+                                         Total:|14.5%  1431| 0.0% 172|    -    0
                                          Total:|15.5%  1275| 0.0% 165|    -    0

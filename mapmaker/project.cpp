@@ -10,6 +10,7 @@
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
+#include "demdata.h"
 
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
@@ -134,6 +135,8 @@ Project::Project(path fileName)
             dataSources_.push_back(new OsmDataDirectDownload(topNode));
         } else if (name == "openStreetMapFileSource") {
             dataSources_.push_back(new OsmDataFile(topNode));
+        } else if (name == "elevationSource") {
+            dataSources_.push_back(new DemData(topNode));
         } else if (name == "tileOutput") {
             outputs_.push_back(new TileOutput(topNode));
         } else if (name == "map") {
