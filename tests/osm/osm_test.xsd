@@ -3,11 +3,12 @@
   <xs:element name="osm">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="bounds" type="boundsType" minOccurs="0" maxOccurs="1"/>
         <xs:element name="node" type="nodeType" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="way" type="wayType" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element name="relation" type="relationType" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
-      <xs:attribute name="version" type="xs:string" use="required"/>
+      <xs:attribute name="version" type="xs:decimal" use="required" fixed="0.6"/>
       <xs:attribute name="generator" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
@@ -17,17 +18,30 @@
     <xs:attribute name="v" type="xs:string" use="required"/>
   </xs:complexType>
 
+  <xs:complexType name="boundsType">
+    <xs:attribute name="minlat" type="xs:double" use="required"/>
+    <xs:attribute name="minlon" type="xs:double" use="required"/>
+    <xs:attribute name="maxlat" type="xs:double" use="required"/>
+    <xs:attribute name="maxlon" type="xs:double" use="required"/>
+  </xs:complexType>
+
   <xs:complexType name="nodeType">
     <xs:sequence>
       <xs:element name="tag" type="tagType" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:long" use="required"/>
-    <xs:attribute name="lat" type="xs:decimal" use="required"/>
-    <xs:attribute name="lon" type="xs:decimal" use="required"/>
+    <xs:attribute name="id" type="xs:unsignedLong" use="required"/>
+    <xs:attribute name="lat" type="xs:double" use="required"/>
+    <xs:attribute name="lon" type="xs:double" use="required"/>
+    <xs:attribute name="user" type="xs:string" use="optional"/>
+    <xs:attribute name="uid" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="visible" type="xs:boolean" use="optional"/>
+    <xs:attribute name="version" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="changeset" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="ndType">
-    <xs:attribute name="ref" type="xs:long" use="required"/>
+    <xs:attribute name="ref" type="xs:unsignedLong" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="wayType">
@@ -35,12 +49,26 @@
       <xs:element name="nd" type="ndType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="tag" type="tagType" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:long" use="required"/>
+    <xs:attribute name="id" type="xs:unsignedLong" use="required"/>
+    <xs:attribute name="user" type="xs:string" use="optional"/>
+    <xs:attribute name="uid" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="visible" type="xs:boolean" use="optional"/>
+    <xs:attribute name="version" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="changeset" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="memberType">
-    <xs:attribute name="type" type="xs:string" use="required"/>
-    <xs:attribute name="ref" type="xs:long" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="node"/>
+          <xs:enumeration value="way"/>
+          <xs:enumeration value="relation"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="ref" type="xs:unsignedLong" use="required"/>
     <xs:attribute name="role" type="xs:string" use="required"/>
   </xs:complexType>
 
@@ -49,6 +77,12 @@
       <xs:element name="member" type="memberType" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="tag" type="tagType" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
-    <xs:attribute name="id" type="xs:long" use="required"/>
+    <xs:attribute name="id" type="xs:unsignedLong" use="required"/>
+    <xs:attribute name="user" type="xs:string" use="optional"/>
+    <xs:attribute name="uid" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="visible" type="xs:boolean" use="optional"/>
+    <xs:attribute name="version" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="changeset" type="xs:unsignedLong" use="optional"/>
+    <xs:attribute name="timestamp" type="xs:dateTime" use="optional"/>
   </xs:complexType>
 </xs:schema>
