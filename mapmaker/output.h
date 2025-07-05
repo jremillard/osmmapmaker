@@ -14,7 +14,7 @@ struct BoundingBox {
 class Output {
 public:
     Output(QString name);
-    Output(QDomElement ouputNode);
+    Output(QDomElement outputNode);
 
     virtual ~Output();
 
@@ -31,7 +31,7 @@ protected:
 class TileOutput : public Output {
 public:
     TileOutput(QString name);
-    TileOutput(QDomElement ouputNode);
+    TileOutput(QDomElement outputNode);
     ~TileOutput();
 
     int maxZoom() const;
