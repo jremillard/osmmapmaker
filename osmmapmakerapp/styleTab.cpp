@@ -7,6 +7,7 @@
 #include <QColorDialog>
 
 #include <renderqt.h>
+#include "maputils.h"
 
 #include "newtoplevelstyle.h"
 
@@ -94,7 +95,7 @@ void StyleTab::setProject(Project* project)
     project_->convertDataToMap(lon, latitude, &centerX_, &centerY_);
 
     ui->zoom->setValue(13);
-    updatePixelResultionFromZoom();
+    updatePixelResolutionFromZoom();
 
     delete render_;
     render_ = NULL;
@@ -381,7 +382,7 @@ void StyleTab::on_zoom_editingFinished()
     /*
     renderedImage_ = QImage();
 
-    updatePixelResultionFromZoom();
+    updatePixelResolutionFromZoom();
 
     render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
     renderedImage_ = render_->RenderImage();
@@ -396,7 +397,7 @@ void StyleTab::on_zoomIn_clicked()
 
     ui->zoom->setValue(ui->zoom->value() + 1);
 
-    updatePixelResultionFromZoom();
+    updatePixelResolutionFromZoom();
 
     render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
     renderedImage_ = render_->RenderImage();
@@ -410,7 +411,7 @@ void StyleTab::on_zoomOut_clicked()
 
     ui->zoom->setValue(ui->zoom->value() - 1);
 
-    updatePixelResultionFromZoom();
+    updatePixelResolutionFromZoom();
 
     render_->SetupZoomAtCenter(width() - renderImageLeft(), height(), centerX_, centerY_, pixelResolution_);
     renderedImage_ = render_->RenderImage();
@@ -418,12 +419,12 @@ void StyleTab::on_zoomOut_clicked()
     repaint();
 }
 
-void StyleTab::updatePixelResultionFromZoom()
+void StyleTab::updatePixelResolutionFromZoom()
 {
     double latitude, lon;
     project_->convertMapToData(centerX_, centerY_, &lon, &latitude);
 
-    pixelResolution_ = 156543.03 * cos(latitude * 0.01745329251994329576923690768489) / pow(2, ui->zoom->value());
+    pixelResolution_ = metersPerPixel(latitude, ui->zoom->value());
 }
 
 void StyleTab::mouseMoveEvent(QMouseEvent* mevent)

@@ -7,6 +7,7 @@ output.cpp                        |27.6%     87| 0.0%    23|    -      0
 osmdata.cpp                       | 8.2%    183| 0.0%    14|    -      0
 project.cpp                       |15.3%    190| 0.0%    25|    -      0
 renderqt.cpp                      |    -      0|    -     0|    -      0
+maputils.cpp                      |50.0%      2| 0.0%     1|    -      0
 textfield.cpp                     | 4.5%     44| 0.0%     2|    -      0
 stylelayer.cpp                    | 8.7%    530| 0.0%    45|    -      0
 datasource.cpp                    |26.8%     56| 0.0%    14|    -      0

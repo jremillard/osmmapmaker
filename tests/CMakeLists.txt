@@ -11,6 +11,11 @@ target_compile_features(hello_test PRIVATE cxx_std_17)
 
 add_test(NAME hello_test COMMAND hello_test)
 
+add_executable(maputils_test maputils_test.cpp)
+target_link_libraries(maputils_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(maputils_test PRIVATE cxx_std_17)
+add_test(NAME maputils_test COMMAND maputils_test)
+
 add_executable(textfieldprocessor_test textfieldprocessor_test.cpp)
 target_link_libraries(textfieldprocessor_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(textfieldprocessor_test PRIVATE cxx_std_17)
