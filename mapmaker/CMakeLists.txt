@@ -18,6 +18,7 @@ set(SRC_FILES
     batchtileoutput.cpp
     renderqt.cpp
     linebreaking.cpp
+    maputils.cpp
 )
 add_library(mapmaker STATIC ${SRC_FILES} resources.qrc)
 

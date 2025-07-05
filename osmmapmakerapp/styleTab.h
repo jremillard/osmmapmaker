@@ -97,7 +97,7 @@ private:
     void saveArea();
     void savePoint();
     void moveTreeItem(int direction);
-    void updatePixelResultionFromZoom();
+    void updatePixelResolutionFromZoom();
 
     SubLayerTextPage* lineLabelPage_;
     SubLayerTextPage* areaLabelPage_;
