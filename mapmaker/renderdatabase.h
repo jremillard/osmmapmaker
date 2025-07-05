@@ -34,4 +34,7 @@ public:
 
     /// Return values for a given key/data source ordered by frequency.
     std::vector<QString> valuesByFrequency(const QString& dataSource, const QString& key);
+
+    /// Remove all data belonging to a given source.
+    void cleanDataSource(const QString& dataSource);
 };
