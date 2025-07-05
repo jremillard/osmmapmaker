@@ -2,6 +2,7 @@
 #include <QtXml>
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
+#include <QResource>
 #include <QAbstractMessageHandler>
 #include <exception>
 #include <stdexcept>
@@ -43,6 +44,7 @@ private:
 
 Project::Project(path fileName)
 {
+    Q_INIT_RESOURCE(mapmaker_resources);
     proj_context_ = proj_context_create();
 
     mapToData_ = proj_create_crs_to_crs(proj_context_, mapSRS().c_str(), dataSRS().c_str(), NULL);

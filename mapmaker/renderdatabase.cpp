@@ -28,6 +28,7 @@ static void execSqlResource(RenderDatabase& db, const QString& resource)
 RenderDatabase::RenderDatabase()
     : SQLite::Database(":memory:", SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
 {
+    Q_INIT_RESOURCE(mapmaker_resources);
     upgrade();
     exec("PRAGMA cache_size = -256000");
     exec("PRAGMA default_cache_size = 256000");
@@ -36,6 +37,7 @@ RenderDatabase::RenderDatabase()
 RenderDatabase::RenderDatabase(const QString& filePath)
     : SQLite::Database(filePath.toStdString(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE)
 {
+    Q_INIT_RESOURCE(mapmaker_resources);
     upgrade();
     exec("PRAGMA cache_size = -256000");
     exec("PRAGMA default_cache_size = 256000");

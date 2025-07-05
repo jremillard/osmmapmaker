@@ -44,9 +44,7 @@ add_test(NAME batchtileoutput_test COMMAND batchtileoutput_test)
 
 add_executable(project_schema_test
     project_schema_test.cpp
-    ../mapmaker/resources.qrc
 )
-set_target_properties(project_schema_test PROPERTIES AUTORCC ON)
 target_link_libraries(project_schema_test PRIVATE Catch2::Catch2WithMain mapmaker Qt5::XmlPatterns)
 target_compile_features(project_schema_test PRIVATE cxx_std_17)
 target_compile_definitions(project_schema_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
@@ -95,7 +93,6 @@ add_test(NAME label_test COMMAND label_test)
 add_executable(osmdata_test
     osmdata_test.cpp
     ../osmmapmakerapp/resources.qrc
-    ../mapmaker/resources.qrc
 )
 set_target_properties(osmdata_test PROPERTIES AUTORCC ON)
 target_link_libraries(osmdata_test PRIVATE Catch2::Catch2WithMain mapmaker BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT PROJ::proj SQLiteCpp SQLite::SQLite3 GEOS::geos GEOS::geos_c)
@@ -110,7 +107,6 @@ add_test(NAME linebreaking_test COMMAND linebreaking_test)
 
 add_executable(project_load_save_test
     project_load_save_test.cpp
-    ../mapmaker/resources.qrc
     ../osmmapmakerapp/resources.qrc
 )
 set_target_properties(project_load_save_test PROPERTIES AUTORCC ON)
@@ -134,7 +130,6 @@ add_test(NAME project_load_save_test COMMAND project_load_save_test)
 add_executable(overpass_test
     overpass_test.cpp
     ../osmmapmakerapp/resources.qrc
-    ../mapmaker/resources.qrc
 )
 set_target_properties(overpass_test PROPERTIES AUTORCC ON)
 target_link_libraries(overpass_test PRIVATE
