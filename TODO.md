@@ -224,3 +224,27 @@ Add a Most Recently Used list of projects so the application can quickly reopen 
 ### Automated Testing
 - Save multiple project paths and verify the MRU file persists across sessions.
 - Launch the app with an existing MRU file and confirm the most recent project opens automatically.
+
+## Project New
+### Goal
+Allow creation of new empty projects directly from the main application.
+
+### Specification
+1. Provide a dialog or wizard launched from the File menu to choose a destination path and default style.
+2. Generate the project XML and folder layout automatically so users can begin importing data immediately.
+3. Offer templates for common project types with preconfigured layers.
+
+### Automated Testing
+- Confirm the wizard creates valid project files that load without errors.
+
+## Project Copy
+### Goal
+Duplicate an existing project to a different location for experimentation.
+
+### Specification
+1. Add a `Copy Project` command that prompts for the target directory.
+2. Copy the project file and all referenced resources such as stylesheets and icons.
+3. Update any relative paths so the copy renders identically.
+
+### Automated Testing
+- Verify the copied project opens correctly and produces the same output as the original.
