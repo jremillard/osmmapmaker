@@ -133,6 +133,50 @@ target_compile_features(project_load_save_test PRIVATE cxx_std_17)
 target_compile_definitions(project_load_save_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME project_load_save_test COMMAND project_load_save_test)
 
+add_executable(new_project_test
+    new_project_test.cpp
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(new_project_test PROPERTIES AUTORCC ON)
+target_link_libraries(new_project_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::XmlPatterns
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(new_project_test PRIVATE cxx_std_17)
+target_compile_definitions(new_project_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME new_project_test COMMAND new_project_test)
+
+add_executable(projecttemplate_test
+    projecttemplate_test.cpp
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(projecttemplate_test PROPERTIES AUTORCC ON)
+target_link_libraries(projecttemplate_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::XmlPatterns
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(projecttemplate_test PRIVATE cxx_std_17)
+target_compile_definitions(projecttemplate_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME projecttemplate_test COMMAND projecttemplate_test)
+
 add_executable(overpass_test
     overpass_test.cpp
     ../osmmapmakerapp/resources.qrc

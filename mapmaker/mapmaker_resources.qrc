@@ -5,5 +5,9 @@
         <file>resources/render-1.sql</file>
         <file>resources/areaKeys.json</file>
         <file>resources/discarded.txt</file>
+        <file>resources/templates/template_empty.osmmap.xml</file>
+        <file>resources/templates/template_point.osmmap.xml</file>
+        <file>resources/templates/template_line.osmmap.xml</file>
+        <file>resources/templates/template_area.osmmap.xml</file>
     </qresource>
 </RCC>

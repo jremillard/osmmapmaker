@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <openStreetMapDirectDownload name="remote">
+  <dataSource>Primary</dataSource>
+ </openStreetMapDirectDownload>
+ <openStreetMapExtractDownload name="remote2">
+  <dataSource>Secondary</dataSource>
+ </openStreetMapExtractDownload>
+ <map backgroundColor="#00ff00" backgroundOpacity="0.5">
+  <layer dataSource="Primary" k="landuse" type="area">
+   <subLayer name="forest" visible="true" minZoom="13">
+    <selector>
+     <condition key="landuse">
+      <value>forest</value>
+     </condition>
+    </selector>
+    <area>
+     <color>#00ff00</color>
+     <opacity>1</opacity>
+     <casingWidth>0</casingWidth>
+     <casingColor>#000000</casingColor>
+     <fillImage></fillImage>
+     <fillImageOpacity>1</fillImageOpacity>
+    </area>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>
