@@ -96,12 +96,5 @@ void DataSource::setImportDurationS(int timeS)
 
 void DataSource::cleanDataSource(RenderDatabase& db)
 {
-    // clean out the entity, entityKV deleted with a trigger.
-    SQLite::Statement removeDataStatement(db, "DELETE FROM entity WHERE source = ?");
-    removeDataStatement.bind(1, dataName().toStdString());
-    removeDataStatement.exec();
-
-    // clean out the spatial index, can't setup a trigger for it because it is a virtual table.
-    SQLite::Statement removeSpatialIndextatement(db, "DELETE FROM entitySpatialIndex WHERE NOT EXISTS (SELECT * FROM entitySpatialIndex,entity WHERE entitySpatialIndex.pkid = entity.id)");
-    removeSpatialIndextatement.exec();
+    db.cleanDataSource(dataName());
 }

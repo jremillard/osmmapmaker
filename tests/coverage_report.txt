@@ -10,13 +10,13 @@ renderqt.cpp                      |    -      0|    -     0|    -      0
 maputils.cpp                      |50.0%      2| 0.0%     1|    -      0
 textfield.cpp                     | 4.5%     44| 0.0%     2|    -      0
 stylelayer.cpp                    | 8.7%    530| 0.0%    45|    -      0
-datasource.cpp                    |25.0%     60| 0.0%    14|    -      0
+datasource.cpp                    |26.8%     56| 0.0%    14|    -      0
 osmdatafile.cpp                   |33.3%     24| 0.0%     8|    -      0
 linebreaking.cpp                  |10.0%     10| 0.0%     1|    -      0
-renderdatabase.cpp                |28.6%     49| 0.0%     8|    -      0
+renderdatabase.cpp                |26.8%     56| 0.0%     9|    -      0
 batchtileoutput.cpp               | 9.5%     42| 0.0%     2|    -      0
 osmdataoverpass.cpp               |56.2%     16| 0.0%     5|    -      0
 osmdatadirectdownload.cpp         |50.0%     10| 0.0%     4|    -      0
 osmdataextractdownload.cpp        |50.0%     10| 0.0%     4|    -      0
                                   |Lines       |Functions  |Branches    
-                            Total:|15.0%   1263| 0.0%   159|    -      0
+                            Total:|15.0%   1264| 0.0%   159|    -      0

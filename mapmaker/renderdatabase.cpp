@@ -137,3 +137,17 @@ std::vector<QString> RenderDatabase::valuesByFrequency(const QString& dataSource
     }
     return values;
 }
+
+void RenderDatabase::cleanDataSource(const QString& dataSource)
+{
+    // clean out the entity table, entityKV records are removed via trigger
+    SQLite::Statement removeData(*this, "DELETE FROM entity WHERE source = ?");
+    removeData.bind(1, dataSource.toStdString());
+    removeData.exec();
+
+    // clean out the spatial index - cannot use trigger on virtual table
+    SQLite::Statement removeIndex(
+        *this,
+        "DELETE FROM entitySpatialIndex WHERE NOT EXISTS (SELECT * FROM entitySpatialIndex,entity WHERE entitySpatialIndex.pkid = entity.id)");
+    removeIndex.exec();
+}
