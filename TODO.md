@@ -221,18 +221,6 @@ Allow creation of new empty projects directly from the main application.
 ### Automated Testing
 - Confirm the wizard creates valid project files that load without errors.
 
-## Project Copy
-### Goal
-Duplicate an existing project to a different location for experimentation.
-
-### Specification
-1. Add a `Copy Project` command that prompts for the target directory.
-2. Copy the project file and all referenced resources such as stylesheets and icons.
-3. Update any relative paths so the copy renders identically.
-
-### Automated Testing
-- Verify the copied project opens correctly and produces the same output as the original.
-
 ## Daily Logging to File
 ### Goal
 Capture trace output in a rotating log so issues can be diagnosed easily.
