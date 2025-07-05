@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QApplication>
+#include <QCoreApplication>
 
 MainWindow::MainWindow(path projectPath, QWidget* parent)
     : QMainWindow(parent)
@@ -56,7 +57,9 @@ void MainWindow::openProject(path projectPath)
     delete project_;
     project_ = NULL;
     project_ = new Project(projectPath);
-    setWindowTitle(QString("OSM Map Maker - %1").arg(QString::fromStdWString(projectPath.filename().wstring())));
+    setWindowTitle(QString("OSM Map Maker %1 - %2")
+            .arg(QCoreApplication::applicationVersion(),
+                QString::fromStdWString(projectPath.filename().wstring())));
 
     DataTab* dataTab = dynamic_cast<DataTab*>(ui->tabWidget->widget(0));
     dataTab->setProject(project_);
