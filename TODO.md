@@ -263,3 +263,25 @@ Capture trace output in a rotating log so issues can be diagnosed easily.
 ### Automated Testing
 - Launch the application twice and verify the log file from the first run is removed before the second begins.
 - Run the unit test suite and confirm no log file is created.
+
+## detToM Conversion Accuracy
+### Goal
+Investigate whether the constant converting degrees to meters in `osmdata.cpp` uses the correct Earth radius.
+
+### Background
+Codex flagged a discrepancy between the implementation:
+```cpp
+static const double detToM = 6356.0 * 1000.0 * 2.0 * (std::atan(1.0) * 4) / 360;
+```
+and a comment that references the WGS84 equatorial radius:
+```cpp
+static const double detToM = 6378137.0 * M_PI / 180.0;
+```
+Using the truncated radius could underestimate lengths.
+
+### Specification
+1. Confirm which value is intended and ensure the constant is defined only once.
+2. Update related calculations and documentation to use the chosen radius consistently.
+
+### Automated Testing
+- Run existing length and area computation tests to verify results remain correct after any change.
