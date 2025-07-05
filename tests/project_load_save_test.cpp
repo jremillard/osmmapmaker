@@ -5,7 +5,6 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QFile>
-#include <QNetworkAccessManager>
 #include <QEvent>
 #include <QStringList>
 #include "project.h"
@@ -18,10 +17,9 @@ TEST_CASE("Valid project files load and save", "[Project]")
 {
     int argc = 0;
     qputenv("QT_PLUGIN_PATH", "");
+    qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QXmlSchema schema;
     QFile xsdFile(":/resources/project.xsd");
@@ -72,8 +70,6 @@ TEST_CASE("Invalid project files fail validation", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QXmlSchema schema;
     QFile xsdFile(":/resources/project.xsd");
@@ -108,8 +104,6 @@ TEST_CASE("Invalid project files throw on load", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QStringList files = {
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_no_map.osmmap.xml"),
@@ -144,8 +138,6 @@ TEST_CASE("Malformed project file reports parse location", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/malformed/malformed_missing_lt.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
@@ -169,8 +161,6 @@ TEST_CASE("Project coordinate conversions", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
@@ -207,8 +197,6 @@ TEST_CASE("Project add and remove components", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();

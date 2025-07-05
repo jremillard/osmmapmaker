@@ -6,7 +6,6 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QDir>
-#include <QNetworkAccessManager>
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "renderdatabase.h"
 
@@ -182,10 +181,9 @@ TEST_CASE("Rendering sample OSM schema validation", "[OsmSchema]")
 {
     int argc = 0;
     qputenv("QT_PLUGIN_PATH", "");
+    qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QXmlSchema schema;
     QFile xsdFile(QStringLiteral(SOURCE_DIR "/tests/osm/osm_test.xsd"));

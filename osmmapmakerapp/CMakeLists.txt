@@ -13,6 +13,7 @@ set(SRC_FILES
     outputTab.cpp
     styleTab.cpp
     newtoplevelstyle.cpp
+    newprojectdialog.cpp
     subLayerTextPage.cpp
     sublayerselectpage.cpp
     selectvalueeditdialog.cpp)
@@ -22,6 +23,7 @@ set(UI_FILES
     outputTab.ui
     styleTab.ui
     newtoplevelstyle.ui
+    newprojectdialog.ui
     subLayerTextPage.ui
     sublayerselectpage.ui
     selectvalueeditdialog.ui)

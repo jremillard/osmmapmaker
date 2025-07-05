@@ -6,6 +6,8 @@
 #include "outputTab.h"
 
 #include "project.h"
+#include "newprojectdialog.h"
+#include "projecttemplate.h"
 #include "applicationpreferences.h"
 
 #include <QMessageBox>
@@ -105,9 +107,30 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_action_Project_New_triggered()
 {
-    QMessageBox msgBox(this);
-    msgBox.setText(QString("New"));
-    msgBox.exec();
+    NewProjectDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted) {
+        QString path = dlg.projectPath();
+        if (path.isEmpty())
+            return;
+
+        std::filesystem::path p = path.toStdString();
+        QString name = QString::fromStdString(p.stem().string());
+        std::filesystem::path dir = p.parent_path();
+
+        try {
+            QByteArray bytes = ProjectTemplate::projectTemplateContents(dlg.templateName());
+            Project::createNew(name, dir, bytes);
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, tr("New Project"), e.what());
+            return;
+        }
+
+        try {
+            openProject(path.toStdString());
+        } catch (std::exception& e) {
+            QMessageBox::warning(this, tr("New Project"), e.what());
+        }
+    }
 }
 
 void MainWindow::on_action_Project_Open_triggered()

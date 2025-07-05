@@ -22,6 +22,11 @@ public:
     Project(path filename);
     ~Project();
 
+    /// Create a new project from a template. Throws std::runtime_error on failure.
+    static void createNew(const QString& projectName,
+        const std::filesystem::path& directory,
+        const QByteArray& templateData);
+
     void save();
     void saveProjectFile(path filename);
     void saveTo(path filename);
