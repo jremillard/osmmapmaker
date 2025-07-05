@@ -14,6 +14,7 @@ TEST_CASE("Project files validate against schema", "[ProjectSchema]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
+    Q_INIT_RESOURCE(mapmaker_resources);
     QNetworkAccessManager nam;
     nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
     QXmlSchema schema;
