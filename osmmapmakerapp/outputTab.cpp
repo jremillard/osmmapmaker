@@ -3,6 +3,7 @@
 
 #include "batchtileoutput.h"
 #include <QProgressDialog>
+#include <QApplication>
 
 OutputTab::OutputTab(QWidget* parent)
     : QWidget(parent)
@@ -226,6 +227,7 @@ void OutputTab::on_generate_clicked()
             [&dlg](int done, int total) {
                 dlg.setMaximum(total);
                 dlg.setValue(done);
+                QApplication::processEvents();
                 return !dlg.wasCanceled();
             });
 
