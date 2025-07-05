@@ -51,7 +51,7 @@ TEST_CASE("Valid project files load and save", "[Project]")
                 ds->setImportTime(QDateTime::currentDateTimeUtc());
             }
             std::filesystem::path tmp = p.parent_path() / "tmp_saved.osmmap.xml";
-            proj.save(tmp);
+            proj.saveProjectFile(tmp);
             QFile out(QString::fromStdString(tmp.string()));
             REQUIRE(out.open(QIODevice::ReadOnly));
             REQUIRE(validator.validate(&out));
@@ -249,6 +249,44 @@ TEST_CASE("Project add and remove components", "[Project]")
     }
 
     std::filesystem::remove_all(p.replace_extension(""));
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Project copy creates duplicate", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
+    std::filesystem::path src = fileName.toStdString();
+
+    {
+        Project proj(src);
+        for (auto* ds : proj.dataSources()) {
+            ds->setImportTime(QDateTime::currentDateTimeUtc());
+        }
+        std::filesystem::path destDir = src.parent_path() / "copied";
+        std::filesystem::create_directories(destDir);
+        std::filesystem::path dest = destDir / src.filename();
+
+        proj.saveTo(dest);
+
+        REQUIRE(std::filesystem::exists(dest));
+
+        Project copied(dest);
+        REQUIRE(std::filesystem::exists(copied.assetDirectory()));
+
+        std::filesystem::remove(dest);
+        std::filesystem::remove_all(dest.replace_extension(""));
+        std::filesystem::remove_all(destDir);
+    }
+
+    std::filesystem::remove_all(src.replace_extension(""));
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
