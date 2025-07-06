@@ -8,6 +8,7 @@
 #include <QInputDialog>
 #include <osmdatafile.h>
 #include <osmdataoverpass.h>
+#include <demdata.h>
 
 DataTab::DataTab(QWidget* parent)
     : QWidget(parent)
@@ -291,6 +292,50 @@ void DataTab::on_addDataSource_clicked()
                 ++cycle;
             } while (nameUsed);
         }
+
+        src->setDataName(dataSourceName);
+        project_->addDataSource(src);
+    } else if (dlg.choice() == InputTypeDialog::DemFile) {
+        QString fileName = dlg.fileName();
+        if (fileName.isEmpty())
+            return;
+
+        DemData* src = new DemData();
+        src->setFileName(fileName);
+
+        QString base = QFileInfo(fileName).baseName();
+        if (base.length() > 0)
+            base[0] = base[0].toUpper();
+
+        QString userName = tr("%0 DEM File").arg(base);
+        bool nameUsed = false;
+        int cycle = 2;
+        do {
+            nameUsed = false;
+            for (DataSource* output : project_->dataSources()) {
+                if (QString::compare(output->userName(), userName, Qt::CaseInsensitive) == 0)
+                    nameUsed = true;
+            }
+            if (nameUsed)
+                userName = tr("%0 %1 DEM File").arg(base).arg(cycle);
+            ++cycle;
+        } while (nameUsed);
+
+        src->setUserName(userName);
+
+        QString dataSourceName = base.toLower();
+        nameUsed = false;
+        cycle = 2;
+        do {
+            nameUsed = false;
+            for (DataSource* output : project_->dataSources()) {
+                if (QString::compare(output->dataName(), dataSourceName, Qt::CaseInsensitive) == 0)
+                    nameUsed = true;
+            }
+            if (nameUsed)
+                dataSourceName = QString("%0-%1").arg(base.toLower()).arg(cycle);
+            ++cycle;
+        } while (nameUsed);
 
         src->setDataName(dataSourceName);
         project_->addDataSource(src);

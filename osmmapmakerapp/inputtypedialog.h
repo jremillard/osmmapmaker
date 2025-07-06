@@ -11,13 +11,17 @@ public:
     explicit InputTypeDialog(QWidget* parent = nullptr);
     ~InputTypeDialog();
 
-    enum Choice { LocalFile,
-        Overpass };
+    enum Choice {
+        LocalFile,
+        Overpass,
+        DemFile
+    };
     Choice choice() const;
     QString fileName() const;
 
 private slots:
     void on_localRadio_toggled(bool checked);
+    void on_demRadio_toggled(bool checked);
     void on_browseButton_clicked();
 
 private:

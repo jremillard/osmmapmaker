@@ -10,6 +10,7 @@ InputTypeDialog::InputTypeDialog(QWidget* parent)
     ui->setupUi(this);
     ui->localRadio->setChecked(true);
     on_localRadio_toggled(true);
+    setFixedSize(200, 200);
 }
 
 InputTypeDialog::~InputTypeDialog()
@@ -19,7 +20,12 @@ InputTypeDialog::~InputTypeDialog()
 
 InputTypeDialog::Choice InputTypeDialog::choice() const
 {
-    return ui->localRadio->isChecked() ? LocalFile : Overpass;
+    if (ui->localRadio->isChecked())
+        return LocalFile;
+    else if (ui->overpassRadio->isChecked())
+        return Overpass;
+    else
+        return DemFile;
 }
 
 QString InputTypeDialog::fileName() const
@@ -29,8 +35,14 @@ QString InputTypeDialog::fileName() const
 
 void InputTypeDialog::on_localRadio_toggled(bool checked)
 {
-    ui->browseButton->setEnabled(checked);
-    ui->localFilePath->setEnabled(checked);
+    ui->browseButton->setEnabled(checked || ui->demRadio->isChecked());
+    ui->localFilePath->setEnabled(checked || ui->demRadio->isChecked());
+}
+
+void InputTypeDialog::on_demRadio_toggled(bool checked)
+{
+    ui->browseButton->setEnabled(checked || ui->localRadio->isChecked());
+    ui->localFilePath->setEnabled(checked || ui->localRadio->isChecked());
 }
 
 void InputTypeDialog::on_browseButton_clicked()
