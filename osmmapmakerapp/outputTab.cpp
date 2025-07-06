@@ -7,6 +7,8 @@
 #include "outputtypedialog.h"
 #include <QProgressDialog>
 #include <QApplication>
+#include <QFileDialog>
+#include <QDir>
 
 static QIcon tileOutputIcon(QStringLiteral(":/resources/tile_output.svg"));
 static QIcon imageOutputIcon(QStringLiteral(":/resources/image_output.svg"));
@@ -232,6 +234,18 @@ void OutputTab::on_tileSize_currentIndexChanged(int i)
         saveTile();
 }
 
+void OutputTab::on_pushButton_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Tile Output Directory"),
+        ui->tilePath->text());
+    if (!dir.isEmpty()) {
+        ui->tilePath->setText(QDir::toNativeSeparators(dir));
+        ui->tileOutputPathUseProjectDir->setChecked(false);
+        ui->tilePath->setEnabled(true);
+        saveTile();
+    }
+}
+
 void OutputTab::on_imageWidth_editingFinished()
 {
     saveImage();
@@ -276,6 +290,18 @@ void OutputTab::on_imageOutputPathUseProjectDir_clicked()
         ui->imagePath->setEnabled(true);
     }
     saveImage();
+}
+
+void OutputTab::on_imagePathBrowse_clicked()
+{
+    QString file = QFileDialog::getSaveFileName(this, tr("Image Output File"), ui->imagePath->text(),
+        tr("Images (*.png *.jpg *.jpeg *.tif);;All Files (*)"));
+    if (!file.isEmpty()) {
+        ui->imagePath->setText(QDir::toNativeSeparators(file));
+        ui->imageOutputPathUseProjectDir->setChecked(false);
+        ui->imagePath->setEnabled(true);
+        saveImage();
+    }
 }
 
 void OutputTab::saveTile()
