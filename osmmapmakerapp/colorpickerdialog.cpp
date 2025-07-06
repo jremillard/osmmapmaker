@@ -5,9 +5,28 @@
 #include <stylelayer.h>
 #include <QColorDialog>
 #include <QMenu>
+#include <QPainter>
 #include <QPixmap>
+#include <QStyledItemDelegate>
 #include <QTableWidgetItem>
 #include <algorithm>
+
+class NoHighlightDelegate : public QStyledItemDelegate {
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+        const QModelIndex& index) const override
+    {
+        if (index.column() == 0) {
+            QStyleOptionViewItem noSelectOption = option;
+            noSelectOption.state &= ~QStyle::State_Selected;
+            QStyledItemDelegate::paint(painter, noSelectOption, index);
+        } else {
+            QStyledItemDelegate::paint(painter, option, index);
+        }
+    }
+};
 
 struct ColorInfo {
     QColor color;
@@ -82,6 +101,8 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     connect(ui->colorTable, &QTableWidget::cellClicked, this, &ColorPickerDialog::onColorTableCellClicked);
     connect(ui->colorTable->horizontalHeader(), &QHeaderView::sectionClicked, this, &ColorPickerDialog::onHeaderClicked);
     connect(ui->colorTable->horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &ColorPickerDialog::onHeaderDoubleClicked);
+
+    ui->colorTable->setItemDelegate(new NoHighlightDelegate(this));
 
     populateColors();
     updatePatch(QColor());
@@ -188,18 +209,22 @@ void ColorPickerDialog::populateColors()
         colors.push_back(*it);
 
     ui->colorTable->setColumnCount(5);
-    ui->colorTable->setHorizontalHeaderLabels({ tr("Color"), tr("Hue"), tr("Saturation"), tr("Value"), tr("Description") });
+    ui->colorTable->setHorizontalHeaderLabels({ tr("Color"), tr("Hue"), tr("Sat"), tr("Val"), tr("Description") });
     ui->colorTable->setRowCount(static_cast<int>(colors.size()));
     ui->colorTable->verticalHeader()->setVisible(false);
 
+    QSize iconSize(80, 25);
+
     for (size_t i = 0; i < colors.size(); ++i) {
         const ColorInfo& info = colors[i];
-        QPixmap pm(80, 80);
-        pm.fill(info.color);
+        QPixmap pm(iconSize);
+        QColor opaqueColor = info.color;
+        opaqueColor.setAlpha(255);
+        pm.fill(opaqueColor);
         QTableWidgetItem* itemColor = new QTableWidgetItem(QIcon(pm), "");
         itemColor->setData(Qt::UserRole, info.color);
         itemColor->setToolTip(info.features.join(", "));
-        itemColor->setFlags(itemColor->flags() & ~Qt::ItemIsEditable);
+        itemColor->setFlags(itemColor->flags() & ~Qt::ItemIsEditable & ~Qt::ItemIsSelectable);
         QTableWidgetItem* itemDesc = new QTableWidgetItem(info.features.join(", "));
         itemDesc->setFlags(itemDesc->flags() & ~Qt::ItemIsEditable);
         int h, s, v;
@@ -217,9 +242,9 @@ void ColorPickerDialog::populateColors()
         valItem->setFlags(valItem->flags() & ~Qt::ItemIsEditable);
         ui->colorTable->setItem(i, 3, valItem);
         ui->colorTable->setItem(i, 4, itemDesc);
-        ui->colorTable->setRowHeight(static_cast<int>(i), 100);
+        ui->colorTable->setRowHeight(static_cast<int>(i), iconSize.height() + 10);
     }
-    ui->colorTable->setIconSize(QSize(100, 100));
+    ui->colorTable->setIconSize(iconSize);
     ui->colorTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->colorTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     ui->colorTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
