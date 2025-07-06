@@ -806,10 +806,6 @@ void StyleTab::saveArea()
 }
 
 ///////// point tab
-void StyleTab::on_pointUpdateMap_clicked()
-{
-    freshRender();
-}
 
 void StyleTab::on_editingFinishedPointLabel()
 {
@@ -844,11 +840,6 @@ void StyleTab::on_pointWidth_editingFinished()
 }
 
 void StyleTab::on_pointOpacity_editingFinished()
-{
-    savePoint();
-}
-
-void StyleTab::on_pointFillImageOpacity_editingFinished()
 {
     savePoint();
 }
