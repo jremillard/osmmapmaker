@@ -16,6 +16,17 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <!-- Allow xs:dateTime values or empty strings -->
+  <xs:simpleType name="optionalDateTime">
+    <xs:union memberTypes="xs:dateTime">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:length value="0"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
   <!-- Valid OSM tag/field names -->
   <xs:simpleType name="fieldName">
     <xs:restriction base="xs:string">
@@ -42,7 +53,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
-        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="lastUpdateDate" type="optionalDateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
         <xs:element name="fileName" type="xs:string"/>
       </xs:sequence>
@@ -54,7 +65,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
-        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="lastUpdateDate" type="optionalDateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
@@ -65,7 +76,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
-        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="lastUpdateDate" type="optionalDateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
@@ -76,7 +87,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
-        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="lastUpdateDate" type="optionalDateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
         <xs:element name="overpassQuery" type="xs:string"/>
       </xs:sequence>
@@ -88,7 +99,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="dataSource" type="xs:string"/>
-        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="lastUpdateDate" type="optionalDateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
         <xs:element name="fileName" type="xs:string"/>
         <xs:element name="interval" type="nonNegativeDecimal"/>
