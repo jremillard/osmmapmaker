@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QFileDialog>
+#include "inputtypedialog.h"
 #include <QInputDialog>
 #include <osmdatafile.h>
 #include <osmdataoverpass.h>
@@ -231,16 +232,12 @@ void DataTab::saveCurrent()
 
 void DataTab::on_addDataSource_clicked()
 {
-    QMessageBox msgBox(this);
-    msgBox.setWindowTitle(tr("Add Map Data Source"));
-    msgBox.setText(tr("Import map data from:"));
-    QPushButton* localButton = msgBox.addButton(tr("Local File"), QMessageBox::AcceptRole);
-    QPushButton* overButton = msgBox.addButton(tr("Overpass"), QMessageBox::AcceptRole);
-    msgBox.addButton(QMessageBox::Cancel);
-    msgBox.exec();
+    InputTypeDialog dlg(this);
+    if (dlg.exec() != QDialog::Accepted)
+        return;
 
-    if (msgBox.clickedButton() == localButton) {
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Open OSM File"), "", tr("Image Files (*.osm.pbf *.osm)"));
+    if (dlg.choice() == InputTypeDialog::LocalFile) {
+        QString fileName = dlg.fileName();
         if (fileName.isEmpty())
             return;
 
@@ -297,7 +294,7 @@ void DataTab::on_addDataSource_clicked()
 
         src->setDataName(dataSourceName);
         project_->addDataSource(src);
-    } else if (msgBox.clickedButton() == overButton) {
+    } else if (dlg.choice() == InputTypeDialog::Overpass) {
         OsmDataOverpass* src = new OsmDataOverpass(&nam_);
 
         QString primarySourceName = DataSource::primarySourceName();
