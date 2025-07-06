@@ -8,6 +8,8 @@
 #include <algorithm>
 
 namespace {
+static QPoint lastOffset(0, 0);
+static QSize lastSize(0, 0);
 struct ColorInfo {
     QColor color;
     QStringList features;
@@ -20,6 +22,24 @@ ColorPickerDialog::ColorPickerDialog(Project* project, QWidget* parent)
 {
     ui->setupUi(this);
     project_ = project;
+
+    if (parent) {
+        if (!lastSize.isEmpty()) {
+            resize(lastSize);
+            move(parent->pos() + lastOffset);
+        } else {
+            QSize s(std::max(1000, parent->width()), std::max(1000, parent->height()));
+            resize(s);
+            move(parent->pos());
+            lastSize = s;
+            lastOffset = QPoint(0, 0);
+        }
+    } else {
+        if (!lastSize.isEmpty())
+            resize(lastSize);
+        else
+            resize(QSize(1000, 1000));
+    }
 
     populateColors();
     updatePatch(QColor());
@@ -34,6 +54,15 @@ void ColorPickerDialog::setCurrentColor(const QColor& color)
     color_ = color;
     ui->colorWidget->setCurrentColor(color);
     updatePatch(color);
+    for (int i = 0; i < ui->usedColors->count(); ++i) {
+        QListWidgetItem* item = ui->usedColors->item(i);
+        QColor c = item->data(Qt::UserRole).value<QColor>();
+        if (c == color) {
+            ui->usedColors->setCurrentItem(item);
+            ui->usedColors->scrollToItem(item);
+            break;
+        }
+    }
 }
 
 QColor ColorPickerDialog::getColor(Project* project, const QColor& initial, QWidget* parent)
@@ -148,4 +177,19 @@ void ColorPickerDialog::updatePatch(const QColor& color)
     pm.fill(color);
     ui->currentColorPatch->setPixmap(pm);
     ui->htmlColor->setText(color.name());
+}
+
+void ColorPickerDialog::moveEvent(QMoveEvent* event)
+{
+    QDialog::moveEvent(event);
+    if (parentWidget())
+        lastOffset = pos() - parentWidget()->pos();
+    else
+        lastOffset = pos();
+}
+
+void ColorPickerDialog::resizeEvent(QResizeEvent* event)
+{
+    QDialog::resizeEvent(event);
+    lastSize = size();
 }
