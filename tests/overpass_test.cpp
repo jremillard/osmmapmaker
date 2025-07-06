@@ -3,6 +3,9 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "osmdataoverpass.h"
 #include "renderdatabase.h"
+#include "project.h"
+#include <QCoreApplication>
+#include <filesystem>
 
 TEST_CASE("Overpass import uses cache", "[Overpass]")
 {
@@ -31,4 +34,29 @@ TEST_CASE("Overpass network failure throws", "[Overpass]")
     RenderDatabase db;
 
     REQUIRE_THROWS(over.importData(db));
+}
+
+TEST_CASE("Project loads overpass data source", "[Project][Overpass]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_overpass.osmmap.xml");
+    std::filesystem::path p = fileName.toStdString();
+
+    Project proj(p);
+
+    bool found = false;
+    for (auto* ds : proj.dataSources()) {
+        if (dynamic_cast<OsmDataOverpass*>(ds) != nullptr)
+            found = true;
+    }
+    REQUIRE(found);
+
+    std::filesystem::remove_all(p.replace_extension(""));
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
