@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QGridLayout>
+#include <QSizePolicy>
 
 BoundingBoxDialog::BoundingBoxDialog(QWidget* parent)
     : QDialog(parent)
@@ -25,7 +26,8 @@ BoundingBoxDialog::BoundingBoxDialog(QWidget* parent)
     maxLon_->setDecimals(6);
 
     QVBoxLayout* main = new QVBoxLayout(this);
-    main->addWidget(canvas_);
+    canvas_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    main->addWidget(canvas_, /*stretch*/ 1);
 
     QGridLayout* grid = new QGridLayout;
     grid->addWidget(new QLabel(tr("Min Lat"), this), 0, 0);
@@ -55,6 +57,8 @@ BoundingBoxDialog::BoundingBoxDialog(QWidget* parent)
 
     canvas_->setCenter(0.0, 0.0);
     canvas_->setZoom(2);
+
+    resize(600, 400);
 }
 
 void BoundingBoxDialog::setInitialBox(const BoundingBoxCoords& box)
