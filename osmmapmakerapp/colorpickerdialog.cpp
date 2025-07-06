@@ -60,7 +60,7 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
         "instead, select a small set (around three to five) and then vary shades and "
         "tints within those hues for clarity and organization."));
     ui->hintBox->document()->setTextWidth(ui->hintBox->viewport()->width());
-    ui->hintBox->setFixedHeight(static_cast<int>(ui->hintBox->document()->size().height()) + 5);
+    ui->hintBox->setFixedHeight(100);
     ui->hintWidget->setVisible(showHint);
 
     ui->hueSlider->setRange(0, 359);
@@ -198,15 +198,23 @@ void ColorPickerDialog::populateColors()
         QTableWidgetItem* itemColor = new QTableWidgetItem(QIcon(pm), "");
         itemColor->setData(Qt::UserRole, info.color);
         itemColor->setToolTip(info.features.join(", "));
+        itemColor->setFlags(itemColor->flags() & ~Qt::ItemIsEditable);
         QTableWidgetItem* itemDesc = new QTableWidgetItem(info.features.join(", "));
+        itemDesc->setFlags(itemDesc->flags() & ~Qt::ItemIsEditable);
         int h, s, v;
         info.color.getHsv(&h, &s, &v);
         if (h < 0)
             h = 0;
         ui->colorTable->setItem(i, 0, itemColor);
-        ui->colorTable->setItem(i, 1, new QTableWidgetItem(QString::number(h)));
-        ui->colorTable->setItem(i, 2, new QTableWidgetItem(QString::number(s)));
-        ui->colorTable->setItem(i, 3, new QTableWidgetItem(QString::number(v)));
+        QTableWidgetItem* hueItem = new QTableWidgetItem(QString::number(h));
+        hueItem->setFlags(hueItem->flags() & ~Qt::ItemIsEditable);
+        ui->colorTable->setItem(i, 1, hueItem);
+        QTableWidgetItem* satItem = new QTableWidgetItem(QString::number(s));
+        satItem->setFlags(satItem->flags() & ~Qt::ItemIsEditable);
+        ui->colorTable->setItem(i, 2, satItem);
+        QTableWidgetItem* valItem = new QTableWidgetItem(QString::number(v));
+        valItem->setFlags(valItem->flags() & ~Qt::ItemIsEditable);
+        ui->colorTable->setItem(i, 3, valItem);
         ui->colorTable->setItem(i, 4, itemDesc);
         ui->colorTable->setRowHeight(static_cast<int>(i), 100);
     }
@@ -322,7 +330,14 @@ void ColorPickerDialog::onHeaderClicked(int index)
     lastSortColumn = index;
     // preserve selection
     QColor c = color_;
-    ui->colorTable->sortItems(index);
+    QHeaderView* header = ui->colorTable->horizontalHeader();
+    Qt::SortOrder order = header->sortIndicatorOrder();
+    if (header->sortIndicatorSection() == index)
+        order = (order == Qt::AscendingOrder) ? Qt::DescendingOrder : Qt::AscendingOrder;
+    else
+        order = Qt::AscendingOrder;
+    ui->colorTable->horizontalHeader()->setSortIndicator(index, order);
+    ui->colorTable->sortItems(index, order);
     int row = findRow(c);
     if (row >= 0) {
         ui->colorTable->selectRow(row);
@@ -337,6 +352,15 @@ void ColorPickerDialog::updatePatch(const QColor& color)
     ui->currentColorPatch->setAutoFillBackground(true);
     ui->currentColorPatch->setPalette(pal);
     ui->htmlColor->setText(color.name());
+    QString cssName;
+    for (const QString& name : QColor::colorNames()) {
+        if (QColor(name) == color) {
+            cssName = name;
+            break;
+        }
+    }
+    ui->currentColorPatch->setText(cssName);
+    ui->currentColorPatch->setAlignment(Qt::AlignCenter);
 }
 
 void ColorPickerDialog::moveEvent(QMoveEvent* event)
@@ -353,5 +377,5 @@ void ColorPickerDialog::resizeEvent(QResizeEvent* event)
     QDialog::resizeEvent(event);
     lastSize = size();
     ui->hintBox->document()->setTextWidth(ui->hintBox->viewport()->width());
-    ui->hintBox->setFixedHeight(static_cast<int>(ui->hintBox->document()->size().height()) + 5);
+    ui->hintBox->setFixedHeight(100);
 }

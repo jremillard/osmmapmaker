@@ -29,21 +29,21 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="htmlColor"/>
-     </item>
-     <item>
       <widget class="QPushButton" name="standardPicker">
        <property name="text">
-        <string>Pick</string>
+        <string>Pick...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="cssPicker">
        <property name="text">
-        <string>CSS</string>
+        <string>CSS...</string>
        </property>
       </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="htmlColor"/>
      </item>
     </layout>
    </item>
@@ -125,7 +125,7 @@
        <item>
         <widget class="QPushButton" name="dismissHint">
          <property name="text">
-          <string>Dismiss</string>
+          <string>Hide</string>
          </property>
         </widget>
        </item>
