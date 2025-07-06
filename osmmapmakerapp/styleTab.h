@@ -34,7 +34,6 @@ private slots:
     void on_treeDown_clicked();
 
     void on_styleTree_itemSelectionChanged();
-    void on_pointUpdateMap_clicked();
     void on_updateMap_clicked();
 
     // map
@@ -83,7 +82,6 @@ private slots:
     void on_pointColorPick_clicked();
     void on_pointWidth_editingFinished();
     void on_pointOpacity_editingFinished();
-    void on_pointFillImageOpacity_editingFinished();
 
 private:
     void showEvent(QShowEvent* event);
