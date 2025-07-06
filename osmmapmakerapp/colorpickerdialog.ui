@@ -20,26 +20,111 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="hexLayout">
      <item>
-      <widget class="QColorDialog" name="colorWidget">
-       <property name="options">
-        <set>QColorDialog::DontUseNativeDialog</set>
+      <widget class="QLabel" name="hexLabel">
+       <property name="text">
+        <string>Web/Hex:</string>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="vLayoutRight">
-       <item>
-        <widget class="QLineEdit" name="htmlColor"/>
-       </item>
-       <item>
-        <widget class="QListWidget" name="usedColors"/>
-       </item>
-      </layout>
+      <widget class="QLineEdit" name="htmlColor"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="standardPicker">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
+   <item>
+    <layout class="QGridLayout" name="hsvLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="hueLabel">
+       <property name="text">
+        <string>Hue</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="hueSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLineEdit" name="hueEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="satLabel">
+       <property name="text">
+        <string>Saturation</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSlider" name="satSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLineEdit" name="satEdit"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="valLabel">
+       <property name="text">
+        <string>Value</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSlider" name="valSlider">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLineEdit" name="valEdit"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="colorTable">
+     <property name="selectionBehavior">
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+    </widget>
+   </item>
+    <item>
+     <widget class="QWidget" name="hintWidget">
+      <layout class="QHBoxLayout" name="hintLayout">
+       <item>
+        <widget class="QPlainTextEdit" name="hintBox">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="dismissHint">
+         <property name="text">
+          <string>Dismiss</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
