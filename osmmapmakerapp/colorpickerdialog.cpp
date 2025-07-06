@@ -7,6 +7,7 @@
 #include <QMenu>
 #include <QPixmap>
 #include <QTableWidgetItem>
+#include <QIcon>
 #include <algorithm>
 
 struct ColorInfo {
@@ -64,6 +65,10 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     ui->hintBox->document()->setTextWidth(ui->hintBox->viewport()->width());
     ui->hintBox->setFixedHeight(100);
     ui->hintWidget->setVisible(showHint);
+
+    int editWidth = ui->hueEdit->sizeHint().width();
+    ui->htmlColor->setMinimumWidth(editWidth);
+    ui->htmlColor->setMaximumWidth(editWidth);
 
     ui->hueSlider->setRange(0, 359);
     ui->satSlider->setRange(0, 255);
@@ -197,10 +202,15 @@ void ColorPickerDialog::populateColors()
     for (size_t i = 0; i < colors.size(); ++i) {
         const ColorInfo& info = colors[i];
         QPixmap pm(80, 80);
-        QColor opaqueColor = info.color;
-        opaqueColor.setAlpha(255);
-        pm.fill(opaqueColor);
-        QTableWidgetItem* itemColor = new QTableWidgetItem(QIcon(pm), "");
+        QColor solid = info.color;
+        solid.setAlpha(255);
+        pm.fill(solid);
+        QIcon icon;
+        icon.addPixmap(pm, QIcon::Normal);
+        icon.addPixmap(pm, QIcon::Selected);
+        icon.addPixmap(pm, QIcon::Active);
+        icon.addPixmap(pm, QIcon::Disabled);
+        QTableWidgetItem* itemColor = new QTableWidgetItem(icon, "");
         itemColor->setData(Qt::UserRole, info.color);
         itemColor->setToolTip(info.features.join(", "));
         itemColor->setFlags(itemColor->flags() & ~Qt::ItemIsEditable);
