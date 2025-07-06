@@ -25,6 +25,8 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     , ui(new Ui::ColorPickerDialog)
 {
     ui->setupUi(this);
+    int editWidth = ui->hueEdit->sizeHint().width();
+    ui->htmlColor->setFixedWidth(editWidth);
     ui->verticalLayout->setStretch(3, 1);
     ui->verticalLayout->setStretch(4, 0);
     project_ = project;
@@ -195,7 +197,9 @@ void ColorPickerDialog::populateColors()
     for (size_t i = 0; i < colors.size(); ++i) {
         const ColorInfo& info = colors[i];
         QPixmap pm(80, 80);
-        pm.fill(info.color);
+        QColor opaqueColor = info.color;
+        opaqueColor.setAlpha(255);
+        pm.fill(opaqueColor);
         QTableWidgetItem* itemColor = new QTableWidgetItem(QIcon(pm), "");
         itemColor->setData(Qt::UserRole, info.color);
         itemColor->setToolTip(info.features.join(", "));
