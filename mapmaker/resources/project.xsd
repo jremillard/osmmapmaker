@@ -103,6 +103,7 @@
       <xs:sequence>
         <xs:element name="width" type="positiveInt" minOccurs="0"/>
         <xs:element name="height" type="positiveInt" minOccurs="0"/>
+        <xs:element name="file" type="xs:string" minOccurs="0"/>
         <xs:element name="boundingBox" minOccurs="0">
           <xs:complexType>
             <xs:attribute name="left" type="xs:double" use="required"/>

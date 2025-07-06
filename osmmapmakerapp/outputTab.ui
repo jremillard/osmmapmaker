@@ -256,15 +256,29 @@
            <string>Output Directory</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_image">
-           <item>
-            <widget class="QCheckBox" name="imageOutputPathUseProjectDir">
-             <property name="text">
-              <string>Output In Project Directory</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+          <item>
+           <widget class="QCheckBox" name="imageOutputPathUseProjectDir">
+            <property name="text">
+             <string>Output In Project Directory</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_image">
+            <item>
+             <widget class="QLineEdit" name="imagePath">
+              <property name="minimumSize">
+               <size>
+                <width>300</width>
+                <height>0</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="imageWidthLabel">

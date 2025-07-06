@@ -4,9 +4,9 @@
 #include "batchtileoutput.h"
 #include "tileoutput.h"
 #include "imageoutput.h"
+#include "outputtypedialog.h"
 #include <QProgressDialog>
 #include <QApplication>
-#include <QInputDialog>
 
 static QIcon tileOutputIcon(QStringLiteral(":/resources/tile_output.svg"));
 static QIcon imageOutputIcon(QStringLiteral(":/resources/image_output.svg"));
@@ -22,8 +22,8 @@ OutputTab::OutputTab(QWidget* parent)
     ui->tileSize->addItem("512", 512);
     ui->tileSize->addItem("1024", 1024);
 
-    ui->imageWidth->setValue(256);
-    ui->imageHeight->setValue(256);
+    ui->imageWidth->setValue(1024);
+    ui->imageHeight->setValue(1024);
 
     surpressSelectionChange_ = false;
     project_ = NULL;
@@ -95,6 +95,15 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
 
                 ui->imageWidth->setValue(imageOutput->widthPixels());
                 ui->imageHeight->setValue(imageOutput->heightPixels());
+                if (imageOutput->outputFile().isEmpty()) {
+                    ui->imageOutputPathUseProjectDir->setChecked(true);
+                    saveDefaultPathIntoImagePath();
+                    ui->imagePath->setEnabled(false);
+                } else {
+                    ui->imageOutputPathUseProjectDir->setChecked(false);
+                    ui->imagePath->setText(imageOutput->outputFile());
+                    ui->imagePath->setEnabled(true);
+                }
                 BoundingBox bb = imageOutput->boundingBox();
                 ui->imageLongLeft->setValue(bb.left_);
                 ui->imageLongRight->setValue(bb.right_);
@@ -110,14 +119,12 @@ void OutputTab::on_outputNew_clicked()
     QString newName = QString::fromStdString(project_->projectPath().filename().string());
     newName.replace(".osmmap.xml", "", Qt::CaseInsensitive);
 
-    QStringList opts { tr("Tile Set"), tr("Single Image") };
-    bool ok = false;
-    QString choice = QInputDialog::getItem(this, tr("New Output"), tr("Output Type"), opts, 0, false, &ok);
-    if (!ok)
+    OutputTypeDialog dlg(this);
+    if (dlg.exec() != QDialog::Accepted)
         return;
 
     Output* out = nullptr;
-    if (choice == opts[1])
+    if (dlg.choice() == OutputTypeDialog::SingleImage)
         out = new ImageOutput(newName);
     else
         out = new TileOutput(newName);
@@ -211,6 +218,14 @@ void OutputTab::saveDefaultPathIntoTilePath()
     ui->tilePath->setEnabled(false);
 }
 
+void OutputTab::saveDefaultPathIntoImagePath()
+{
+    QString path = QString::fromStdString(project_->projectPath().string());
+    path.replace(".osmmap.xml", ".png", Qt::CaseInsensitive);
+    ui->imagePath->setText(path);
+    ui->imagePath->setEnabled(false);
+}
+
 void OutputTab::on_tileSize_currentIndexChanged(int i)
 {
     if (surpressSelectionChange_ == false)
@@ -244,6 +259,22 @@ void OutputTab::on_imageLongLeft_editingFinished()
 
 void OutputTab::on_imageLongRight_editingFinished()
 {
+    saveImage();
+}
+
+void OutputTab::on_imagePath_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageOutputPathUseProjectDir_clicked()
+{
+    if (ui->imageOutputPathUseProjectDir->isChecked()) {
+        saveDefaultPathIntoImagePath();
+        ui->imagePath->setEnabled(false);
+    } else {
+        ui->imagePath->setEnabled(true);
+    }
     saveImage();
 }
 
@@ -300,6 +331,10 @@ void OutputTab::saveImage()
 
         imageOutput->setWidthPixels(ui->imageWidth->value());
         imageOutput->setHeightPixels(ui->imageHeight->value());
+        if (ui->imageOutputPathUseProjectDir->isChecked())
+            imageOutput->setOutputFile(QString());
+        else
+            imageOutput->setOutputFile(ui->imagePath->text());
         BoundingBox bb;
         bb.left_ = ui->imageLongLeft->value();
         bb.right_ = ui->imageLongRight->value();
