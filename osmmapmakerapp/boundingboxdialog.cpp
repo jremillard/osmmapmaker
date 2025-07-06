@@ -57,6 +57,16 @@ BoundingBoxDialog::BoundingBoxDialog(QWidget* parent)
     canvas_->setZoom(2);
 }
 
+void BoundingBoxDialog::setInitialBox(const BoundingBoxCoords& box)
+{
+    currentBox_ = box;
+    canvas_->setSelection(box);
+    minLat_->setValue(box.minLat);
+    minLon_->setValue(box.minLon);
+    maxLat_->setValue(box.maxLat);
+    maxLon_->setValue(box.maxLon);
+}
+
 void BoundingBoxDialog::onReset()
 {
     canvas_->setCenter(0.0, 0.0);

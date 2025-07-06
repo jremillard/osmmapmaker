@@ -186,3 +186,10 @@ QImage MapCanvas::renderSelection(int tileSize) const
     }
     return img;
 }
+
+void MapCanvas::setSelection(const BoundingBoxCoords& box)
+{
+    currentBox_ = box;
+    update();
+    emit boxChanged(currentBox_);
+}

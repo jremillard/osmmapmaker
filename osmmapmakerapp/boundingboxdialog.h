@@ -12,6 +12,7 @@ public:
 
     BoundingBoxCoords selectedBox() const { return currentBox_; }
     QImage selectedImage() const { return previewImage_; }
+    void setInitialBox(const BoundingBoxCoords& box);
 
 private slots:
     void onReset();

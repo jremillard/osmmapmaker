@@ -22,6 +22,7 @@ public:
     void setZoom(int z);
     int zoom() const { return zoom_; }
     BoundingBoxCoords selection() const { return currentBox_; }
+    void setSelection(const BoundingBoxCoords& box);
 
     QImage renderSelection(int tileSize = 256) const;
 

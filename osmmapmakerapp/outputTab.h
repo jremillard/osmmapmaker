@@ -46,6 +46,7 @@ private slots:
     void on_imagePath_editingFinished();
     void on_imageOutputPathUseProjectDir_clicked();
     void on_imagePathBrowse_clicked();
+    void on_imageBboxSelect_clicked();
 
 private:
     void saveTile();
