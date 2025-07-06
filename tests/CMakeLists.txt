@@ -26,6 +26,11 @@ target_link_libraries(tileoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(tileoutput_test PRIVATE cxx_std_17)
 add_test(NAME tileoutput_test COMMAND tileoutput_test)
 
+add_executable(imageoutput_test imageoutput_test.cpp)
+target_link_libraries(imageoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(imageoutput_test PRIVATE cxx_std_17)
+add_test(NAME imageoutput_test COMMAND imageoutput_test)
+
 add_executable(batchtileoutput_test batchtileoutput_test.cpp)
 target_link_libraries(batchtileoutput_test PRIVATE
     Catch2::Catch2WithMain

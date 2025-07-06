@@ -1,5 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include "output.h"
+#include "tileoutput.h"
 #include <QtXml>
 
 TEST_CASE("TileOutput default values", "[TileOutput]")

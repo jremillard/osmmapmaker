@@ -1,7 +1,7 @@
 #pragma once
 
 #include "project.h"
-#include "output.h"
+#include "tileoutput.h"
 #include "renderqt.h"
 #include <filesystem>
 

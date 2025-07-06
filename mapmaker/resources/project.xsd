@@ -30,6 +30,7 @@
         <xs:element ref="openStreetMapDirectDownload" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="openStreetMapExtractDownload" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="tileOutput" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="imageOutput" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="map" minOccurs="1" maxOccurs="1"/>
       </xs:sequence>
     </xs:complexType>
@@ -78,6 +79,24 @@
         <xs:element name="resolution1x" type="xs:boolean"/>
         <xs:element name="resolution2x" type="xs:boolean"/>
         <xs:element name="directory" type="xs:string"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="imageOutput">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="width" type="positiveInt" minOccurs="0"/>
+        <xs:element name="height" type="positiveInt" minOccurs="0"/>
+        <xs:element name="boundingBox" minOccurs="0">
+          <xs:complexType>
+            <xs:attribute name="left" type="xs:double" use="required"/>
+            <xs:attribute name="right" type="xs:double" use="required"/>
+            <xs:attribute name="top" type="xs:double" use="required"/>
+            <xs:attribute name="bottom" type="xs:double" use="required"/>
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>

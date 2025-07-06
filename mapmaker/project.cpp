@@ -11,6 +11,8 @@
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
 
+#include "tileoutput.h"
+#include "imageoutput.h"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include <SQLiteCpp/VariadicBind.h>
 
@@ -124,6 +126,8 @@ Project::Project(path fileName)
             dataSources_.push_back(new OsmDataFile(topNode));
         } else if (name == "tileOutput") {
             outputs_.push_back(new TileOutput(topNode));
+        } else if (name == "imageOutput") {
+            outputs_.push_back(new ImageOutput(topNode));
         } else if (name == "map") {
             backgroundColor_ = topNode.attributes().namedItem("backgroundColor").nodeValue();
             backgroundOpacity_ = topNode.attributes().namedItem("backgroundOpacity").nodeValue().toDouble();

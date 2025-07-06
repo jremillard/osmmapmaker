@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
 
-
 project(mapmaker LANGUAGES CXX)
 
 set(SRC_FILES
@@ -15,6 +14,8 @@ set(SRC_FILES
     stylelayer.cpp
     textfield.cpp
     output.cpp
+    tileoutput.cpp
+    imageoutput.cpp
     batchtileoutput.cpp
     renderqt.cpp
     linebreaking.cpp
@@ -38,4 +39,3 @@ target_link_libraries(mapmaker
         Qt5::XmlPatterns
         Qt5::Network
 )
-
