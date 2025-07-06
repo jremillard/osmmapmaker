@@ -35,8 +35,17 @@ private slots:
     void on_tileOutputPathUseProjectDir_clicked();
     void on_tileSize_currentIndexChanged(int i);
 
+    // image signals
+    void on_imageWidth_editingFinished();
+    void on_imageHeight_editingFinished();
+    void on_imageLatTop_editingFinished();
+    void on_imageLatBottom_editingFinished();
+    void on_imageLongLeft_editingFinished();
+    void on_imageLongRight_editingFinished();
+
 private:
     void saveTile();
+    void saveImage();
     void saveDefaultPathIntoTilePath();
 
     bool surpressSelectionChange_;

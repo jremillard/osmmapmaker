@@ -247,9 +247,108 @@
         </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="blankPage"/>
-    </widget>
+      </widget>
+      <widget class="QWidget" name="imagePage">
+       <layout class="QFormLayout" name="formLayout_image">
+        <item row="0" column="0" colspan="2">
+         <widget class="QGroupBox" name="imageOutputDir">
+          <property name="title">
+           <string>Output Directory</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_image">
+           <item>
+            <widget class="QCheckBox" name="imageOutputPathUseProjectDir">
+             <property name="text">
+              <string>Output In Project Directory</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="imageWidthLabel">
+          <property name="text">
+           <string>Width</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QSpinBox" name="imageWidth">
+          <property name="maximum">
+           <number>4096</number>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="imageHeightLabel">
+          <property name="text">
+           <string>Height</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QSpinBox" name="imageHeight">
+          <property name="maximum">
+           <number>4096</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="imageBoundingBox">
+          <property name="title">
+           <string>Bounding Box</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_image">
+           <item row="3" column="2">
+            <widget class="QDoubleSpinBox" name="imageLatBottom">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QDoubleSpinBox" name="imageLongRight">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QDoubleSpinBox" name="imageLongLeft">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_image_long">
+             <property name="text">
+              <string>Longitude</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QDoubleSpinBox" name="imageLatTop">
+             <property name="decimals">
+              <number>5</number>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_image_lat">
+             <property name="text">
+              <string>Latitude</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="blankPage"/>
+      </widget>
    </item>
   </layout>
  </widget>
