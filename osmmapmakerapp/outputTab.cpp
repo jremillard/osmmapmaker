@@ -8,9 +8,6 @@
 #include <QProgressDialog>
 #include <QApplication>
 
-static QIcon tileOutputIcon(QStringLiteral(":/resources/tile_output.svg"));
-static QIcon imageOutputIcon(QStringLiteral(":/resources/image_output.svg"));
-
 OutputTab::OutputTab(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::OutputTab)
@@ -45,9 +42,9 @@ void OutputTab::setProject(Project* project)
         QListWidgetItem* item = new QListWidgetItem(output->name());
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
         if (dynamic_cast<TileOutput*>(output))
-            item->setIcon(tileOutputIcon);
+            item->setIcon(QIcon(QStringLiteral(":/resources/tile_output.svg")));
         else if (dynamic_cast<ImageOutput*>(output))
-            item->setIcon(imageOutputIcon);
+            item->setIcon(QIcon(QStringLiteral(":/resources/image_output.svg")));
         ui->outputList->addItem(item);
     }
 
@@ -134,9 +131,9 @@ void OutputTab::on_outputNew_clicked()
     QListWidgetItem* item = new QListWidgetItem(out->name());
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
     if (dynamic_cast<TileOutput*>(out))
-        item->setIcon(tileOutputIcon);
+        item->setIcon(QIcon(QStringLiteral(":/resources/tile_output.svg")));
     else
-        item->setIcon(imageOutputIcon);
+        item->setIcon(QIcon(QStringLiteral(":/resources/image_output.svg")));
 
     ui->outputList->addItem(item);
     ui->outputList->setCurrentRow(ui->outputList->count() - 1);
