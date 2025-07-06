@@ -35,6 +35,7 @@ private slots:
     void onValEdited();
     void onHtmlEdited();
     void onStandardPicker();
+    void onCssPicker();
     void onDismissHint();
     void onHeaderClicked(int index);
 

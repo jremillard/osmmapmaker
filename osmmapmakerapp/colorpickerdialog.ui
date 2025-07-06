@@ -34,7 +34,14 @@
      <item>
       <widget class="QPushButton" name="standardPicker">
        <property name="text">
-        <string>...</string>
+        <string>Pick</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="cssPicker">
+       <property name="text">
+        <string>CSS</string>
        </property>
       </widget>
      </item>

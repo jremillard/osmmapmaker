@@ -4,6 +4,7 @@
 #include <project.h>
 #include <stylelayer.h>
 #include <QColorDialog>
+#include <QMenu>
 #include <QPixmap>
 #include <QTableWidgetItem>
 #include <algorithm>
@@ -24,6 +25,8 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     , ui(new Ui::ColorPickerDialog)
 {
     ui->setupUi(this);
+    ui->verticalLayout->setStretch(3, 1);
+    ui->verticalLayout->setStretch(4, 0);
     project_ = project;
     item_ = item;
     if (!item_.isEmpty())
@@ -56,6 +59,8 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
         "backgrounds to maintain readability. Avoid using too many different hues; "
         "instead, select a small set (around three to five) and then vary shades and "
         "tints within those hues for clarity and organization."));
+    ui->hintBox->document()->setTextWidth(ui->hintBox->viewport()->width());
+    ui->hintBox->setFixedHeight(static_cast<int>(ui->hintBox->document()->size().height()) + 5);
     ui->hintWidget->setVisible(showHint);
 
     ui->hueSlider->setRange(0, 359);
@@ -72,6 +77,7 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
 
     connect(ui->htmlColor, &QLineEdit::editingFinished, this, &ColorPickerDialog::onHtmlEdited);
     connect(ui->standardPicker, &QPushButton::clicked, this, &ColorPickerDialog::onStandardPicker);
+    connect(ui->cssPicker, &QPushButton::clicked, this, &ColorPickerDialog::onCssPicker);
     connect(ui->dismissHint, &QPushButton::clicked, this, &ColorPickerDialog::onDismissHint);
     connect(ui->colorTable, &QTableWidget::cellClicked, this, &ColorPickerDialog::onColorTableCellClicked);
     connect(ui->colorTable->horizontalHeader(), &QHeaderView::sectionClicked, this, &ColorPickerDialog::onHeaderClicked);
@@ -202,8 +208,14 @@ void ColorPickerDialog::populateColors()
         ui->colorTable->setItem(i, 2, new QTableWidgetItem(QString::number(s)));
         ui->colorTable->setItem(i, 3, new QTableWidgetItem(QString::number(v)));
         ui->colorTable->setItem(i, 4, itemDesc);
-        ui->colorTable->setRowHeight(static_cast<int>(i), 80);
+        ui->colorTable->setRowHeight(static_cast<int>(i), 100);
     }
+    ui->colorTable->setIconSize(QSize(100, 100));
+    ui->colorTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->colorTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    ui->colorTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    ui->colorTable->horizontalHeader()->setSectionResizeMode(3, QHeaderView::ResizeToContents);
+    ui->colorTable->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Stretch);
     ui->colorTable->setSortingEnabled(true);
     ui->colorTable->sortItems(lastSortColumn);
 }
@@ -282,6 +294,23 @@ void ColorPickerDialog::onStandardPicker()
         setCurrentColor(c);
 }
 
+void ColorPickerDialog::onCssPicker()
+{
+    QMenu menu;
+    for (const QString& name : QColor::colorNames()) {
+        QPixmap pm(12, 12);
+        pm.fill(QColor(name));
+        QAction* act = menu.addAction(QIcon(pm), name);
+        act->setData(name);
+    }
+    QAction* chosen = menu.exec(ui->cssPicker->mapToGlobal(QPoint(0, ui->cssPicker->height())));
+    if (chosen) {
+        QColor c(chosen->data().toString());
+        if (c.isValid())
+            setCurrentColor(c);
+    }
+}
+
 void ColorPickerDialog::onDismissHint()
 {
     ui->hintWidget->setVisible(false);
@@ -303,9 +332,10 @@ void ColorPickerDialog::onHeaderClicked(int index)
 
 void ColorPickerDialog::updatePatch(const QColor& color)
 {
-    QPixmap pm(60, 60);
-    pm.fill(color);
-    ui->currentColorPatch->setPixmap(pm);
+    QPalette pal = ui->currentColorPatch->palette();
+    pal.setColor(ui->currentColorPatch->backgroundRole(), color);
+    ui->currentColorPatch->setAutoFillBackground(true);
+    ui->currentColorPatch->setPalette(pal);
     ui->htmlColor->setText(color.name());
 }
 
@@ -322,4 +352,6 @@ void ColorPickerDialog::resizeEvent(QResizeEvent* event)
 {
     QDialog::resizeEvent(event);
     lastSize = size();
+    ui->hintBox->document()->setTextWidth(ui->hintBox->viewport()->width());
+    ui->hintBox->setFixedHeight(static_cast<int>(ui->hintBox->document()->size().height()) + 5);
 }
