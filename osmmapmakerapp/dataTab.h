@@ -27,6 +27,7 @@ private slots:
     void on_addDataSource_clicked();
     void on_overpassImport_clicked();
     void on_overpassDelete_clicked();
+    void on_dataSourceDelete_clicked();
     void on_overpassQuery_textChanged();
     void on_dataSources_currentIndexChanged(int index);
     void on_OSMFileName_textChanged(QString text);

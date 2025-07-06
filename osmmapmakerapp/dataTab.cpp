@@ -131,6 +131,11 @@ void DataTab::on_overpassDelete_clicked()
     on_OSMFileDelete_clicked();
 }
 
+void DataTab::on_dataSourceDelete_clicked()
+{
+    on_OSMFileDelete_clicked();
+}
+
 void DataTab::on_OSMFileBrowse_clicked()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Open OSM File"), "", tr("Image Files (*.osm.pbf *.osm)"));

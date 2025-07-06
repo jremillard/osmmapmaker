@@ -95,8 +95,19 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
+     <item>
+      <widget class="QPushButton" name="dataSourceDelete">
+       <property name="text">
+        <string>Delete Data Source</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/trashicon.svg</normaloff>:/resources/trashicon.svg</iconset>
+       </property>
+      </widget>
+     </item>
+   </layout>
+  </item>
    <item>
     <widget class="QGroupBox" name="dataSourceGroup">
      <property name="title">
@@ -186,23 +197,6 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="OSMFileDelete">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Delete Data Source</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/resources/trashicon.svg</normaloff>:/resources/trashicon.svg</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
            <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -281,23 +275,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="overpassDelete">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Delete Data Source</string>
-            </property>
-            <property name="icon">
-             <iconset resource="resources.qrc">
-              <normaloff>:/resources/trashicon.svg</normaloff>:/resources/trashicon.svg</iconset>
-            </property>
-           </widget>
           </item>
           <item>
            <spacer name="verticalSpacer_overpass2">
