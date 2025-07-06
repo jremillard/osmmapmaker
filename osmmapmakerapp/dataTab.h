@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <QNetworkAccessManager>
 
 #include "project.h"
 
@@ -23,9 +24,12 @@ private slots:
     void on_OSMFileBrowse_clicked();
     void on_OSMFileImport_clicked();
     void on_OSMFileDelete_clicked();
+    void on_overpassImport_clicked();
+    void on_overpassDelete_clicked();
     void on_addDataSource_clicked();
     void on_dataSources_currentIndexChanged(int index);
     void on_OSMFileName_textChanged(QString text);
+    void on_overpassQuery_textChanged();
     void on_dataSourceUserRename_clicked();
     void on_dataSouceIDEdit_clicked();
 
@@ -34,6 +38,8 @@ private:
 
     Project* project_ = NULL;
     int currentIndex_;
+
+    QNetworkAccessManager networkManager_;
 
     Ui::DataTab* ui;
 };

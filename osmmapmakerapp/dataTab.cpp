@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <osmdatafile.h>
+#include <osmdataoverpass.h>
 
 DataTab::DataTab(QWidget* parent)
     : QWidget(parent)
@@ -66,12 +67,12 @@ void DataTab::on_dataSources_currentIndexChanged(int index)
             ui->dataSourceUserRename->setEnabled(true);
 
             if (name == output->userName()) {
-                if (dynamic_cast<OsmDataFile*>(output) != NULL) {
+                if (auto* fileSrc = dynamic_cast<OsmDataFile*>(output)) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOSMFile);
-
-                    OsmDataFile* outputC = dynamic_cast<OsmDataFile*>(output);
-
-                    ui->OSMFileName->setText(QDir::toNativeSeparators(outputC->localFile()));
+                    ui->OSMFileName->setText(QDir::toNativeSeparators(fileSrc->localFile()));
+                } else if (auto* overSrc = dynamic_cast<OsmDataOverpass*>(output)) {
+                    ui->stackedWidget->setCurrentWidget(ui->pageOverpass);
+                    ui->overpassQuery->setPlainText(overSrc->query());
                 }
 
                 QDateTime importTime = output->importTime();
@@ -114,6 +115,11 @@ void DataTab::on_OSMFileDelete_clicked()
             break;
         }
     }
+}
+
+void DataTab::on_overpassDelete_clicked()
+{
+    on_OSMFileDelete_clicked();
 }
 
 void DataTab::on_OSMFileBrowse_clicked()
@@ -171,6 +177,11 @@ void DataTab::on_OSMFileImport_clicked()
     }
 }
 
+void DataTab::on_overpassImport_clicked()
+{
+    on_OSMFileImport_clicked();
+}
+
 void DataTab::on_OSMFileName_textChanged(QString text)
 {
     if (QFileInfo::exists(text)) {
@@ -180,6 +191,11 @@ void DataTab::on_OSMFileName_textChanged(QString text)
     }
 }
 
+void DataTab::on_overpassQuery_textChanged()
+{
+    ui->overpassImport->setEnabled(!ui->overpassQuery->toPlainText().isEmpty());
+}
+
 void DataTab::saveCurrent()
 {
     if (currentIndex_ >= 0 && currentIndex_ < ui->dataSources->count()) {
@@ -187,12 +203,12 @@ void DataTab::saveCurrent()
 
         for (DataSource* output : project_->dataSources()) {
             if (name == output->userName()) {
-                if (dynamic_cast<OsmDataFile*>(output) != NULL) {
+                if (auto* fileSrc = dynamic_cast<OsmDataFile*>(output)) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOSMFile);
-
-                    OsmDataFile* outputC = dynamic_cast<OsmDataFile*>(output);
-
-                    outputC->SetLocalFile(ui->OSMFileName->text());
+                    fileSrc->SetLocalFile(ui->OSMFileName->text());
+                } else if (auto* overSrc = dynamic_cast<OsmDataOverpass*>(output)) {
+                    ui->stackedWidget->setCurrentWidget(ui->pageOverpass);
+                    overSrc->setQuery(ui->overpassQuery->toPlainText());
                 }
 
                 break;
@@ -203,74 +219,81 @@ void DataTab::saveCurrent()
 
 void DataTab::on_addDataSource_clicked()
 {
-    // assume a local OSM file for now.
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open OSM File"), "", tr("Image Files (*.osm.pbf *.osm)"));
+    QMessageBox msgBox(this);
+    msgBox.setText(tr("Add New Map Data Source"));
+    QPushButton* fileBtn = msgBox.addButton(tr("Local File"), QMessageBox::AcceptRole);
+    QPushButton* overBtn = msgBox.addButton(tr("Overpass"), QMessageBox::AcceptRole);
+    msgBox.addButton(QMessageBox::Cancel);
+    msgBox.exec();
 
-    OsmDataFile* src = new OsmDataFile();
-    src->SetLocalFile(fileName);
+    DataSource* src = nullptr;
+    QString baseName;
+    QString baseId;
+    QString fileName;
+
+    if (msgBox.clickedButton() == fileBtn) {
+        fileName = QFileDialog::getOpenFileName(this, tr("Open OSM File"), "", tr("Image Files (*.osm.pbf *.osm)"));
+        if (fileName.isEmpty())
+            return;
+
+        auto* f = new OsmDataFile();
+        f->SetLocalFile(fileName);
+        src = f;
+
+        QFileInfo info(fileName);
+        baseId = info.baseName().toLower();
+        baseName = tr("%0 Local Open Street Map File").arg(info.baseName().left(1).toUpper() + info.baseName().mid(1));
+    } else if (msgBox.clickedButton() == overBtn) {
+        src = new OsmDataOverpass(&networkManager_);
+        baseId = "overpass";
+        baseName = tr("Overpass Data Source");
+    } else {
+        return;
+    }
 
     QString primarySourceName = DataSource::primarySourceName();
-
     bool hasPrimary = false;
-
     for (DataSource* output : project_->dataSources()) {
         if (output->dataName() == primarySourceName)
             hasPrimary = true;
     }
 
-    QFileInfo info(fileName);
-
-    QString basename = info.baseName();
-    if (basename.length() > 0)
-        basename[0] = basename[0].toUpper();
-
-    QString userName = tr("%0 Local Open Street Map File").arg(basename);
+    QString userName = baseName;
     bool nameUsed = false;
     int cycle = 2;
     do {
         nameUsed = false;
-
         for (DataSource* output : project_->dataSources()) {
             if (QString::compare(output->userName(), userName, Qt::CaseInsensitive) == 0)
                 nameUsed = true;
         }
-
         if (nameUsed)
-            userName = tr("%0 %1 Local Open Street Map File").arg(basename).arg(cycle);
-
+            userName = tr("%0 %1").arg(baseName).arg(cycle);
         ++cycle;
     } while (nameUsed);
-
     src->setUserName(userName);
 
     QString dataSourceName;
-    if (hasPrimary == false) {
+    if (!hasPrimary) {
         dataSourceName = primarySourceName;
     } else {
-        dataSourceName = info.baseName();
-        dataSourceName = dataSourceName.toLower();
-
-        bool nameUsed = false;
+        dataSourceName = baseId;
+        bool used = false;
         int cycle = 2;
         do {
-            nameUsed = false;
-
+            used = false;
             for (DataSource* output : project_->dataSources()) {
                 if (QString::compare(output->dataName(), dataSourceName, Qt::CaseInsensitive) == 0)
-                    nameUsed = true;
+                    used = true;
             }
-
-            if (nameUsed)
-                dataSourceName = QString("%0-%1").arg(info.baseName().toLower()).arg(cycle);
-
+            if (used)
+                dataSourceName = QString("%0-%1").arg(baseId).arg(cycle);
             ++cycle;
-        } while (nameUsed);
+        } while (used);
     }
-
     src->setDataName(dataSourceName);
 
     project_->addDataSource(src);
-
     UpdateDataSourceList();
     ui->dataSources->setCurrentIndex(ui->dataSources->count() - 1);
 }
