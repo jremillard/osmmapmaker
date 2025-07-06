@@ -81,6 +81,7 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     connect(ui->dismissHint, &QPushButton::clicked, this, &ColorPickerDialog::onDismissHint);
     connect(ui->colorTable, &QTableWidget::cellClicked, this, &ColorPickerDialog::onColorTableCellClicked);
     connect(ui->colorTable->horizontalHeader(), &QHeaderView::sectionClicked, this, &ColorPickerDialog::onHeaderClicked);
+    connect(ui->colorTable->horizontalHeader(), &QHeaderView::sectionDoubleClicked, this, &ColorPickerDialog::onHeaderDoubleClicked);
 
     populateColors();
     updatePatch(QColor());
@@ -345,12 +346,34 @@ void ColorPickerDialog::onHeaderClicked(int index)
     }
 }
 
+void ColorPickerDialog::onHeaderDoubleClicked(int index)
+{
+    lastSortColumn = index;
+    QColor c = color_;
+    QHeaderView* header = ui->colorTable->horizontalHeader();
+    Qt::SortOrder order = header->sortIndicatorOrder() == Qt::AscendingOrder
+        ? Qt::DescendingOrder
+        : Qt::AscendingOrder;
+    ui->colorTable->horizontalHeader()->setSortIndicator(index, order);
+    ui->colorTable->sortItems(index, order);
+    int row = findRow(c);
+    if (row >= 0) {
+        ui->colorTable->selectRow(row);
+        ui->colorTable->scrollToItem(ui->colorTable->item(row, 0));
+    }
+}
+
 void ColorPickerDialog::updatePatch(const QColor& color)
 {
     QPalette pal = ui->currentColorPatch->palette();
     pal.setColor(ui->currentColorPatch->backgroundRole(), color);
+    QColor textColor = color.lightness() < 128 ? Qt::white : Qt::black;
+    pal.setColor(ui->currentColorPatch->foregroundRole(), textColor);
     ui->currentColorPatch->setAutoFillBackground(true);
     ui->currentColorPatch->setPalette(pal);
+    QFont f = ui->currentColorPatch->font();
+    f.setBold(true);
+    ui->currentColorPatch->setFont(f);
     ui->htmlColor->setText(color.name());
     QString cssName;
     for (const QString& name : QColor::colorNames()) {

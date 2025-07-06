@@ -38,6 +38,7 @@ private slots:
     void onCssPicker();
     void onDismissHint();
     void onHeaderClicked(int index);
+    void onHeaderDoubleClicked(int index);
 
 protected:
     void moveEvent(QMoveEvent* event) override;
