@@ -21,7 +21,10 @@ NewProjectDialog::~NewProjectDialog()
 
 QString NewProjectDialog::projectPath() const
 {
-    return ui->projectPath->text();
+    QString path = ui->projectPath->text();
+    if (!path.endsWith(".osmmap.xml", Qt::CaseInsensitive))
+        path += ".osmmap.xml";
+    return path;
 }
 
 QString NewProjectDialog::templateName() const
