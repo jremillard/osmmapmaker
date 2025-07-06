@@ -8,6 +8,8 @@ To see example output, visit [grotontrails.org](http://www.grotontrails.org) and
 
 The application accepts a `--project` command line option to open a project file directly. If this option is omitted, a file picker will be shown on startup so you can choose the project to load.
 
+An optional `--output` argument can be used to generate map outputs without launching the UI. When invoked as `--output` all configured outputs are written. When invoked as `--output <name>` only the specified output is generated.
+
 ## Dependencies
 
 The project relies on the following libraries:
@@ -25,4 +27,4 @@ The project relies on the following libraries:
 
 Development and testing also require `clang-format`, `lcov`, and `valgrind`.
 
-On Debian-based systems you can install them with `install_dependencies.sh`.
+On Debian-based systems you can install them with `install_dependencies_apt.sh`.

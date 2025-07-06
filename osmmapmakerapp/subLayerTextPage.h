@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include "stylelayer.h"
+#include <project.h>
 
 namespace Ui {
 class SubLayerTextPage;
@@ -13,6 +14,8 @@ class SubLayerTextPage : public QWidget {
 public:
     SubLayerTextPage(QWidget* parent);
     ~SubLayerTextPage();
+
+    void setProject(Project* project);
 
     void SaveTo(Label* lb);
     void Load(const Label& lb);
@@ -37,5 +40,6 @@ private slots:
 
 private:
     bool suppressUpdates_;
+    Project* project_ = nullptr;
     Ui::SubLayerTextPage* ui;
 };

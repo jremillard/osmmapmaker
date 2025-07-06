@@ -6,9 +6,9 @@ Output::Output(QString nameIn)
 {
 }
 
-Output::Output(QDomElement ouputNode)
+Output::Output(QDomElement outputNode)
 {
-    name_ = ouputNode.attributes().namedItem("name").nodeValue();
+    name_ = outputNode.attributes().namedItem("name").nodeValue();
 }
 
 Output::~Output()
@@ -25,7 +25,7 @@ void Output::setName(QString name)
     name_ = name;
 }
 
-void Output::saveXML(QDomDocument& doc, QDomElement& ouputNode)
+void Output::saveXML(QDomDocument& doc, QDomElement& outputNode)
 {
-    ouputNode.setAttribute("name", name_);
+    outputNode.setAttribute("name", name_);
 }

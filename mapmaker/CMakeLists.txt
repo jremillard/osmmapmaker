@@ -11,6 +11,7 @@ set(SRC_FILES
     datasource.cpp
     osmdata.cpp
     osmdatafile.cpp
+    demdata.cpp
     stylelayer.cpp
     textfield.cpp
     output.cpp
@@ -20,6 +21,8 @@ set(SRC_FILES
     renderqt.cpp
     linebreaking.cpp
     maputils.cpp
+    projecttemplate.cpp
+    applicationpreferences.cpp
 )
 add_library(mapmaker STATIC ${SRC_FILES} mapmaker_resources.qrc)
 

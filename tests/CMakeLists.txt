@@ -21,6 +21,12 @@ target_link_libraries(textfieldprocessor_test PRIVATE Catch2::Catch2WithMain map
 target_compile_features(textfieldprocessor_test PRIVATE cxx_std_17)
 add_test(NAME textfieldprocessor_test COMMAND textfieldprocessor_test)
 
+add_executable(demdata_test demdata_test.cpp)
+target_link_libraries(demdata_test PRIVATE Catch2::Catch2WithMain mapmaker SQLiteCpp SQLite::SQLite3)
+target_compile_features(demdata_test PRIVATE cxx_std_17)
+target_compile_definitions(demdata_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME demdata_test COMMAND demdata_test)
+
 add_executable(tileoutput_test tileoutput_test.cpp)
 target_link_libraries(tileoutput_test PRIVATE Catch2::Catch2WithMain mapmaker)
 target_compile_features(tileoutput_test PRIVATE cxx_std_17)
@@ -132,6 +138,50 @@ target_compile_features(project_load_save_test PRIVATE cxx_std_17)
 target_compile_definitions(project_load_save_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME project_load_save_test COMMAND project_load_save_test)
 
+add_executable(new_project_test
+    new_project_test.cpp
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(new_project_test PROPERTIES AUTORCC ON)
+target_link_libraries(new_project_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::XmlPatterns
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(new_project_test PRIVATE cxx_std_17)
+target_compile_definitions(new_project_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME new_project_test COMMAND new_project_test)
+
+add_executable(projecttemplate_test
+    projecttemplate_test.cpp
+    ../osmmapmakerapp/resources.qrc
+)
+set_target_properties(projecttemplate_test PROPERTIES AUTORCC ON)
+target_link_libraries(projecttemplate_test PRIVATE
+    Catch2::Catch2WithMain
+    mapmaker
+    Qt5::XmlPatterns
+    BZip2::BZip2
+    ZLIB::ZLIB
+    EXPAT::EXPAT
+    PROJ::proj
+    SQLiteCpp
+    SQLite::SQLite3
+    GEOS::geos
+    GEOS::geos_c
+)
+target_compile_features(projecttemplate_test PRIVATE cxx_std_17)
+target_compile_definitions(projecttemplate_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
+add_test(NAME projecttemplate_test COMMAND projecttemplate_test)
+
 add_executable(overpass_test
     overpass_test.cpp
     ../osmmapmakerapp/resources.qrc
@@ -153,3 +203,8 @@ target_link_libraries(overpass_test PRIVATE
 target_compile_features(overpass_test PRIVATE cxx_std_17)
 target_compile_definitions(overpass_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME overpass_test COMMAND overpass_test)
+
+add_executable(applicationpreferences_test applicationpreferences_test.cpp)
+target_link_libraries(applicationpreferences_test PRIVATE Catch2::Catch2WithMain mapmaker)
+target_compile_features(applicationpreferences_test PRIVATE cxx_std_17)
+add_test(NAME applicationpreferences_test COMMAND applicationpreferences_test)

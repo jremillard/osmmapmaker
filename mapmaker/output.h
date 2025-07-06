@@ -14,7 +14,7 @@ struct BoundingBox {
 class Output {
 public:
     Output(QString name);
-    Output(QDomElement ouputNode);
+    Output(QDomElement outputNode);
 
     virtual ~Output();
 
@@ -26,3 +26,4 @@ public:
 protected:
     QString name_;
 };
+

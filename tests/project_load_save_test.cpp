@@ -5,9 +5,9 @@
 #include <QXmlSchema>
 #include <QXmlSchemaValidator>
 #include <QFile>
-#include <QNetworkAccessManager>
 #include <QEvent>
 #include <QStringList>
+#include <QNetworkAccessManager>
 #include "project.h"
 #include "osmdatafile.h"
 #include "stylelayer.h"
@@ -18,10 +18,9 @@ TEST_CASE("Valid project files load and save", "[Project]")
 {
     int argc = 0;
     qputenv("QT_PLUGIN_PATH", "");
+    qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QXmlSchema schema;
     QFile xsdFile(":/resources/project.xsd");
@@ -52,7 +51,7 @@ TEST_CASE("Valid project files load and save", "[Project]")
                 ds->setImportTime(QDateTime::currentDateTimeUtc());
             }
             std::filesystem::path tmp = p.parent_path() / "tmp_saved.osmmap.xml";
-            proj.save(tmp);
+            proj.saveProjectFile(tmp);
             QFile out(QString::fromStdString(tmp.string()));
             REQUIRE(out.open(QIODevice::ReadOnly));
             REQUIRE(validator.validate(&out));
@@ -73,8 +72,6 @@ TEST_CASE("Invalid project files fail validation", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QXmlSchema schema;
     QFile xsdFile(":/resources/project.xsd");
@@ -109,8 +106,6 @@ TEST_CASE("Invalid project files throw on load", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QStringList files = {
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/invalid/invalid_no_map.osmmap.xml"),
@@ -145,8 +140,6 @@ TEST_CASE("Malformed project file reports parse location", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/malformed/malformed_missing_lt.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
@@ -170,8 +163,6 @@ TEST_CASE("Project coordinate conversions", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
@@ -208,8 +199,6 @@ TEST_CASE("Project add and remove components", "[Project]")
     qputenv("QT_PLUGIN_PATH", "");
     QCoreApplication app(argc, nullptr);
     QCoreApplication::setLibraryPaths(QStringList());
-    QNetworkAccessManager nam;
-    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
 
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
@@ -250,6 +239,44 @@ TEST_CASE("Project add and remove components", "[Project]")
     }
 
     std::filesystem::remove_all(p.replace_extension(""));
+    app.processEvents();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+TEST_CASE("Project copy creates duplicate", "[Project]")
+{
+    int argc = 0;
+    qputenv("QT_PLUGIN_PATH", "");
+    QCoreApplication app(argc, nullptr);
+    QCoreApplication::setLibraryPaths(QStringList());
+    QNetworkAccessManager nam;
+    nam.setNetworkAccessible(QNetworkAccessManager::NotAccessible);
+
+    QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml");
+    std::filesystem::path src = fileName.toStdString();
+
+    {
+        Project proj(src);
+        for (auto* ds : proj.dataSources()) {
+            ds->setImportTime(QDateTime::currentDateTimeUtc());
+        }
+        std::filesystem::path destDir = src.parent_path() / "copied";
+        std::filesystem::create_directories(destDir);
+        std::filesystem::path dest = destDir / src.filename();
+
+        proj.saveTo(dest);
+
+        REQUIRE(std::filesystem::exists(dest));
+
+        Project copied(dest);
+        REQUIRE(std::filesystem::exists(copied.assetDirectory()));
+
+        std::filesystem::remove(dest);
+        std::filesystem::remove_all(dest.replace_extension(""));
+        std::filesystem::remove_all(destDir);
+    }
+
+    std::filesystem::remove_all(src.replace_extension(""));
     app.processEvents();
     QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

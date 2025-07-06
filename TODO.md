@@ -209,22 +209,6 @@ consistent across code changes.
 - Integrate the RenderQT image comparison tests into the CTest suite for CI.
 - Provide scripts to generate benchmarks and fail when pixels differ beyond tolerance.
 
-
-
-## Recent Projects MRU
-### Goal
-Add a Most Recently Used list of projects so the application can quickly reopen recent work. The map main window should load the last project automatically.
-
-### Specification
-1. Store opened project paths using `QStandardPaths::AppDataLocation` so the configuration works across Windows, Linux and macOS.
-2. Maintain the list in order of use and cap it at five entries.
-3. On startup, load the list and attempt to open the most recent project if it still exists.
-4. Expose the list in the File menu under a `Recent Projects` section.
-
-### Automated Testing
-- Save multiple project paths and verify the MRU file persists across sessions.
-- Launch the app with an existing MRU file and confirm the most recent project opens automatically.
-
 ## Project New
 ### Goal
 Allow creation of new empty projects directly from the main application.
@@ -237,14 +221,39 @@ Allow creation of new empty projects directly from the main application.
 ### Automated Testing
 - Confirm the wizard creates valid project files that load without errors.
 
-## Project Copy
+## Daily Logging to File
 ### Goal
-Duplicate an existing project to a different location for experimentation.
+Capture trace output in a rotating log so issues can be diagnosed easily.
 
 ### Specification
-1. Add a `Copy Project` command that prompts for the target directory.
-2. Copy the project file and all referenced resources such as stylesheets and icons.
-3. Update any relative paths so the copy renders identically.
+1. Use the header-only [spdlog](https://github.com/gabime/spdlog) library for cross‑platform logging.
+2. Create a daily logger that writes to `Preferences::logDirectory()/osmmapmaker.log` so the location can be customized by the user.
+3. Rotate (delete) the previous log at startup so each run begins fresh.
+4. Provide a small wrapper that initializes the logger and exposes simple `log::info` style functions.
+5. Allow logging to be disabled in release builds via a compile flag.
 
 ### Automated Testing
-- Verify the copied project opens correctly and produces the same output as the original.
+- Launch the application twice and verify the log file from the first run is removed before the second begins.
+- Run the unit test suite and confirm no log file is created.
+
+## detToM Conversion Accuracy
+### Goal
+Investigate whether the constant converting degrees to meters in `osmdata.cpp` uses the correct Earth radius.
+
+### Background
+Codex flagged a discrepancy between the implementation:
+```cpp
+static const double detToM = 6356.0 * 1000.0 * 2.0 * (std::atan(1.0) * 4) / 360;
+```
+and a comment that references the WGS84 equatorial radius:
+```cpp
+static const double detToM = 6378137.0 * M_PI / 180.0;
+```
+Using the truncated radius could underestimate lengths.
+
+### Specification
+1. Confirm which value is intended and ensure the constant is defined only once.
+2. Update related calculations and documentation to use the chosen radius consistently.
+
+### Automated Testing
+- Run existing length and area computation tests to verify results remain correct after any change.

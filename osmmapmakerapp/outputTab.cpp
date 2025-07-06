@@ -2,6 +2,8 @@
 #include "ui_outputTab.h"
 
 #include "batchtileoutput.h"
+#include <QProgressDialog>
+#include <QApplication>
 
 OutputTab::OutputTab(QWidget* parent)
     : QWidget(parent)
@@ -218,6 +220,17 @@ void OutputTab::on_generate_clicked()
     TileOutput* tileOutput = dynamic_cast<TileOutput*>(output);
 
     if (tileOutput != NULL) {
-        BatchTileOutput::generateTiles(project_, *tileOutput);
+        QProgressDialog dlg("Writing tiles", "Cancel", 0, 0, this);
+        dlg.setWindowModality(Qt::WindowModal);
+
+        BatchTileOutput::generateTiles(project_, *tileOutput,
+            [&dlg](int done, int total) {
+                dlg.setMaximum(total);
+                dlg.setValue(done);
+                QApplication::processEvents();
+                return !dlg.wasCanceled();
+            });
+
+        dlg.close();
     }
 }

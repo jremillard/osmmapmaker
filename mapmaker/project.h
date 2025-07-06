@@ -16,11 +16,20 @@ using namespace std::filesystem;
 /// render database, style layers and outputs.
 class Project {
 public:
+    static const char* projectDirectoryExtension();
+    static const char* projectFileExtension();
+
     Project(path filename);
     ~Project();
 
+    /// Create a new project from a template. Throws std::runtime_error on failure.
+    static void createNew(const QString& projectName,
+        const std::filesystem::path& directory,
+        const QByteArray& templateData);
+
     void save();
-    void save(path filename);
+    void saveProjectFile(path filename);
+    void saveTo(path filename);
 
     std::vector<DataSource*> dataSources()
     {

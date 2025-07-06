@@ -10,6 +10,8 @@
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
 #include "osmdatafile.h"
+#include "projecttemplate.h"
+#include "demdata.h"
 
 #include "tileoutput.h"
 #include "imageoutput.h"
@@ -17,6 +19,16 @@
 #include <SQLiteCpp/VariadicBind.h>
 
 #include <set>
+
+const char* Project::projectDirectoryExtension()
+{
+    return ".osmmap";
+}
+
+const char* Project::projectFileExtension()
+{
+    return ".osmmap.xml";
+}
 
 class SchemaMessageHandler : public QAbstractMessageHandler {
 public:
@@ -44,6 +56,8 @@ private:
     int line_;
 };
 
+// 'fileName' is the full path to the project XML including
+// the '.osmmap.xml' extension.
 Project::Project(path fileName)
 {
     Q_INIT_RESOURCE(mapmaker_resources);
@@ -124,6 +138,8 @@ Project::Project(path fileName)
             dataSources_.push_back(new OsmDataDirectDownload(topNode));
         } else if (name == "openStreetMapFileSource") {
             dataSources_.push_back(new OsmDataFile(topNode));
+        } else if (name == "elevationSource") {
+            dataSources_.push_back(new DemData(topNode));
         } else if (name == "tileOutput") {
             outputs_.push_back(new TileOutput(topNode));
         } else if (name == "imageOutput") {
@@ -172,6 +188,34 @@ Project::~Project()
 
     proj_context_destroy(proj_context_);
     proj_context_ = NULL;
+}
+
+void Project::createNew(const QString& projectName,
+    const std::filesystem::path& directory,
+    const QByteArray& templateData)
+{
+    std::filesystem::path dirPath = directory;
+    if (!std::filesystem::exists(dirPath))
+        std::filesystem::create_directories(dirPath);
+
+    std::filesystem::path projectFile = dirPath / (projectName.toStdString() + ".osmmap.xml");
+
+    QFile out(QString::fromStdString(projectFile.string()));
+    if (!out.open(QIODevice::WriteOnly))
+        throw std::runtime_error("Unable to create project file");
+    if (out.write(templateData) != templateData.size()) {
+        out.close();
+        throw std::runtime_error("Failed to write project file");
+    }
+    out.close();
+
+    std::filesystem::path assetDir = projectFile;
+    assetDir.replace_extension("");
+    if (!std::filesystem::exists(assetDir))
+        std::filesystem::create_directories(assetDir);
+
+    QString dbPath = QString::fromStdString((assetDir / "render.sqlite").string());
+    RenderDatabase db(dbPath);
 }
 
 void Project::createRenderDatabaseIfNotExist()
@@ -230,10 +274,12 @@ void Project::setBackgroundColor(QColor c)
 
 void Project::save()
 {
-    save(projectPath_);
+    saveProjectFile(projectPath_);
 }
 
-void Project::save(path fileName)
+// Write only the project XML to the specified path. This does not
+// copy any referenced files or asset directories.
+void Project::saveProjectFile(path fileName)
 {
     QDomDocument doc;
 
@@ -277,6 +323,57 @@ void Project::save(path fileName)
     } else {
         auto s = QString("Can't open file %1.").arg(pathStrQ);
         throw std::runtime_error(s.toStdString());
+    }
+}
+
+// Duplicate the current project to a new location. The provided
+// path may omit the standard project extension. Assets and any
+// referenced relative files are copied alongside the XML file.
+void Project::saveTo(path fileName)
+{
+    std::error_code ec;
+
+    std::string fnStr = fileName.filename().string();
+    const char* projExt = Project::projectFileExtension();
+    if (fnStr.size() < strlen(projExt) || fnStr.compare(fnStr.size() - strlen(projExt), strlen(projExt), projExt) != 0)
+        fileName.replace_extension(Project::projectFileExtension());
+
+    path dstDir = fileName;
+    dstDir.replace_extension("");
+
+    if (exists(fileName))
+        std::filesystem::remove(fileName, ec);
+    if (exists(dstDir))
+        std::filesystem::remove_all(dstDir, ec);
+
+    saveProjectFile(fileName);
+
+    path srcDir = assetDirectory();
+    if (exists(srcDir)) {
+        create_directories(dstDir);
+        copy_options opts = copy_options::recursive | copy_options::overwrite_existing;
+        std::filesystem::copy(srcDir, dstDir, opts, ec);
+        if (ec)
+            throw std::runtime_error(ec.message());
+    }
+
+    path srcProjectDir = projectPath_.parent_path();
+    path dstProjectDir = fileName.parent_path();
+    for (auto* ds : dataSources_) {
+        auto* fileSrc = dynamic_cast<OsmDataFile*>(ds);
+        if (fileSrc) {
+            std::filesystem::path srcFile = fileSrc->localFile().toStdString();
+            if (!srcFile.is_absolute()) {
+                path absSrc = srcProjectDir / srcFile;
+                path absDst = dstProjectDir / srcFile;
+                if (exists(absSrc)) {
+                    create_directories(absDst.parent_path());
+                    std::filesystem::copy_file(absSrc, absDst, copy_options::overwrite_existing, ec);
+                    if (ec)
+                        throw std::runtime_error(ec.message());
+                }
+            }
+        }
     }
 }
 
