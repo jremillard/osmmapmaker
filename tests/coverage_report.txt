@@ -8,7 +8,7 @@ mapmaker/demdata.cpp                           | 7.7%   155| 0.0%   7|    -    0
 mapmaker/osmdata.cpp                           | 8.5%   176| 0.0%  14|    -    0
 mapmaker/project.cpp                           |13.6%   242| 0.0%  28|    -    0
 mapmaker/renderqt.cpp                          |    -     0|    -   0|    -    0
-mapmaker/maputils.cpp                          |50.0%     2| 0.0%   1|    -    0
+mapmaker/maputils.cpp                          |35.7%    14| 0.0%   3|    -    0
 mapmaker/textfield.cpp                         | 4.5%    44| 0.0%   2|    -    0
 mapmaker/stylelayer.cpp                        | 8.7%   530| 0.0%  45|    -    0
 mapmaker/tileoutput.cpp                        |23.9%    71| 0.0%  17|    -    0
@@ -25,4 +25,4 @@ mapmaker/applicationpreferences.cpp            |14.0%    43| 0.0%   6|    -    0
 mapmaker/osmdataextractdownload.cpp            |50.0%    10| 0.0%   4|    -    0
                                                |Lines      |Functions|Branches  
 bin/coverage/mapmaker/...mapmaker_resources.cpp|38.5%    13| 0.0%   5|    -    0
-                                         Total:|14.6%  1616| 0.0% 200|    -    0
+                                         Total:|14.7%  1628| 0.0% 202|    -    0

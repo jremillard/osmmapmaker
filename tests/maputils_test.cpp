@@ -16,3 +16,14 @@ TEST_CASE("metersPerPixel varies with latitude and zoom", "[maputils]")
     double expected = 156543.03392 * std::cos(lat * M_PI / 180.0) / std::pow(2.0, zoom);
     REQUIRE(metersPerPixel(lat, zoom) == Approx(expected).epsilon(0.00001));
 }
+
+TEST_CASE("lonLat to tile and back", "[maputils]")
+{
+    TileXY t = lonLatToTile(0.0, 0.0, 1);
+    REQUIRE(t.x == Approx(1.0));
+    REQUIRE(t.y == Approx(1.0));
+    double lon, lat;
+    tileToLonLat(t, 1, lon, lat);
+    REQUIRE(lon == Approx(0.0).margin(0.0001));
+    REQUIRE(lat == Approx(0.0).margin(0.0001));
+}

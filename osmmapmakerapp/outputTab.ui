@@ -334,7 +334,7 @@
           <property name="title">
            <string>Bounding Box</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_image">
+           <layout class="QGridLayout" name="gridLayout_image">
            <item row="3" column="2">
             <widget class="QDoubleSpinBox" name="imageLatBottom">
              <property name="decimals">
@@ -370,16 +370,23 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_image_lat">
-             <property name="text">
-              <string>Latitude</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_image_lat">
+              <property name="text">
+               <string>Latitude</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" colspan="4">
+             <widget class="QPushButton" name="imageBboxSelect">
+              <property name="text">
+               <string>Choose on Map...</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
        </layout>
       </widget>
       <widget class="QWidget" name="blankPage"/>

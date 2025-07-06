@@ -28,3 +28,25 @@ The project relies on the following libraries:
 Development and testing also require `clang-format`, `lcov`, and `valgrind`.
 
 On Debian-based systems you can install them with `install_dependencies_apt.sh`.
+
+## Bounding Box Dialog
+
+The `BoundingBoxDialog` provides an interactive way to select map extents using
+OpenStreetMap tiles. After the user confirms the selection the dialog exposes
+the chosen coordinates and an optional image of the area.
+
+```cpp
+BoundingBoxDialog dlg;
+if (dlg.exec() == QDialog::Accepted) {
+    BoundingBoxCoords box = dlg.selectedBox();
+    QImage img = dlg.selectedImage();
+    OsmDataOverpass over(&nam);
+    QString q = QString("node(%1,%2,%3,%4);out;")
+                    .arg(box.minLat)
+                    .arg(box.minLon)
+                    .arg(box.maxLat)
+                    .arg(box.maxLon);
+    over.setQuery(q);
+    over.importData(db);
+}
+```

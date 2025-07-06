@@ -4,6 +4,7 @@
 #include "batchtileoutput.h"
 #include "tileoutput.h"
 #include "imageoutput.h"
+#include "boundingboxdialog.h"
 #include "outputtypedialog.h"
 #include <QProgressDialog>
 #include <QApplication>
@@ -299,6 +300,25 @@ void OutputTab::on_imagePathBrowse_clicked()
         ui->imagePath->setText(QDir::toNativeSeparators(file));
         ui->imageOutputPathUseProjectDir->setChecked(false);
         ui->imagePath->setEnabled(true);
+        saveImage();
+    }
+}
+
+void OutputTab::on_imageBboxSelect_clicked()
+{
+    BoundingBoxDialog dlg(this);
+    BoundingBoxCoords box;
+    box.minLat = ui->imageLatBottom->value();
+    box.maxLat = ui->imageLatTop->value();
+    box.minLon = ui->imageLongLeft->value();
+    box.maxLon = ui->imageLongRight->value();
+    dlg.setInitialBox(box);
+    if (dlg.exec() == QDialog::Accepted) {
+        BoundingBoxCoords sel = dlg.selectedBox();
+        ui->imageLatTop->setValue(sel.maxLat);
+        ui->imageLatBottom->setValue(sel.minLat);
+        ui->imageLongLeft->setValue(sel.minLon);
+        ui->imageLongRight->setValue(sel.maxLon);
         saveImage();
     }
 }

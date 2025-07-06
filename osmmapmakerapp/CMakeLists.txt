@@ -19,7 +19,9 @@ set(SRC_FILES
     subLayerTextPage.cpp
     sublayerselectpage.cpp
     selectvalueeditdialog.cpp
-    colorpickerdialog.cpp)
+    colorpickerdialog.cpp
+    mapcanvas.cpp
+    boundingboxdialog.cpp)
 set(UI_FILES
     mainwindow.ui
     dataTab.ui
