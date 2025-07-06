@@ -8,6 +8,8 @@
       <file>resources/downarrow.svg</file>
       <file>resources/leftarrow.svg</file>
       <file>resources/rightarrow.svg</file>
+      <file>resources/tile_output.svg</file>
+      <file>resources/image_output.svg</file>
       <!-- areaKeys.json and discarded.txt moved to mapmaker resources -->
     </qresource>
 </RCC>

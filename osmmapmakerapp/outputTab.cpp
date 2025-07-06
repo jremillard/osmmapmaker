@@ -2,8 +2,14 @@
 #include "ui_outputTab.h"
 
 #include "batchtileoutput.h"
+#include "tileoutput.h"
+#include "imageoutput.h"
 #include <QProgressDialog>
 #include <QApplication>
+#include <QInputDialog>
+
+static QIcon tileOutputIcon(QStringLiteral(":/resources/tile_output.svg"));
+static QIcon imageOutputIcon(QStringLiteral(":/resources/image_output.svg"));
 
 OutputTab::OutputTab(QWidget* parent)
     : QWidget(parent)
@@ -15,6 +21,9 @@ OutputTab::OutputTab(QWidget* parent)
     ui->tileSize->addItem("256", 256);
     ui->tileSize->addItem("512", 512);
     ui->tileSize->addItem("1024", 1024);
+
+    ui->imageWidth->setValue(256);
+    ui->imageHeight->setValue(256);
 
     surpressSelectionChange_ = false;
     project_ = NULL;
@@ -35,6 +44,10 @@ void OutputTab::setProject(Project* project)
     for (Output* output : project_->outputs()) {
         QListWidgetItem* item = new QListWidgetItem(output->name());
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+        if (dynamic_cast<TileOutput*>(output))
+            item->setIcon(tileOutputIcon);
+        else if (dynamic_cast<ImageOutput*>(output))
+            item->setIcon(imageOutputIcon);
         ui->outputList->addItem(item);
     }
 
@@ -53,9 +66,11 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
             Output* output = project_->outputs()[currentRow];
 
             TileOutput* tileOutput = dynamic_cast<TileOutput*>(output);
+            ImageOutput* imageOutput = dynamic_cast<ImageOutput*>(output);
 
             if (tileOutput != NULL) {
                 ui->stackedWidget->setCurrentWidget(ui->tilePage);
+                ui->generate->setText(tr("Write Tiles"));
 
                 ui->maxZoom->setValue(tileOutput->maxZoom());
                 ui->minZoom->setValue(tileOutput->minZoom());
@@ -74,6 +89,17 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
 
                 int i = ui->tileSize->findData(tileOutput->tileSizePixels());
                 ui->tileSize->setCurrentIndex(i);
+            } else if (imageOutput != NULL) {
+                ui->stackedWidget->setCurrentWidget(ui->imagePage);
+                ui->generate->setText(tr("Write Image"));
+
+                ui->imageWidth->setValue(imageOutput->widthPixels());
+                ui->imageHeight->setValue(imageOutput->heightPixels());
+                BoundingBox bb = imageOutput->boundingBox();
+                ui->imageLongLeft->setValue(bb.left_);
+                ui->imageLongRight->setValue(bb.right_);
+                ui->imageLatTop->setValue(bb.top_);
+                ui->imageLatBottom->setValue(bb.bottom_);
             }
         }
     }
@@ -83,12 +109,27 @@ void OutputTab::on_outputNew_clicked()
 {
     QString newName = QString::fromStdString(project_->projectPath().filename().string());
     newName.replace(".osmmap.xml", "", Qt::CaseInsensitive);
-    TileOutput* to = new TileOutput(newName);
 
-    project_->addOutput(to);
+    QStringList opts { tr("Tile Set"), tr("Single Image") };
+    bool ok = false;
+    QString choice = QInputDialog::getItem(this, tr("New Output"), tr("Output Type"), opts, 0, false, &ok);
+    if (!ok)
+        return;
 
-    QListWidgetItem* item = new QListWidgetItem(to->name());
+    Output* out = nullptr;
+    if (choice == opts[1])
+        out = new ImageOutput(newName);
+    else
+        out = new TileOutput(newName);
+
+    project_->addOutput(out);
+
+    QListWidgetItem* item = new QListWidgetItem(out->name());
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
+    if (dynamic_cast<TileOutput*>(out))
+        item->setIcon(tileOutputIcon);
+    else
+        item->setIcon(imageOutputIcon);
 
     ui->outputList->addItem(item);
     ui->outputList->setCurrentRow(ui->outputList->count() - 1);
@@ -176,6 +217,36 @@ void OutputTab::on_tileSize_currentIndexChanged(int i)
         saveTile();
 }
 
+void OutputTab::on_imageWidth_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageHeight_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageLatTop_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageLatBottom_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageLongLeft_editingFinished()
+{
+    saveImage();
+}
+
+void OutputTab::on_imageLongRight_editingFinished()
+{
+    saveImage();
+}
+
 void OutputTab::saveTile()
 {
 
@@ -211,6 +282,35 @@ void OutputTab::saveTile()
     }
 }
 
+void OutputTab::saveImage()
+{
+    if (project_ == NULL)
+        return;
+
+    int currentRow = ui->outputList->currentRow();
+
+    if (currentRow < 0 || currentRow >= int(project_->outputs().size()))
+        return;
+
+    Output* output = project_->outputs()[currentRow];
+    ImageOutput* imageOutput = dynamic_cast<ImageOutput*>(output);
+
+    if (imageOutput != NULL) {
+        surpressSelectionChange_ = true;
+
+        imageOutput->setWidthPixels(ui->imageWidth->value());
+        imageOutput->setHeightPixels(ui->imageHeight->value());
+        BoundingBox bb;
+        bb.left_ = ui->imageLongLeft->value();
+        bb.right_ = ui->imageLongRight->value();
+        bb.top_ = ui->imageLatTop->value();
+        bb.bottom_ = ui->imageLatBottom->value();
+        imageOutput->setBoundingBox(bb);
+
+        surpressSelectionChange_ = false;
+    }
+}
+
 void OutputTab::on_generate_clicked()
 {
     int currentRow = ui->outputList->currentRow();
@@ -218,6 +318,7 @@ void OutputTab::on_generate_clicked()
     Output* output = project_->outputs()[currentRow];
 
     TileOutput* tileOutput = dynamic_cast<TileOutput*>(output);
+    ImageOutput* imageOutput = dynamic_cast<ImageOutput*>(output);
 
     if (tileOutput != NULL) {
         QProgressDialog dlg("Writing tiles", "Cancel", 0, 0, this);
@@ -232,5 +333,7 @@ void OutputTab::on_generate_clicked()
             });
 
         dlg.close();
+    } else if (imageOutput != NULL) {
+        // image generation not implemented yet
     }
 }
