@@ -70,7 +70,7 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
             if (tileOutput != NULL) {
                 ui->stackedWidget->setCurrentWidget(ui->tilePage);
                 ui->generate->setText(tr("Write Tiles"));
-                ui->generate->setIcon(QIcon(QStringLiteral(":/resources/tile_output.svg")));
+                ui->generate->setIcon(QIcon(QStringLiteral(":/resources/upload.svg")));
 
                 ui->maxZoom->setValue(tileOutput->maxZoom());
                 ui->minZoom->setValue(tileOutput->minZoom());
@@ -92,7 +92,7 @@ void OutputTab::on_outputList_currentRowChanged(int currentRow)
             } else if (imageOutput != NULL) {
                 ui->stackedWidget->setCurrentWidget(ui->imagePage);
                 ui->generate->setText(tr("Write Image"));
-                ui->generate->setIcon(QIcon(QStringLiteral(":/resources/image_output.svg")));
+                ui->generate->setIcon(QIcon(QStringLiteral(":/resources/upload.svg")));
 
                 ui->imageWidth->setValue(imageOutput->widthPixels());
                 ui->imageHeight->setValue(imageOutput->heightPixels());
