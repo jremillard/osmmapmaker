@@ -36,11 +36,15 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
-         <widget class="QPushButton" name="outputNew">
-          <property name="text">
-           <string>New</string>
-          </property>
-         </widget>
+        <widget class="QPushButton" name="outputNew">
+         <property name="text">
+          <string>New</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/resources/plus.svg</normaloff>:/resources/plus.svg</iconset>
+         </property>
+        </widget>
         </item>
         <item>
          <spacer name="horizontalSpacer_7">

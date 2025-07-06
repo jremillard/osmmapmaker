@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
       <file>resources/download.svg</file>
+      <file>resources/upload.svg</file>
       <file>resources/plus.svg</file>
       <file>resources/minus.svg</file>
       <file>resources/trashicon.svg</file>

@@ -26,6 +26,8 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
     , ui(new Ui::ColorPickerDialog)
 {
     ui->setupUi(this);
+    int editWidth = ui->hueEdit->sizeHint().width();
+    ui->htmlColor->setFixedWidth(editWidth);
     ui->verticalLayout->setStretch(3, 1);
     ui->verticalLayout->setStretch(4, 0);
     project_ = project;
