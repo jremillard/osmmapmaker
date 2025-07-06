@@ -80,6 +80,7 @@ private slots:
     // point
     void on_pointVisible_clicked();
     void on_pointColor_editingFinished();
+    void on_pointColorPick_clicked();
     void on_pointWidth_editingFinished();
     void on_pointOpacity_editingFinished();
     void on_pointFillImageOpacity_editingFinished();
