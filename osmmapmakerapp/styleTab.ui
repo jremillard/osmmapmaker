@@ -125,6 +125,10 @@
         <property name="text">
          <string>Delete</string>
         </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/resources/trashicon.svg</normaloff>:/resources/trashicon.svg</iconset>
+        </property>
        </widget>
       </item>
      </layout>
