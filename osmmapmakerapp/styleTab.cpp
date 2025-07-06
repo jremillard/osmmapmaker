@@ -661,11 +661,13 @@ void StyleTab::on_mapBackgroundOpacity_valueChanged(double v)
 
 void StyleTab::on_mapBackgroundColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->mapBackgroundColor->text()), this);
+    QString old = ui->mapBackgroundColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->mapBackgroundColor->setText(newColor.name());
         on_mapBackgroundColor_editingFinished();
+        freshRender();
     }
 }
 
@@ -737,21 +739,25 @@ void StyleTab::on_areaMinZoom_editingFinished()
 
 void StyleTab::on_areaColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->areaColor->text()), this);
+    QString old = ui->areaColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->areaColor->setText(newColor.name());
         saveArea();
+        freshRender();
     }
 }
 
 void StyleTab::on_areaBorderColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->areaBorderColor->text()), this);
+    QString old = ui->areaBorderColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->areaBorderColor->setText(newColor.name());
         saveArea();
+        freshRender();
     }
 }
 
@@ -818,6 +824,18 @@ void StyleTab::on_pointVisible_clicked()
 void StyleTab::on_pointColor_editingFinished()
 {
     savePoint();
+}
+
+void StyleTab::on_pointColorPick_clicked()
+{
+    QString old = ui->pointColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+
+    if (newColor.isValid() && newColor.name() != old) {
+        ui->pointColor->setText(newColor.name());
+        savePoint();
+        freshRender();
+    }
 }
 
 void StyleTab::on_pointWidth_editingFinished()
@@ -915,21 +933,25 @@ void StyleTab::on_lineMinZoom_editingFinished()
 
 void StyleTab::on_lineCasingColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->lineCasingColor->text()), this);
+    QString old = ui->lineCasingColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->lineCasingColor->setText(newColor.name());
         saveLine();
+        freshRender();
     }
 }
 
 void StyleTab::on_lineColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->lineColor->text()), this);
+    QString old = ui->lineColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->lineColor->setText(newColor.name());
         saveLine();
+        freshRender();
     }
 }
 

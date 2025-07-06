@@ -28,7 +28,7 @@ ColorPickerDialog::ColorPickerDialog(Project* project, QWidget* parent)
             resize(lastSize);
             move(parent->pos() + lastOffset);
         } else {
-            QSize s(std::max(1000, parent->width()), std::max(1000, parent->height()));
+            QSize s(std::min(1000, parent->width()), std::min(1000, parent->height()));
             resize(s);
             move(parent->pos());
             lastSize = s;

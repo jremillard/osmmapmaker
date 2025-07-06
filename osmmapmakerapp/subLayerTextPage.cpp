@@ -84,9 +84,10 @@ void SubLayerTextPage::on_fontWeight_currentIndexChanged(int i)
 
 void SubLayerTextPage::on_colorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->color->text()), this);
+    QString old = ui->color->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->color->setText(newColor.name());
         emit editingFinished();
     }
@@ -94,9 +95,10 @@ void SubLayerTextPage::on_colorPick_clicked()
 
 void SubLayerTextPage::on_haloColorPick_clicked()
 {
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(ui->haloColor->text()), this);
+    QString old = ui->haloColor->text();
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
 
-    if (newColor.isValid()) {
+    if (newColor.isValid() && newColor.name() != old) {
         ui->haloColor->setText(newColor.name());
         emit editingFinished();
     }
