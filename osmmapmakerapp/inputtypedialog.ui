@@ -3,20 +3,30 @@
  <class>InputTypeDialog</class>
  <widget class="QDialog" name="InputTypeDialog">
   <property name="windowTitle">
-   <string>New Input</string>
+   <string>Add New Map Data Source</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QRadioButton" name="localRadio">
      <property name="text">
-      <string>Local File</string>
+      <string>Local OpenStreetMap files (osm, pbf)</string>
      </property>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="localLayout">
+     <property name="leftMargin">
+      <number>20</number>
+     </property>
      <item>
-      <widget class="QLineEdit" name="localFilePath"/>
+      <widget class="QLineEdit" name="localFilePath">
+       <property name="minimumSize">
+        <size>
+         <width>500</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="browseButton">
@@ -37,9 +47,22 @@
   <item>
    <widget class="QRadioButton" name="demRadio">
     <property name="text">
-     <string>DEM File</string>
+     <string>Digital Elevation Model (asc)</string>
     </property>
    </widget>
+  </item>
+  <item>
+   <spacer name="verticalSpacer">
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+    <property name="sizeHint" stdset="0">
+     <size>
+      <width>20</width>
+      <height>20</height>
+     </size>
+    </property>
+   </spacer>
   </item>
   <item>
    <widget class="QDialogButtonBox" name="buttonBox">

@@ -10,7 +10,8 @@ InputTypeDialog::InputTypeDialog(QWidget* parent)
     ui->setupUi(this);
     ui->localRadio->setChecked(true);
     on_localRadio_toggled(true);
-    setFixedSize(200, 200);
+    resize(600, 250);
+    ui->localFilePath->setMinimumWidth(500);
 }
 
 InputTypeDialog::~InputTypeDialog()
