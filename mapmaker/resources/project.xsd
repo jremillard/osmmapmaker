@@ -29,6 +29,7 @@
         <xs:element ref="openStreetMapFileSource" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="openStreetMapDirectDownload" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="openStreetMapExtractDownload" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="overpassSource" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="elevationSource" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="tileOutput" minOccurs="0" maxOccurs="unbounded"/>
         <xs:element ref="imageOutput" minOccurs="0" maxOccurs="unbounded"/>
@@ -66,6 +67,18 @@
         <xs:element name="dataSource" type="xs:string"/>
         <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
         <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="overpassSource">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="dataSource" type="xs:string"/>
+        <xs:element name="lastUpdateDate" type="xs:dateTime" minOccurs="0"/>
+        <xs:element name="importDurationS" type="nonNegativeInt" minOccurs="0"/>
+        <xs:element name="overpassQuery" type="xs:string"/>
       </xs:sequence>
       <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>

@@ -34,7 +34,8 @@ TEST_CASE("Valid project files load and save", "[Project]")
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_line.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_point.osmmap.xml"),
         QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_area.osmmap.xml"),
-        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_image_output.osmmap.xml")
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_image_output.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_overpass.osmmap.xml")
     };
 
     for (const QString& fileName : files) {

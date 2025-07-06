@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osmmapmakerproject>
+ <overpassSource name="over">
+  <dataSource>Primary</dataSource>
+  <overpassQuery>node(0,0,1,1);out;</overpassQuery>
+ </overpassSource>
+ <tileOutput name="pointTiles">
+  <maxZoom>18</maxZoom>
+  <minZoom>15</minZoom>
+  <tileSize>256</tileSize>
+  <resolution1x>true</resolution1x>
+  <resolution2x>false</resolution2x>
+  <directory></directory>
+ </tileOutput>
+ <map>
+  <layer dataSource="Primary" k="amenity" type="point">
+   <subLayer name="poi" visible="true" minZoom="15">
+    <selector>
+     <condition key="amenity">
+      <value>restaurant</value>
+     </condition>
+    </selector>
+    <point>
+     <image>poi.png</image>
+     <opacity>1</opacity>
+     <color>#ff0000</color>
+     <width>1</width>
+    </point>
+   </subLayer>
+  </layer>
+ </map>
+</osmmapmakerproject>

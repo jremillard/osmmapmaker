@@ -23,7 +23,8 @@ TEST_CASE("Project files validate against schema", "[ProjectSchema]")
 
     QStringList files = {
         QStringLiteral(SOURCE_DIR "/projects/groton-sat.osmmap.xml"),
-        QStringLiteral(SOURCE_DIR "/projects/groton-trail.osmmap.xml")
+        QStringLiteral(SOURCE_DIR "/projects/groton-trail.osmmap.xml"),
+        QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_overpass.osmmap.xml")
     };
 
     for (const QString& fileName : files) {
