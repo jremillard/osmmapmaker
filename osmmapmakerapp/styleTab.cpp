@@ -682,6 +682,7 @@ void StyleTab::on_layerShowAll_clicked()
 
     StyleLayer* layer = layers[index];
     layer->showAll();
+    freshRender();
 }
 
 void StyleTab::on_layerHideAll_clicked()
@@ -693,6 +694,7 @@ void StyleTab::on_layerHideAll_clicked()
 
     StyleLayer* layer = layers[index];
     layer->hideAll();
+    freshRender();
 }
 
 ////////// area tab
