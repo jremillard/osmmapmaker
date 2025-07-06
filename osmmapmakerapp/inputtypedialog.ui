@@ -28,14 +28,21 @@
     </layout>
    </item>
    <item>
-    <widget class="QRadioButton" name="overpassRadio">
-     <property name="text">
-      <string>Overpass</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <widget class="QRadioButton" name="overpassRadio">
+    <property name="text">
+     <string>Overpass</string>
+    </property>
+   </widget>
+  </item>
+  <item>
+   <widget class="QRadioButton" name="demRadio">
+    <property name="text">
+     <string>DEM File</string>
+    </property>
+   </widget>
+  </item>
+  <item>
+   <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
