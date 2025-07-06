@@ -9,6 +9,7 @@
 
 #include "osmdataextractdownload.h"
 #include "osmdatadirectdownload.h"
+#include "osmdataoverpass.h"
 #include "osmdatafile.h"
 #include "projecttemplate.h"
 #include "demdata.h"
@@ -138,6 +139,8 @@ Project::Project(path fileName)
             dataSources_.push_back(new OsmDataDirectDownload(topNode));
         } else if (name == "openStreetMapFileSource") {
             dataSources_.push_back(new OsmDataFile(topNode));
+        } else if (name == "overpassSource") {
+            dataSources_.push_back(new OsmDataOverpass(nullptr, topNode));
         } else if (name == "elevationSource") {
             dataSources_.push_back(new DemData(topNode));
         } else if (name == "tileOutput") {
