@@ -34,6 +34,7 @@ private slots:
     void on_tilePath_editingFinished();
     void on_tileOutputPathUseProjectDir_clicked();
     void on_tileSize_currentIndexChanged(int i);
+    void on_pushButton_clicked();
 
     // image signals
     void on_imageWidth_editingFinished();
@@ -44,6 +45,7 @@ private slots:
     void on_imageLongRight_editingFinished();
     void on_imagePath_editingFinished();
     void on_imageOutputPathUseProjectDir_clicked();
+    void on_imagePathBrowse_clicked();
 
 private:
     void saveTile();
