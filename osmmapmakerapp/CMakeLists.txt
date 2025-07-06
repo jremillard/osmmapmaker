@@ -14,6 +14,7 @@ set(SRC_FILES
     styleTab.cpp
     newtoplevelstyle.cpp
     newprojectdialog.cpp
+    outputtypedialog.cpp
     subLayerTextPage.cpp
     sublayerselectpage.cpp
     selectvalueeditdialog.cpp
@@ -25,6 +26,7 @@ set(UI_FILES
     styleTab.ui
     newtoplevelstyle.ui
     newprojectdialog.ui
+    outputtypedialog.ui
     subLayerTextPage.ui
     sublayerselectpage.ui
     selectvalueeditdialog.ui

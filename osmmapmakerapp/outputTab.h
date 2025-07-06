@@ -42,11 +42,14 @@ private slots:
     void on_imageLatBottom_editingFinished();
     void on_imageLongLeft_editingFinished();
     void on_imageLongRight_editingFinished();
+    void on_imagePath_editingFinished();
+    void on_imageOutputPathUseProjectDir_clicked();
 
 private:
     void saveTile();
     void saveImage();
     void saveDefaultPathIntoTilePath();
+    void saveDefaultPathIntoImagePath();
 
     bool surpressSelectionChange_;
 

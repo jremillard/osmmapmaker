@@ -4,9 +4,10 @@
 ImageOutput::ImageOutput(QString name)
     : Output(name)
 {
-    widthPixels_ = 256;
-    heightPixels_ = 256;
+    widthPixels_ = 1024;
+    heightPixels_ = 1024;
     boundingBox_ = { 0, 0, 0, 0 };
+    outputFile_.clear();
 }
 
 ImageOutput::ImageOutput(QDomElement outputElement)
@@ -14,6 +15,7 @@ ImageOutput::ImageOutput(QDomElement outputElement)
 {
     widthPixels_ = outputElement.firstChildElement("width").text().toInt();
     heightPixels_ = outputElement.firstChildElement("height").text().toInt();
+    outputFile_ = outputElement.firstChildElement("file").text();
 
     QDomElement bbox = outputElement.firstChildElement("boundingBox");
     if (!bbox.isNull()) {
@@ -43,6 +45,12 @@ void ImageOutput::saveXML(QDomDocument& doc, QDomElement& outputElement)
     QDomElement heightNode = doc.createElement("height");
     heightNode.appendChild(doc.createTextNode(QString::number(heightPixels_)));
     outputElement.appendChild(heightNode);
+
+    if (!outputFile_.isEmpty()) {
+        QDomElement fileNode = doc.createElement("file");
+        fileNode.appendChild(doc.createTextNode(outputFile_));
+        outputElement.appendChild(fileNode);
+    }
 
     QDomElement bboxNode = doc.createElement("boundingBox");
     bboxNode.setAttribute("left", QString::number(boundingBox_.left_));
@@ -80,4 +88,14 @@ BoundingBox ImageOutput::boundingBox() const
 void ImageOutput::setBoundingBox(const BoundingBox& bb)
 {
     boundingBox_ = bb;
+}
+
+QString ImageOutput::outputFile() const
+{
+    return outputFile_;
+}
+
+void ImageOutput::setOutputFile(const QString& file)
+{
+    outputFile_ = file;
 }

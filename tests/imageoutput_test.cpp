@@ -5,8 +5,8 @@
 TEST_CASE("ImageOutput default values", "[ImageOutput]")
 {
     ImageOutput out("img");
-    REQUIRE(out.widthPixels() == 256);
-    REQUIRE(out.heightPixels() == 256);
+    REQUIRE(out.widthPixels() == 1024);
+    REQUIRE(out.heightPixels() == 1024);
     BoundingBox bb = out.boundingBox();
     REQUIRE(bb.left_ == 0);
     REQUIRE(bb.right_ == 0);
@@ -19,6 +19,7 @@ TEST_CASE("ImageOutput setters and getters", "[ImageOutput]")
     ImageOutput out("temp");
     out.setWidthPixels(640);
     out.setHeightPixels(480);
+    out.setOutputFile("file.png");
     BoundingBox bb { 1, 2, 3, 4 };
     out.setBoundingBox(bb);
 
@@ -29,6 +30,7 @@ TEST_CASE("ImageOutput setters and getters", "[ImageOutput]")
     REQUIRE(obb.right_ == 2);
     REQUIRE(obb.top_ == 3);
     REQUIRE(obb.bottom_ == 4);
+    REQUIRE(out.outputFile() == "file.png");
 }
 
 TEST_CASE("ImageOutput saveXML populates document", "[ImageOutput]")
@@ -38,6 +40,7 @@ TEST_CASE("ImageOutput saveXML populates document", "[ImageOutput]")
     out.setHeightPixels(600);
     BoundingBox bb { -1, 1, 2, -2 };
     out.setBoundingBox(bb);
+    out.setOutputFile("out.png");
 
     QDomDocument doc;
     QDomElement elem;
@@ -47,6 +50,7 @@ TEST_CASE("ImageOutput saveXML populates document", "[ImageOutput]")
     REQUIRE(elem.attribute("name") == "xml");
     REQUIRE(elem.firstChildElement("width").text() == "800");
     REQUIRE(elem.firstChildElement("height").text() == "600");
+    REQUIRE(elem.firstChildElement("file").text() == "out.png");
     QDomElement b = elem.firstChildElement("boundingBox");
     REQUIRE(b.attribute("left") == "-1");
     REQUIRE(b.attribute("right") == "1");
@@ -67,6 +71,7 @@ TEST_CASE("ImageOutput constructed from DOM", "[ImageOutput]")
     };
     addChild("width", "320");
     addChild("height", "240");
+    addChild("file", "abc.png");
     QDomElement bb = doc.createElement("boundingBox");
     bb.setAttribute("left", "5");
     bb.setAttribute("right", "6");
@@ -78,6 +83,7 @@ TEST_CASE("ImageOutput constructed from DOM", "[ImageOutput]")
     REQUIRE(loaded.name() == "dom");
     REQUIRE(loaded.widthPixels() == 320);
     REQUIRE(loaded.heightPixels() == 240);
+    REQUIRE(loaded.outputFile() == "abc.png");
     BoundingBox lb = loaded.boundingBox();
     REQUIRE(lb.left_ == 5);
     REQUIRE(lb.right_ == 6);

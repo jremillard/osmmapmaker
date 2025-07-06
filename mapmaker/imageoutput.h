@@ -20,10 +20,14 @@ public:
     BoundingBox boundingBox() const;
     void setBoundingBox(const BoundingBox& bb);
 
+    QString outputFile() const;
+    void setOutputFile(const QString& file);
+
     virtual void saveXML(QDomDocument& doc, QDomElement& layerElement);
 
 private:
     int widthPixels_;
     int heightPixels_;
     BoundingBox boundingBox_;
+    QString outputFile_;
 };
