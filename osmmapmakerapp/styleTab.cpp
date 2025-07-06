@@ -662,7 +662,7 @@ void StyleTab::on_mapBackgroundOpacity_valueChanged(double v)
 void StyleTab::on_mapBackgroundColorPick_clicked()
 {
     QString old = ui->mapBackgroundColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("map background"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->mapBackgroundColor->setText(newColor.name());
@@ -740,7 +740,7 @@ void StyleTab::on_areaMinZoom_editingFinished()
 void StyleTab::on_areaColorPick_clicked()
 {
     QString old = ui->areaColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("area fill"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->areaColor->setText(newColor.name());
@@ -752,7 +752,7 @@ void StyleTab::on_areaColorPick_clicked()
 void StyleTab::on_areaBorderColorPick_clicked()
 {
     QString old = ui->areaBorderColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("area border"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->areaBorderColor->setText(newColor.name());
@@ -829,7 +829,7 @@ void StyleTab::on_pointColor_editingFinished()
 void StyleTab::on_pointColorPick_clicked()
 {
     QString old = ui->pointColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("point"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->pointColor->setText(newColor.name());
@@ -934,7 +934,7 @@ void StyleTab::on_lineMinZoom_editingFinished()
 void StyleTab::on_lineCasingColorPick_clicked()
 {
     QString old = ui->lineCasingColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("line casing"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->lineCasingColor->setText(newColor.name());
@@ -946,7 +946,7 @@ void StyleTab::on_lineCasingColorPick_clicked()
 void StyleTab::on_lineColorPick_clicked()
 {
     QString old = ui->lineColor->text();
-    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), this);
+    QColor newColor = ColorPickerDialog::getColor(project_, QColor(old), tr("line"), this);
 
     if (newColor.isValid() && newColor.name() != old) {
         ui->lineColor->setText(newColor.name());
