@@ -47,7 +47,15 @@ ColorPickerDialog::ColorPickerDialog(Project* project, const QString& item,
             resize(QSize(1000, 1000));
     }
 
-    ui->hintBox->setPlainText(tr("Choose colors that are distinct and readable on maps."));
+    ui->hintBox->setPlainText(tr(
+        "When picking colors for maps, start by choosing hues that intuitively match the "
+        "type of information you're showing—like greens for forests, blues for water, or "
+        "yellows and browns for elevation. Use muted or softer tones rather than bright "
+        "colors, as these are easier on the eyes and prevent visual fatigue. Ensure good "
+        "contrast between important map elements like roads or labels and their "
+        "backgrounds to maintain readability. Avoid using too many different hues; "
+        "instead, select a small set (around three to five) and then vary shades and "
+        "tints within those hues for clarity and organization."));
     ui->hintWidget->setVisible(showHint);
 
     ui->hueSlider->setRange(0, 359);
@@ -172,17 +180,19 @@ void ColorPickerDialog::populateColors()
     for (auto it = colorMap.begin(); it != colorMap.end(); ++it)
         colors.push_back(*it);
 
-    ui->colorTable->setColumnCount(4);
-    ui->colorTable->setHorizontalHeaderLabels({ tr("Color"), tr("Hue"), tr("Saturation"), tr("Value") });
+    ui->colorTable->setColumnCount(5);
+    ui->colorTable->setHorizontalHeaderLabels({ tr("Color"), tr("Hue"), tr("Saturation"), tr("Value"), tr("Description") });
     ui->colorTable->setRowCount(static_cast<int>(colors.size()));
+    ui->colorTable->verticalHeader()->setVisible(false);
 
     for (size_t i = 0; i < colors.size(); ++i) {
         const ColorInfo& info = colors[i];
-        QPixmap pm(20, 20);
+        QPixmap pm(80, 80);
         pm.fill(info.color);
         QTableWidgetItem* itemColor = new QTableWidgetItem(QIcon(pm), "");
         itemColor->setData(Qt::UserRole, info.color);
         itemColor->setToolTip(info.features.join(", "));
+        QTableWidgetItem* itemDesc = new QTableWidgetItem(info.features.join(", "));
         int h, s, v;
         info.color.getHsv(&h, &s, &v);
         if (h < 0)
@@ -191,6 +201,8 @@ void ColorPickerDialog::populateColors()
         ui->colorTable->setItem(i, 1, new QTableWidgetItem(QString::number(h)));
         ui->colorTable->setItem(i, 2, new QTableWidgetItem(QString::number(s)));
         ui->colorTable->setItem(i, 3, new QTableWidgetItem(QString::number(v)));
+        ui->colorTable->setItem(i, 4, itemDesc);
+        ui->colorTable->setRowHeight(static_cast<int>(i), 80);
     }
     ui->colorTable->setSortingEnabled(true);
     ui->colorTable->sortItems(lastSortColumn);
