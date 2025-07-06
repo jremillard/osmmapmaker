@@ -27,6 +27,10 @@ private slots:
     void on_usedColors_itemDoubleClicked(QListWidgetItem* item);
     void on_colorWidget_currentColorChanged(const QColor& color);
 
+protected:
+    void moveEvent(QMoveEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
+
 private:
     void populateColors();
     void updatePatch(const QColor& color);
