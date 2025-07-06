@@ -81,11 +81,15 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QPushButton" name="treeNew">
-        <property name="text">
-         <string>New</string>
-        </property>
-       </widget>
+      <widget class="QPushButton" name="treeNew">
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/plus.svg</normaloff>:/resources/plus.svg</iconset>
+       </property>
+       <property name="text">
+        <string>New</string>
+       </property>
+      </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_7">
@@ -156,11 +160,15 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QPushButton" name="treeUp">
-        <property name="text">
-         <string>Move Up</string>
-        </property>
-       </widget>
+      <widget class="QPushButton" name="treeUp">
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/uparrow.svg</normaloff>:/resources/uparrow.svg</iconset>
+       </property>
+       <property name="text">
+        <string>Move Up</string>
+       </property>
+      </widget>
       </item>
       <item>
        <spacer name="horizontalSpacer_5">
@@ -196,11 +204,15 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="treeDown">
-        <property name="text">
-         <string>Move Down</string>
-        </property>
-       </widget>
+      <widget class="QPushButton" name="treeDown">
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/downarrow.svg</normaloff>:/resources/downarrow.svg</iconset>
+       </property>
+       <property name="text">
+        <string>Move Down</string>
+       </property>
+      </widget>
       </item>
      </layout>
     </item>
