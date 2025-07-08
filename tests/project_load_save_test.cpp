@@ -9,7 +9,7 @@
 #include <QStringList>
 #include <QNetworkAccessManager>
 #include "project.h"
-#include "osmdatafile.h"
+#include "osmdatafilesource.h"
 #include "stylelayer.h"
 #include "tileoutput.h"
 #include <filesystem>
@@ -210,7 +210,7 @@ TEST_CASE("Project add and remove components", "[Project]")
         size_t outCount = proj.outputs().size();
         size_t layerCount = proj.styleLayers().size();
 
-        auto* ds = new OsmDataFile();
+        auto* ds = new OsmDataFileSource();
         proj.addDataSource(ds);
         REQUIRE(proj.dataSources().size() == dataCount + 1);
         proj.removeDataSource(ds);

@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <QtXml>
 #include <SQLiteCpp/SQLiteCpp.h>
-#include "osmdataoverpass.h"
+#include "osmoverpasssource.h"
 #include "renderdatabase.h"
 #include "project.h"
 #include <QCoreApplication>
@@ -14,9 +14,9 @@ TEST_CASE("Overpass import uses cache", "[Overpass]")
 
     QString query = "node(0,0,1,1);out;";
     QByteArray osm = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><osm version=\"0.6\"><node id=\"1\" lat=\"0\" lon=\"0\"><tag k=\"name\" v=\"n1\"/></node></osm>";
-    OsmDataOverpass::cache_.insert(query, osm);
+    OsmOverpassSource::cache_.insert(query, osm);
 
-    OsmDataOverpass over(nullptr);
+    OsmOverpassSource over(nullptr);
     over.setQuery(query);
     over.importData(db);
 
@@ -28,7 +28,7 @@ TEST_CASE("Overpass import uses cache", "[Overpass]")
 TEST_CASE("Overpass network failure throws", "[Overpass]")
 {
     qputenv("QT_BEARER_POLL_TIMEOUT", "-1");
-    OsmDataOverpass over(nullptr);
+    OsmOverpassSource over(nullptr);
     over.setQuery("foo");
 
     RenderDatabase db;
@@ -51,7 +51,7 @@ TEST_CASE("Project loads overpass data source", "[Project][Overpass]")
 
     bool found = false;
     for (auto* ds : proj.dataSources()) {
-        if (dynamic_cast<OsmDataOverpass*>(ds) != nullptr)
+        if (dynamic_cast<OsmOverpassSource*>(ds) != nullptr)
             found = true;
     }
     REQUIRE(found);

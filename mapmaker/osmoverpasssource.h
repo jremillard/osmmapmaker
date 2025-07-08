@@ -1,15 +1,16 @@
 #pragma once
 
-#include "osmdata.h"
+#include "datasource.h"
+#include "osmiumimporter.h"
 #include <QNetworkAccessManager>
 #include <QDomElement>
 
 /// Downloads OSM data using the Overpass API and imports it.
-class OsmDataOverpass : public OsmData {
+class OsmOverpassSource : public DataSource {
 public:
-    explicit OsmDataOverpass(QNetworkAccessManager* nam, QDomElement projectNode);
-    explicit OsmDataOverpass(QNetworkAccessManager* nam);
-    ~OsmDataOverpass();
+    explicit OsmOverpassSource(QNetworkAccessManager* nam, QDomElement projectNode);
+    explicit OsmOverpassSource(QNetworkAccessManager* nam);
+    ~OsmOverpassSource();
 
     void setQuery(const QString& query);
     QString query() const;

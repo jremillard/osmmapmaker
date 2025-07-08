@@ -5,8 +5,7 @@ Filename                                       |Rate    Num|Rate  Num|Rate   Num
 mapmaker/project.h                             |50.0%     6| 0.0%   3|    -    0
 mapmaker/output.cpp                            |43.8%    16| 0.0%   6|    -    0
 mapmaker/demdata.cpp                           | 7.7%   155| 0.0%   7|    -    0
-mapmaker/osmdata.cpp                           | 8.5%   176| 0.0%  14|    -    0
-mapmaker/project.cpp                           |13.6%   242| 0.0%  28|    -    0
+mapmaker/project.cpp                           |13.9%   238| 0.0%  28|    -    0
 mapmaker/renderqt.cpp                          |    -     0|    -   0|    -    0
 mapmaker/maputils.cpp                          |50.0%     2| 0.0%   1|    -    0
 mapmaker/textfield.cpp                         | 4.5%    44| 0.0%   2|    -    0
@@ -14,15 +13,15 @@ mapmaker/stylelayer.cpp                        | 8.7%   530| 0.0%  45|    -    0
 mapmaker/tileoutput.cpp                        |23.9%    71| 0.0%  17|    -    0
 mapmaker/datasource.cpp                        |26.8%    56| 0.0%  14|    -    0
 mapmaker/imageoutput.cpp                       |21.0%    62| 0.0%  13|    -    0
-mapmaker/osmdatafile.cpp                       |33.3%    24| 0.0%   8|    -    0
 mapmaker/linebreaking.cpp                      |10.0%    10| 0.0%   1|    -    0
+mapmaker/osmiumimporter.cpp                    |13.0%    23| 0.0%   3|    -    0
 mapmaker/renderdatabase.cpp                    |25.9%    58| 0.0%   9|    -    0
 mapmaker/batchtileoutput.cpp                   |14.3%    42| 0.0%   2|    -    0
 mapmaker/projecttemplate.cpp                   |17.6%    17| 0.0%   3|    -    0
-mapmaker/osmdataoverpass.cpp                   |31.0%    29| 0.0%   8|    -    0
-mapmaker/osmdatadirectdownload.cpp             |50.0%    10| 0.0%   4|    -    0
+mapmaker/osmoverpasssource.cpp                 |31.0%    29| 0.0%   8|    -    0
+mapmaker/osmdatafilesource.cpp                 |33.3%    24| 0.0%   8|    -    0
+mapmaker/osmiumimporthandler.cpp               | 5.5%   146| 0.0%   8|    -    0
 mapmaker/applicationpreferences.cpp            |14.0%    43| 0.0%   6|    -    0
-mapmaker/osmdataextractdownload.cpp            |50.0%    10| 0.0%   4|    -    0
                                                |Lines      |Functions|Branches  
 bin/coverage/mapmaker/...mapmaker_resources.cpp|38.5%    13| 0.0%   5|    -    0
-                                         Total:|14.6%  1616| 0.0% 200|    -    0
+                                         Total:|14.0%  1585| 0.0% 189|    -    0

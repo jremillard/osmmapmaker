@@ -7,10 +7,8 @@
 #include <exception>
 #include <stdexcept>
 
-#include "osmdataextractdownload.h"
-#include "osmdatadirectdownload.h"
-#include "osmdataoverpass.h"
-#include "osmdatafile.h"
+#include "osmoverpasssource.h"
+#include "osmdatafilesource.h"
 #include "projecttemplate.h"
 #include "demdata.h"
 
@@ -133,14 +131,10 @@ Project::Project(path fileName)
         QDomElement topNode = toplevelNodes.at(i).toElement();
         QString name = topNode.tagName();
 
-        if (name == "openStreetMapExtractDownload") {
-            dataSources_.push_back(new OsmDataExtractDownload(topNode));
-        } else if (name == "openStreetMapDirectDownload") {
-            dataSources_.push_back(new OsmDataDirectDownload(topNode));
-        } else if (name == "openStreetMapFileSource") {
-            dataSources_.push_back(new OsmDataFile(topNode));
+        if (name == "openStreetMapFileSource") {
+            dataSources_.push_back(new OsmDataFileSource(topNode));
         } else if (name == "overpassSource") {
-            dataSources_.push_back(new OsmDataOverpass(nullptr, topNode));
+            dataSources_.push_back(new OsmOverpassSource(nullptr, topNode));
         } else if (name == "elevationSource") {
             dataSources_.push_back(new DemData(topNode));
         } else if (name == "tileOutput") {
@@ -363,7 +357,7 @@ void Project::saveTo(path fileName)
     path srcProjectDir = projectPath_.parent_path();
     path dstProjectDir = fileName.parent_path();
     for (auto* ds : dataSources_) {
-        auto* fileSrc = dynamic_cast<OsmDataFile*>(ds);
+        auto* fileSrc = dynamic_cast<OsmDataFileSource*>(ds);
         if (fileSrc) {
             std::filesystem::path srcFile = fileSrc->localFile().toStdString();
             if (!srcFile.is_absolute()) {
