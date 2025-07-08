@@ -4,13 +4,12 @@ project(mapmaker LANGUAGES CXX)
 
 set(SRC_FILES
     project.cpp
-    osmdataextractdownload.cpp
-    osmdatadirectdownload.cpp
-    osmdataoverpass.cpp
+    osmoverpasssource.cpp
+    osmdatafilesource.cpp
+    osmiumimporter.cpp
+    osmiumimporthandler.cpp
     renderdatabase.cpp
     datasource.cpp
-    osmdata.cpp
-    osmdatafile.cpp
     demdata.cpp
     stylelayer.cpp
     textfield.cpp

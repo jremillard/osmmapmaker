@@ -6,8 +6,8 @@
 #include <QFileDialog>
 #include "inputtypedialog.h"
 #include <QInputDialog>
-#include <osmdatafile.h>
-#include <osmdataoverpass.h>
+#include <osmdatafilesource.h>
+#include <osmoverpasssource.h>
 #include <demdata.h>
 
 DataTab::DataTab(QWidget* parent)
@@ -69,17 +69,17 @@ void DataTab::on_dataSources_currentIndexChanged(int index)
             ui->dataSourceUserRename->setEnabled(true);
 
             if (name == output->userName()) {
-                if (dynamic_cast<OsmDataFile*>(output) != NULL) {
+                if (dynamic_cast<OsmDataFileSource*>(output) != NULL) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOSMFile);
 
-                    OsmDataFile* outputC = dynamic_cast<OsmDataFile*>(output);
+                    OsmDataFileSource* outputC = dynamic_cast<OsmDataFileSource*>(output);
 
                     ui->OSMFileName->setText(QDir::toNativeSeparators(outputC->localFile()));
                     ui->OSMFileImport->setEnabled(QFileInfo::exists(ui->OSMFileName->text()));
-                } else if (dynamic_cast<OsmDataOverpass*>(output) != NULL) {
+                } else if (dynamic_cast<OsmOverpassSource*>(output) != NULL) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOverpass);
 
-                    OsmDataOverpass* over = dynamic_cast<OsmDataOverpass*>(output);
+                    OsmOverpassSource* over = dynamic_cast<OsmOverpassSource*>(output);
                     ui->overpassQuery->setPlainText(over->query());
                     ui->overpassImport->setEnabled(!over->query().isEmpty());
                 }
@@ -217,16 +217,16 @@ void DataTab::saveCurrent()
 
         for (DataSource* output : project_->dataSources()) {
             if (name == output->userName()) {
-                if (dynamic_cast<OsmDataFile*>(output) != NULL) {
+                if (dynamic_cast<OsmDataFileSource*>(output) != NULL) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOSMFile);
 
-                    OsmDataFile* outputC = dynamic_cast<OsmDataFile*>(output);
+                    OsmDataFileSource* outputC = dynamic_cast<OsmDataFileSource*>(output);
 
                     outputC->SetLocalFile(ui->OSMFileName->text());
-                } else if (dynamic_cast<OsmDataOverpass*>(output) != NULL) {
+                } else if (dynamic_cast<OsmOverpassSource*>(output) != NULL) {
                     ui->stackedWidget->setCurrentWidget(ui->pageOverpass);
 
-                    OsmDataOverpass* over = dynamic_cast<OsmDataOverpass*>(output);
+                    OsmOverpassSource* over = dynamic_cast<OsmOverpassSource*>(output);
                     over->setQuery(ui->overpassQuery->toPlainText());
                 }
 
@@ -247,7 +247,7 @@ void DataTab::on_addDataSource_clicked()
         if (fileName.isEmpty())
             return;
 
-        OsmDataFile* src = new OsmDataFile();
+        OsmDataFileSource* src = new OsmDataFileSource();
         src->SetLocalFile(fileName);
 
         QString primarySourceName = DataSource::primarySourceName();
@@ -345,7 +345,7 @@ void DataTab::on_addDataSource_clicked()
         src->setDataName(dataSourceName);
         project_->addDataSource(src);
     } else if (dlg.choice() == InputTypeDialog::Overpass) {
-        OsmDataOverpass* src = new OsmDataOverpass(&nam_);
+        OsmOverpassSource* src = new OsmOverpassSource(&nam_);
 
         QString primarySourceName = DataSource::primarySourceName();
         bool hasPrimary = false;

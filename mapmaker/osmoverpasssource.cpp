@@ -1,12 +1,13 @@
-#include "osmdataoverpass.h"
+#include "osmoverpasssource.h"
+#include "osmiumimporter.h"
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QEventLoop>
 
-QHash<QString, QByteArray> OsmDataOverpass::cache_;
+QHash<QString, QByteArray> OsmOverpassSource::cache_;
 
-OsmDataOverpass::OsmDataOverpass(QNetworkAccessManager* nam, QDomElement projectNode)
-    : OsmData(projectNode)
+OsmOverpassSource::OsmOverpassSource(QNetworkAccessManager* nam, QDomElement projectNode)
+    : DataSource(projectNode)
     , nam_(nam)
 {
     QDomElement qEl = projectNode.firstChildElement("overpassQuery");
@@ -14,24 +15,24 @@ OsmDataOverpass::OsmDataOverpass(QNetworkAccessManager* nam, QDomElement project
         query_ = qEl.text();
 }
 
-OsmDataOverpass::OsmDataOverpass(QNetworkAccessManager* nam)
+OsmOverpassSource::OsmOverpassSource(QNetworkAccessManager* nam)
     : nam_(nam)
 {
 }
 
-OsmDataOverpass::~OsmDataOverpass() { }
+OsmOverpassSource::~OsmOverpassSource() { }
 
-void OsmDataOverpass::setQuery(const QString& query)
+void OsmOverpassSource::setQuery(const QString& query)
 {
     query_ = query;
 }
 
-QString OsmDataOverpass::query() const
+QString OsmOverpassSource::query() const
 {
     return query_;
 }
 
-QByteArray OsmDataOverpass::download()
+QByteArray OsmOverpassSource::download()
 {
     if (cache_.contains(query_))
         return cache_[query_];
@@ -59,13 +60,13 @@ QByteArray OsmDataOverpass::download()
     return data;
 }
 
-void OsmDataOverpass::importData(RenderDatabase& db)
+void OsmOverpassSource::importData(RenderDatabase& db)
 {
     QByteArray data = download();
-    importBuffer(db, data);
+    OsmiumImporter::importBuffer(db, data, dataName());
 }
 
-void OsmDataOverpass::saveXML(QDomDocument& doc, QDomElement& toElement)
+void OsmOverpassSource::saveXML(QDomDocument& doc, QDomElement& toElement)
 {
     toElement = doc.createElement("overpassSource");
     DataSource::saveXML(doc, toElement);
