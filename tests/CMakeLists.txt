@@ -1,3 +1,11 @@
+# For instructions on running the tests, see:
+# - README.md: For general build setup
+# - AGENTS.md: For specific test commands
+# Run tests with:
+# Windows: ctest --test-dir bin/release -C Release (or --test-dir bin/debug -C Debug)
+# Linux/macOS: ctest --test-dir bin/release (or bin/debug, bin/coverage, bin/valgrind)
+# Add --output-on-failure to see detailed test results
+
 cmake_minimum_required(VERSION 3.20)
 
 project(tests LANGUAGES CXX)

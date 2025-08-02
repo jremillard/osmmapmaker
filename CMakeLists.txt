@@ -1,3 +1,5 @@
+# Build instructions can be found in readme.md and agents.md.
+
 cmake_minimum_required(VERSION 3.20)
 
 project(osmmapmaker VERSION 1.0 LANGUAGES CXX)
