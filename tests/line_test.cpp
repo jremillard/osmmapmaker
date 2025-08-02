@@ -55,8 +55,6 @@ TEST_CASE("StyleLayer parses line with dash array", "[Line]")
     REQUIRE(parsed.dashArray_[0].second == Approx(1.0));
     REQUIRE(parsed.dashArray_[1].first == Approx(2.0));
     REQUIRE(parsed.dashArray_[1].second == Approx(2.0));
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer saves line with dash array", "[Line]")
@@ -86,8 +84,6 @@ TEST_CASE("StyleLayer saves line with dash array", "[Line]")
                           .firstChildElement("dashArray")
                           .text();
     REQUIRE(dashStr == "1,2,3,4");
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer parses line without dash array", "[Line]")
@@ -120,6 +116,4 @@ TEST_CASE("StyleLayer parses line without dash array", "[Line]")
     REQUIRE(parsed.opacity_ == Approx(1.0));
     REQUIRE(parsed.smooth_ == Approx(0.0));
     REQUIRE(parsed.dashArray_.empty());
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

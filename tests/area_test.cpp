@@ -39,8 +39,6 @@ TEST_CASE("StyleLayer setSubLayerArea branches", "[StyleLayer]")
     layer.setSubLayerArea(1, second); // append new
     REQUIRE(layer.subLayerCount() == 2);
     REQUIRE(layer.subLayerArea(1).name_ == "second");
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer save and load area", "[StyleLayer]")
@@ -78,6 +76,4 @@ TEST_CASE("StyleLayer save and load area", "[StyleLayer]")
     REQUIRE(loadedArea.opacity_ == Catch::Approx(0.5));
     REQUIRE(loadedArea.fillImage_ == "img");
     REQUIRE(loadedArea.fillImageOpacity_ == Catch::Approx(0.75));
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

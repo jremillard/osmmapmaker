@@ -47,16 +47,17 @@ TEST_CASE("Project loads overpass data source", "[Project][Overpass]")
     QString fileName = QStringLiteral(SOURCE_DIR "/tests/project_xml_samples/valid/valid_overpass.osmmap.xml");
     std::filesystem::path p = fileName.toStdString();
 
-    Project proj(p);
+    {
+        Project proj(p);
 
-    bool found = false;
-    for (auto* ds : proj.dataSources()) {
-        if (dynamic_cast<OsmOverpassSource*>(ds) != nullptr)
-            found = true;
+        bool found = false;
+        for (auto* ds : proj.dataSources()) {
+            if (dynamic_cast<OsmOverpassSource*>(ds) != nullptr)
+                found = true;
+        }
+        REQUIRE(found);
+        // proj destructor called here, all internal resources released
     }
-    REQUIRE(found);
 
     std::filesystem::remove_all(p.replace_extension(""));
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

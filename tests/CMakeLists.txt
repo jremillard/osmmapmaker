@@ -78,6 +78,9 @@ if(WIN32)
                 "${PROJ_DB_PATH}"
                 "$<TARGET_FILE_DIR:osmmapmaker_tests>"
             COMMENT "Copying proj.db to executable directory")
+        
+        # Set PROJ_DATA environment variable for tests
+        set_property(TEST osmmapmaker_tests PROPERTY ENVIRONMENT "PROJ_DATA=$<TARGET_FILE_DIR:osmmapmaker_tests>")
     else()
         message(WARNING "proj.db not found. PROJ may not function correctly.")
     endif()

@@ -20,9 +20,6 @@ TEST_CASE("StyleLayer dataType and virtual table", "[StyleLayer]")
     StyleLayer layerA("ds", "k", ST_AREA);
     REQUIRE(layerA.dataType() == OET_AREA);
     REQUIRE(layerA.virtualSQLTableName() == "k_ds_area_v");
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer show and hide", "[StyleLayer]")
@@ -42,9 +39,6 @@ TEST_CASE("StyleLayer show and hide", "[StyleLayer]")
     layer.showAll();
     REQUIRE(layer.subLayerPoint(0).visible_);
     REQUIRE(layer.subLayerPoint(1).visible_);
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer move and remove", "[StyleLayer]")
@@ -65,9 +59,6 @@ TEST_CASE("StyleLayer move and remove", "[StyleLayer]")
 
     layer.removeSubLayer(1);
     REQUIRE(layer.subLayerCount() == 1);
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer required keys", "[StyleLayer]")
@@ -103,9 +94,6 @@ TEST_CASE("StyleLayer required keys", "[StyleLayer]")
     REQUIRE(std::find(keys.begin(), keys.end(), "extra") != keys.end());
     REQUIRE(std::find(keys.begin(), keys.end(), "dup") != keys.end());
     REQUIRE(std::find(keys.begin(), keys.end(), "primary") == keys.end());
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer sub layer names", "[StyleLayer]")
@@ -136,9 +124,6 @@ TEST_CASE("StyleLayer sub layer names", "[StyleLayer]")
     REQUIRE(names[0].endsWith("..."));
     REQUIRE(names[1] == "foo, other=");
     REQUIRE(names[2] == "All");
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer renderSQLSelect includes joins", "[StyleLayer]")
@@ -162,9 +147,6 @@ TEST_CASE("StyleLayer renderSQLSelect includes joins", "[StyleLayer]")
     REQUIRE(sql.contains("\"highway\".value as \"highway\""));
     REQUIRE(sql.contains("\"name\".value as \"name\""));
     REQUIRE(sql.contains("left outer join entityKV as \"access\""));
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer save and load point", "[StyleLayer]")
@@ -208,9 +190,6 @@ TEST_CASE("StyleLayer save and load point", "[StyleLayer]")
     REQUIRE(loadedLb.text_ == "[name]");
     REQUIRE(loadedLb.color_ == QColor(Qt::yellow));
     REQUIRE(loadedLb.height_ == Catch::Approx(8.0));
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("StyleLayer removeSubLayer for points", "[StyleLayer]")
@@ -259,7 +238,4 @@ TEST_CASE("StyleLayer renderSQLSelect deduplicates keys", "[StyleLayer]")
     REQUIRE(sql.contains("\"foo\".value as \"foo\""));
 
     REQUIRE(sql.count("left outer join entityKV as \"foo\"") == 1);
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

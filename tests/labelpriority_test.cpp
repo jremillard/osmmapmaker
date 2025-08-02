@@ -31,6 +31,4 @@ TEST_CASE("StyleLayer preserves label priority in XML", "[StyleLayer]")
 
     StyleLayer loaded(elem);
     REQUIRE(loaded.label(0).priority_ == 5);
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

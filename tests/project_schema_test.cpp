@@ -33,7 +33,7 @@ TEST_CASE("Project files validate against schema", "[ProjectSchema]")
         QXmlSchemaValidator validator(schema);
         REQUIRE(validator.validate(&f));
     }
+    
+    // Clean up schema resources
     schema = QXmlSchema();
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

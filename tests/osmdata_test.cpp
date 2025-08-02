@@ -169,7 +169,7 @@ TEST_CASE("Rendering sample OSM schema validation", "[OsmSchema]")
         QXmlSchemaValidator validator(schema);
         REQUIRE(validator.validate(&dataFile));
     }
+    
+    // Clean up schema resources
     schema = QXmlSchema();
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

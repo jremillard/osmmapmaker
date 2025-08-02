@@ -28,17 +28,30 @@ TEST_CASE("Project templates create valid files", "[Project]")
         QByteArray bytes = ProjectTemplate::projectTemplateContents(t);
         REQUIRE_NOTHROW(Project::createNew("test", dir, bytes));
         std::filesystem::path tmp = dir / "test.osmmap.xml";
-        QFile f(QString::fromStdString(tmp.string()));
-        REQUIRE(f.open(QIODevice::ReadOnly));
-        QXmlSchemaValidator validator(schema);
-        REQUIRE(validator.validate(&f));
-        f.close();
-        Project proj(tmp);
-        (void)proj; // ensure it loads
+        
+        // Scope all Qt objects to ensure proper destruction order
+        {
+            {
+                QFile f(QString::fromStdString(tmp.string()));
+                REQUIRE(f.open(QIODevice::ReadOnly));
+                QXmlSchemaValidator validator(schema);
+                REQUIRE(validator.validate(&f));
+                f.close();
+                // f destructor called here, file handle released
+            }
+            
+            {
+                Project proj(tmp);
+                (void)proj; // ensure it loads
+                // proj destructor called here, all internal resources released
+            }
+            
+            // All Qt objects destroyed, file handles should be released
+        }
+        
         std::filesystem::remove_all(dir);
     }
 
+    // Clean up schema resources
     schema = QXmlSchema();
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

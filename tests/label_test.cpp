@@ -16,6 +16,4 @@ TEST_CASE("Label default values", "[Label]")
     REQUIRE(lb.offsetY_ == Catch::Approx(0.0));
     REQUIRE(lb.fontWeight == 400);
     REQUIRE(lb.priority_ == 0);
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }

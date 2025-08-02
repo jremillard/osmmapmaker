@@ -62,9 +62,8 @@ TEST_CASE("Valid project files load and save", "[Project]")
         std::filesystem::remove_all(p.replace_extension(""));
     }
 
+    // Clean up schema resources
     schema = QXmlSchema();
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Invalid project files fail validation", "[Project]")
@@ -96,9 +95,8 @@ TEST_CASE("Invalid project files fail validation", "[Project]")
         REQUIRE_FALSE(validator.validate(&f));
     }
 
+    // Clean up schema resources
     schema = QXmlSchema();
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Invalid project files throw on load", "[Project]")
@@ -130,9 +128,6 @@ TEST_CASE("Invalid project files throw on load", "[Project]")
             CHECK_THAT(msg, Catch::Matchers::Matches(".*:\\d+:.*"));
         }
     }
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Malformed project file reports parse location", "[Project]")
@@ -153,9 +148,6 @@ TEST_CASE("Malformed project file reports parse location", "[Project]")
         CHECK_THAT(msg, Catch::Matchers::ContainsSubstring(fileName.toStdString()));
         CHECK_THAT(msg, Catch::Matchers::Matches(".*:\\d+:.*"));
     }
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Project coordinate conversions", "[Project]")
@@ -189,9 +181,6 @@ TEST_CASE("Project coordinate conversions", "[Project]")
     }
 
     std::filesystem::remove_all(p.replace_extension(""));
-
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Project add and remove components", "[Project]")
@@ -240,8 +229,6 @@ TEST_CASE("Project add and remove components", "[Project]")
     }
 
     std::filesystem::remove_all(p.replace_extension(""));
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
 
 TEST_CASE("Project copy creates duplicate", "[Project]")
@@ -269,15 +256,17 @@ TEST_CASE("Project copy creates duplicate", "[Project]")
 
         REQUIRE(std::filesystem::exists(dest));
 
-        Project copied(dest);
-        REQUIRE(std::filesystem::exists(copied.assetDirectory()));
+        {
+            Project copied(dest);
+            REQUIRE(std::filesystem::exists(copied.assetDirectory()));
+            // copied destructor called here, all internal resources released
+        }
 
         std::filesystem::remove(dest);
         std::filesystem::remove_all(dest.replace_extension(""));
         std::filesystem::remove_all(destDir);
     }
 
+    // Final cleanup
     std::filesystem::remove_all(src.replace_extension(""));
-    app.processEvents();
-    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
 }
