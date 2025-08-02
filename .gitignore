@@ -1,7 +1,7 @@
 
 *.user
 bin/
-vcpkg/
+vcpkg_installed/
 CMakeCache.txt
 cmake_install.cmake
 CMakeFiles/
