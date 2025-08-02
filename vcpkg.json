@@ -1,0 +1,21 @@
+{
+  "name": "osmmapmaker",
+  "version": "1.0.0",
+  "description": "OSM Map Maker - A tool for creating maps from OpenStreetMap data",
+  "homepage": "https://github.com/jremillard/osmmapmaker",
+  "dependencies": [
+    "qt5-base",
+    "qt5-tools",
+    "qt5-xmlpatterns",
+    "bzip2",
+    "zlib",
+    "expat",
+    "proj",
+    "sqlite3",
+    "sqlitecpp",
+    "geos",
+    "libosmium",
+    "catch2",
+    "spdlog"
+  ]
+}

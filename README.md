@@ -28,3 +28,5 @@ The project relies on the following libraries:
 Development and testing also require `clang-format`, `lcov`, and `valgrind`.
 
 On Debian-based systems you can install them with `install_dependencies_apt.sh`.
+
+See the AGENTS.MD file for detailed instructions on building the project.
