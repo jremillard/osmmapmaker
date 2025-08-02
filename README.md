@@ -1,8 +1,6 @@
-#osmmapmaker
+# osmmapmaker
 
-osmmapmaker is a desktop application for cre### Build
-
-Build each directory with `cmake --build bin/<type> -j$(nproc)`. maps directly from OpenStreetMap data. It aims to be simple enough that non-engineers can import OSM data, style their maps, and generate the tiles from within the application.
+osmmapmaker is a desktop application for creating maps directly from OpenStreetMap data. It aims to be simple enough that non-engineers can import OSM data, style their maps, and generate the tiles from within the application.
 
 The program includes its own stylesheet system, which is easier to use than Mapnik XML, CartoCSS, or Mapbox GL JS. Because the data is imported without filtering, any information available in OpenStreetMap can be used to build specialized maps.
 
