@@ -1,0 +1,48 @@
+{
+   QtHelgrindAllRace
+   Helgrind:Race
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt5*
+}
+{
+   QtHelgrindAllMutex
+   Helgrind:Race
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt5*
+}
+{
+   QtHelgrindPthreadDestroyNetwork
+   Helgrind:Race
+   obj:*libQt5Network.so*
+}
+{
+   QtHelgrindPthreadDestroyCore
+   Helgrind:Race
+   obj:*libQt5Core.so*
+}
+{
+   QtHelgrindPthreadDestroyGui
+   Helgrind:Misc
+   obj:/usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so
+   fun:__cxa_finalize
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Gui.so.5*
+   fun:_dl_call_fini
+   fun:_dl_fini
+   fun:__run_exit_handlers
+   fun:exit
+   fun:(below main)
+}
+{
+   QtHelgrindPthreadDestroyRecursiveMutex
+   Helgrind:Misc
+   obj:/usr/libexec/valgrind/vgpreload_helgrind-amd64-linux.so
+   fun:_ZN15QRecursiveMutexD1Ev
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5*
+   fun:__cxa_finalize
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5*
+   fun:_dl_call_fini
+   fun:_dl_fini
+   fun:__run_exit_handlers
+   fun:exit
+   fun:(below main)
+}
