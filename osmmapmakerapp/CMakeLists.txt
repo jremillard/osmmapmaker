@@ -63,4 +63,17 @@ else()
   target_link_libraries(osmmapmakerapp PRIVATE SQLite::SQLite3)
 endif()
 
+if(WIN32)
+    find_file(PROJ_DB_PATH proj.db HINTS ENV VCPKG_INSTALLED_DIR PATH_SUFFIXES "share/proj" "x64-windows/share/proj" "x86-windows/share/proj")
+    if(PROJ_DB_PATH)
+        add_custom_command(TARGET osmmapmakerapp POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "${PROJ_DB_PATH}"
+                "$<TARGET_FILE_DIR:osmmapmakerapp>"
+            COMMENT "Copying proj.db to executable directory")
+    else()
+        message(WARNING "proj.db not found. PROJ may not function correctly.")
+    endif()
+endif()
+
 #install(DIRECTORY "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/bin/plugins" DESTINATION  "${CMAKE_BINARY_DIR}/Debug")

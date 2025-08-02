@@ -61,3 +61,16 @@ target_compile_features(osmmapmaker_tests PRIVATE cxx_std_17)
 target_compile_definitions(osmmapmaker_tests PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 
 add_test(NAME osmmapmaker_tests COMMAND osmmapmaker_tests)
+
+if(WIN32)
+    find_file(PROJ_DB_PATH proj.db HINTS ENV VCPKG_INSTALLED_DIR PATH_SUFFIXES "share/proj" "x64-windows/share/proj" "x86-windows/share/proj")
+    if(PROJ_DB_PATH)
+        add_custom_command(TARGET osmmapmaker_tests POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                "${PROJ_DB_PATH}"
+                "$<TARGET_FILE_DIR:osmmapmaker_tests>"
+            COMMENT "Copying proj.db to executable directory")
+    else()
+        message(WARNING "proj.db not found. PROJ may not function correctly.")
+    endif()
+endif()
