@@ -40,4 +40,17 @@ target_link_libraries(mapmaker
         Qt5::Xml
         Qt5::XmlPatterns
         Qt5::Network
+        BZip2::BZip2
+        ZLIB::ZLIB
+        expat::expat
+        PROJ::proj
+        SQLiteCpp
+        GEOS::geos
+        GEOS::geos_c
 )
+
+if(WIN32)
+    target_link_libraries(mapmaker PUBLIC unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(mapmaker PUBLIC SQLite::SQLite3)
+endif()

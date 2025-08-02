@@ -1,4 +1,6 @@
 #include "maputils.h"
+#include <cmath>
+
 
 namespace {
 constexpr double kEarthEquatorialRadiusMeters = 6378137.0;

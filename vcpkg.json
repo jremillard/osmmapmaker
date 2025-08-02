@@ -11,7 +11,12 @@
     "zlib",
     "expat",
     "proj",
-    "sqlite3",
+    {
+      "name": "sqlite3",
+      "features": [
+        "rtree"
+      ]
+    },
     "sqlitecpp",
     "geos",
     "libosmium",

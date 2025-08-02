@@ -22,7 +22,11 @@ target_compile_features(textfieldprocessor_test PRIVATE cxx_std_17)
 add_test(NAME textfieldprocessor_test COMMAND textfieldprocessor_test)
 
 add_executable(demdata_test demdata_test.cpp)
-target_link_libraries(demdata_test PRIVATE Catch2::Catch2WithMain mapmaker SQLiteCpp SQLite::SQLite3)
+if(WIN32)
+  target_link_libraries(demdata_test PRIVATE Catch2::Catch2WithMain mapmaker SQLiteCpp unofficial::sqlite3::sqlite3)
+else()
+  target_link_libraries(demdata_test PRIVATE Catch2::Catch2WithMain mapmaker SQLiteCpp SQLite::SQLite3)
+endif()
 target_compile_features(demdata_test PRIVATE cxx_std_17)
 target_compile_definitions(demdata_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME demdata_test COMMAND demdata_test)
@@ -43,13 +47,17 @@ target_link_libraries(batchtileoutput_test PRIVATE
     mapmaker
     BZip2::BZip2
     ZLIB::ZLIB
-    EXPAT::EXPAT
+    expat::expat
     PROJ::proj
     SQLiteCpp
-    SQLite::SQLite3
     GEOS::geos
     GEOS::geos_c
 )
+if(WIN32)
+    target_link_libraries(batchtileoutput_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(batchtileoutput_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(batchtileoutput_test PRIVATE cxx_std_17)
 add_test(NAME batchtileoutput_test COMMAND batchtileoutput_test)
 
@@ -106,7 +114,12 @@ add_executable(osmdata_test
     ../osmmapmakerapp/resources.qrc
 )
 set_target_properties(osmdata_test PROPERTIES AUTORCC ON)
-target_link_libraries(osmdata_test PRIVATE Catch2::Catch2WithMain mapmaker BZip2::BZip2 ZLIB::ZLIB EXPAT::EXPAT PROJ::proj SQLiteCpp SQLite::SQLite3 GEOS::geos GEOS::geos_c)
+target_link_libraries(osmdata_test PRIVATE Catch2::Catch2WithMain mapmaker BZip2::BZip2 ZLIB::ZLIB expat::expat PROJ::proj SQLiteCpp GEOS::geos GEOS::geos_c)
+if(WIN32)
+    target_link_libraries(osmdata_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(osmdata_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(osmdata_test PRIVATE cxx_std_17)
 target_compile_definitions(osmdata_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME osmdata_test COMMAND osmdata_test)
@@ -127,13 +140,17 @@ target_link_libraries(project_load_save_test PRIVATE
     Qt5::XmlPatterns
     BZip2::BZip2
     ZLIB::ZLIB
-    EXPAT::EXPAT
+    expat::expat
     PROJ::proj
     SQLiteCpp
-    SQLite::SQLite3
     GEOS::geos
     GEOS::geos_c
 )
+if(WIN32)
+    target_link_libraries(project_load_save_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(project_load_save_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(project_load_save_test PRIVATE cxx_std_17)
 target_compile_definitions(project_load_save_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME project_load_save_test COMMAND project_load_save_test)
@@ -149,13 +166,17 @@ target_link_libraries(new_project_test PRIVATE
     Qt5::XmlPatterns
     BZip2::BZip2
     ZLIB::ZLIB
-    EXPAT::EXPAT
+    expat::expat
     PROJ::proj
     SQLiteCpp
-    SQLite::SQLite3
     GEOS::geos
     GEOS::geos_c
 )
+if(WIN32)
+    target_link_libraries(new_project_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(new_project_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(new_project_test PRIVATE cxx_std_17)
 target_compile_definitions(new_project_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME new_project_test COMMAND new_project_test)
@@ -171,13 +192,17 @@ target_link_libraries(projecttemplate_test PRIVATE
     Qt5::XmlPatterns
     BZip2::BZip2
     ZLIB::ZLIB
-    EXPAT::EXPAT
+    expat::expat
     PROJ::proj
     SQLiteCpp
-    SQLite::SQLite3
     GEOS::geos
     GEOS::geos_c
 )
+if(WIN32)
+    target_link_libraries(projecttemplate_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(projecttemplate_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(projecttemplate_test PRIVATE cxx_std_17)
 target_compile_definitions(projecttemplate_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME projecttemplate_test COMMAND projecttemplate_test)
@@ -193,13 +218,17 @@ target_link_libraries(overpass_test PRIVATE
     Qt5::Network
     BZip2::BZip2
     ZLIB::ZLIB
-    EXPAT::EXPAT
+    expat::expat
     PROJ::proj
     SQLiteCpp
-    SQLite::SQLite3
     GEOS::geos
     GEOS::geos_c
 )
+if(WIN32)
+    target_link_libraries(overpass_test PRIVATE unofficial::sqlite3::sqlite3)
+else()
+    target_link_libraries(overpass_test PRIVATE SQLite::SQLite3)
+endif()
 target_compile_features(overpass_test PRIVATE cxx_std_17)
 target_compile_definitions(overpass_test PRIVATE SOURCE_DIR="${CMAKE_SOURCE_DIR}")
 add_test(NAME overpass_test COMMAND overpass_test)

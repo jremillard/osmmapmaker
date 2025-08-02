@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <geos.h>
 #include <osmium/geom/wkb.hpp>
+#include <sstream>
 
 static const double detToM = 6356.0 * 1000.0 * 2.0 * (std::atan(1.0) * 4) / 360;
 

@@ -37,7 +37,7 @@ On Debian-based systems you can install them with `install_dependencies_apt.sh`.
 
 1. Open the Visual Studio 2022 Command Prompt (Developer Command Prompt for VS 2022).
 2. Check if `vcpkg` is installed by verifying the `VCPKG_ROOT` environment variable: `if exist %VCPKG_ROOT% (echo vcpkg is installed) else (echo vcpkg is not installed)`.
-3. Install packages `vcpkg install`
+3. Install packages: `vcpkg install`
 
 ### Linux/macOS Build Setup
 
@@ -48,11 +48,11 @@ On Debian-based systems you can install them with `install_dependencies_apt.sh`.
 
 ### Configure CMake Build Directories
 
-1. Delete the `bin` directory if it exists.
+1. Delete the `bin` directory if it exists: 
 
 **For Windows:**
-2. Configure a release build using `cmake -S . -B bin/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake` – optimized binaries.
-3. Configure a debug build using `cmake -S . -B bin/debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake` – includes debug symbols.
+2. Configure a release build using `cmake -S . -B bin/release -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"` – optimized binaries.
+3. Configure a debug build using `cmake -S . -B bin/debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"` – includes debug symbols.
 
 **For Linux/macOS:**
 2. Configure a release build using `cmake -S . -B bin/release -DCMAKE_BUILD_TYPE=Release` – optimized binaries.
@@ -62,5 +62,10 @@ On Debian-based systems you can install them with `install_dependencies_apt.sh`.
 
 ### Build
 
-Build each directory with `cmake --build bin/<type> -j$(nproc)`.
+**For Windows:**
+- Build release: `cmake --build bin/release --config Release`
+- Build debug: `cmake --build bin/debug --config Debug`
+
+**For Linux/macOS:**
+- Build each directory with `cmake --build bin/<type> -j$(nproc)`.
 

@@ -50,16 +50,17 @@ target_link_libraries(osmmapmakerapp
       Qt5::Widgets
       BZip2::BZip2
       ZLIB::ZLIB
-      EXPAT::EXPAT
+      expat::expat
       PROJ::proj
   SQLiteCpp
-  SQLite::SQLite3
   GEOS::geos
   GEOS::geos_c
 )
 
 if(WIN32)
-  target_link_libraries(osmmapmakerapp PRIVATE Qt5::WinMain)
+  target_link_libraries(osmmapmakerapp PRIVATE Qt5::WinMain unofficial::sqlite3::sqlite3)
+else()
+  target_link_libraries(osmmapmakerapp PRIVATE SQLite::SQLite3)
 endif()
 
 #install(DIRECTORY "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/Debug/bin/plugins" DESTINATION  "${CMAKE_BINARY_DIR}/Debug")
